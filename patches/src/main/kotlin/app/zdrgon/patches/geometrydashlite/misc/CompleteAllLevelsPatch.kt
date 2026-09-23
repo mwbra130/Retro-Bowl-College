@@ -18,6 +18,11 @@ val completeAllLevelsPatch = bytecodePatch(
 ) {
     compatibleWith(COMPATIBILITY_GEOMETRY_DASH_LITE)
 
+    // Merge the extension DEX into the patched app. Without this the
+    // injected call below references a class that does not exist at
+    // runtime and the game crashes on launch with NoClassDefFoundError.
+    extendWith("extensions/extension.mpe")
+
     execute {
         val method = LauncherOnCreateFingerprint.method
 
