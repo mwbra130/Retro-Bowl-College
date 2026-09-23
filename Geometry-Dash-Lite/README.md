@@ -16,5 +16,9 @@ Marks official levels 1–22 as 100% complete with all secret coins, stars, and 
 
 ⚠️ The fake completions sync to RobTop's servers, which carries a ban risk.
 
+## 🔍 Troubleshooting
+
+Each launch (until it succeeds once) shows a short toast: "no save yet — reopen the game once", "could not read save, will retry", or "marked N levels + M coins complete — reopen the game". The patch also writes `gdl_patch_before.xml`, `gdl_patch_after.xml`, and `gdl_patch_log.txt` into the app's external files dir (`/Android/data/com.robtopx.geometryjumplite/files/`, readable over USB) — send those files if the completions still don't appear and the exact save contents can be checked.
+
 Patch source: [`../patches/src/main/kotlin/app/zdrgon/patches/geometrydashlite/`](../patches/src/main/kotlin/app/zdrgon/patches/geometrydashlite/)
 · save-editing helper: [`../extensions/extension/src/main/java/app/template/extension/geometrydashlite/SaveCompleter.java`](../extensions/extension/src/main/java/app/template/extension/geometrydashlite/SaveCompleter.java)
