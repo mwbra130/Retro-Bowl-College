@@ -96,3 +96,21 @@ object VideoAutoplayFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
     parameters = listOf("Ljava/lang/Object;"),
 )
+
+/**
+ * PairIP/Guardsquare license check entry point.
+ *
+ * Verified against BeReal 3.96.0: Lcom/pairip/licensecheck/LicenseClient;->checkLicense
+ * runs from the PairIP Application wrapper's attachBaseContext (before the real
+ * app attaches) and from LicenseContentProvider.onCreate. On a re-signed APK the
+ * verdict comes back NOT_LICENSED, and processResponse launches LicenseActivity
+ * ("Get this app from Play" blocking screen) via startPaywallActivity.
+ * The class name is the SDK's own (not obfuscated); the string pins the match.
+ */
+object LicenseCheckBypassFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
+    name = "checkLicense",
+    returnType = "V",
+    parameters = listOf("Landroid/content/Context;"),
+    strings = listOf("Cannot check license with null context."),
+)

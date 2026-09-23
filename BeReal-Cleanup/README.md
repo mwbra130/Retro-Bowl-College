@@ -4,6 +4,9 @@ Patches for **BeReal** (`com.bereal.ft`, v3.96.0 XAPK) that remove sponsored con
 
 ## 🩹 Patches
 
+### Bypass license check
+Skips BeReal's PairIP/Guardsquare license check, which blocks re-signed APKs with a "Get this app from Play" screen. Without this patch the patched app cannot launch at all.
+
 ### Remove sponsored posts
 Filters sponsored posts out of the feed at the data layer by adding `AND isSponsored = 0` to BeReal's Room feed queries (`FeedItemEntity` cache). Applies to the Friends and Discovery feeds.
 
