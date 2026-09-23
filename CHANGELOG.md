@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.0.2...v1.1.0) (2026-09-23)
+
+### ✨ New Features
+
+* add Geometry Dash Lite complete-all-levels patch ([dd2a378](https://github.com/mwbra130/Retro-Bowl-College/commit/dd2a37801c5330dc0f6e119b04dfab32c0c2150f))
+
 ## [1.0.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.0.1...v1.0.2) (2026-09-23)
 
 ### 🐛 Bug Fixes
