@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.0.0...v1.0.1) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* make premium fingerprint build-proof ([73d948f](https://github.com/mwbra130/Retro-Bowl-College/commit/73d948fce66bbfef5036068788ad6e311aa54c63))
+
 ## 1.0.0 (2026-09-23)
 
 ### ✨ New Features
