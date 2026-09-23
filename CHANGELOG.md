@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.0...v1.1.1) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* merge extension classes into patched app so Geometry Dash Lite no longer crashes on launch ([87eaf4b](https://github.com/mwbra130/Retro-Bowl-College/commit/87eaf4b7cd3b0e5481af1e584a64c55538483a5a))
+
 ## [1.1.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.0.2...v1.1.0) (2026-09-23)
 
 ### ✨ New Features
