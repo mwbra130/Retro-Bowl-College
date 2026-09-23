@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "patches": [
     {
       "name": "Bypass license check",
@@ -109,6 +109,84 @@
     {
       "name": "Disable video autoplay",
       "description": "Stops feed videos from auto-playing by removing the play-when-ready trigger from the video player's visibility effect. Videos load paused; tap-to-play still works. Applies to the Discovery feed, friends feed, and profiles.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Kill license blocking activity",
+      "description": "Makes BeReal's 'Get this app from Play' blocking activity finish itself immediately on start, so it can never be displayed. Backup layer behind the license-check bypass.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Kill license delayed shutdown",
+      "description": "Disables BeReal's PairIP delayed process kill (System.exit) that fires after an unlicensed verdict and shows up as an app crash. Backup layer behind the license-check bypass.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Kill license verdict handler",
+      "description": "Makes BeReal's PairIP license-verdict handler a no-op so a NOT_LICENSED verdict can never trigger the 'Get this app from Play' screen. Backup layer behind the license-check bypass.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [

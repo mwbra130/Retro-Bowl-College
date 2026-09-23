@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-23T15:46:30",
-  "description": "## [1.3.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.2.0...v1.3.0) (2026-09-23)\n\n### ✨ New Features\n\n* add BeReal license-check bypass patch (P7) ([863f3be](https://github.com/mwbra130/Retro-Bowl-College/commit/863f3be04440742c4a4bd2927b1e91bed5e246a1))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.3.0/patches-1.3.0.mpp",
+  "created_at": "2026-09-23T16:26:25",
+  "description": "## [1.3.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.0...v1.3.1) (2026-09-23)\n\n### 🐛 Bug Fixes\n\n* harden BeReal license bypass against paywall screen and crash ([849d44f](https://github.com/mwbra130/Retro-Bowl-College/commit/849d44f9257071d72ebbe0a14bcc9cc23985d2dc))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.3.1/patches-1.3.1.mpp",
   "signature_download_url": "",
-  "version": "1.3.0"
+  "version": "1.3.1"
 }

@@ -1,3 +1,9 @@
+## [1.3.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.0...v1.3.1) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* harden BeReal license bypass against paywall screen and crash ([849d44f](https://github.com/mwbra130/Retro-Bowl-College/commit/849d44f9257071d72ebbe0a14bcc9cc23985d2dc))
+
 ## [1.3.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.2.0...v1.3.0) (2026-09-23)
 
 ### ✨ New Features

@@ -28,9 +28,9 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.3.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.3.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;10 patches total
+> **[v1.3.1](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.3.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;13 patches total
 <details open>
-<summary>📦 BeReal&nbsp;&nbsp;•&nbsp;&nbsp;7 patches</summary>
+<summary>📦 BeReal&nbsp;&nbsp;•&nbsp;&nbsp;10 patches</summary>
 <br>
 
 **🎯 Supported versions:**
@@ -44,6 +44,9 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 | [Disable Adjust tracking](#disable-adjust-tracking) | Prevents the Adjust analytics/attribution SDK from initializing by returning early from BeReal's Adjust setup routine. No Adjust session or events are started. |  |
 | [Disable AppLovin ads](#disable-applovin-ads) | Prevents the AppLovin MAX SDK from initializing by returning early from BeReal's ad-setup routine. Stops SDK-served ads; use with 'Remove sponsored posts' to also clear sponsored feed items. |  |
 | [Disable video autoplay](#disable-video-autoplay) | Stops feed videos from auto-playing by removing the play-when-ready trigger from the video player's visibility effect. Videos load paused; tap-to-play still works. Applies to the Discovery feed, friends feed, and profiles. |  |
+| [Kill license blocking activity](#kill-license-blocking-activity) | Makes BeReal's 'Get this app from Play' blocking activity finish itself immediately on start, so it can never be displayed. Backup layer behind the license-check bypass. |  |
+| [Kill license delayed shutdown](#kill-license-delayed-shutdown) | Disables BeReal's PairIP delayed process kill (System.exit) that fires after an unlicensed verdict and shows up as an app crash. Backup layer behind the license-check bypass. |  |
+| [Kill license verdict handler](#kill-license-verdict-handler) | Makes BeReal's PairIP license-verdict handler a no-op so a NOT_LICENSED verdict can never trigger the 'Get this app from Play' screen. Backup layer behind the license-check bypass. |  |
 | [Remove ad/tracker auto-init providers](#remove-ad-tracker-auto-init-providers) | Removes the manifest <provider> entries that auto-initialize ad and tracker SDKs at startup (Mobile Ads, InMobi, AppLovin, Datadog RUM, Vungle, Adjust). Push notifications and AndroidX Startup are left untouched. |  |
 | [Remove sponsored posts](#remove-sponsored-posts) | Filters sponsored posts out of the feed at the data layer by adding 'AND isSponsored = 0' to the Room feed queries. Applies to the Friends and Discovery feeds. |  |
 | [Remove suggested-people card](#remove-suggested-people-card) | Hides the 'suggested people / suggested friends' card from the feed by making its renderer a no-op. |  |
