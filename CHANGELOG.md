@@ -1,3 +1,9 @@
+## [1.3.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.1...v1.3.2) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* remove unrelated satellite patch, fix Retro Bowl folder layout, clean up README ([30df9a7](https://github.com/mwbra130/Retro-Bowl-College/commit/30df9a752bf3f266b81ce22fba41f30d87c23bfd))
+
 ## [1.3.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.0...v1.3.1) (2026-09-23)
 
 ### 🐛 Bug Fixes

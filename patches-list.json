@@ -1,318 +1,318 @@
 {
-    "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-    "version": "1.3.1",
-    "patches": [
+  "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
+  "version": "1.3.2",
+  "patches": [
+    {
+      "name": "Bypass license check",
+      "description": "Lets the patched app open without the 'Get this app from Play' block. Required for the app to launch.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
         {
-            "name": "Bypass license check",
-            "description": "Lets the patched app open without the 'Get this app from Play' block. Required for the app to launch.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.bereal.ft",
-                    "name": "BeReal",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#111111",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "3.96.0",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Complete all levels",
-            "description": "Marks every official level 100% complete with all secret coins.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.robtopx.geometryjumplite",
-                    "name": "Geometry Dash Lite",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#2DB3FF",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "2.2.147",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Disable Adjust tracking",
-            "description": "Stops Adjust analytics tracking.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.bereal.ft",
-                    "name": "BeReal",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#111111",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "3.96.0",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Disable AppLovin ads",
-            "description": "Blocks AppLovin ads from loading.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.bereal.ft",
-                    "name": "BeReal",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#111111",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "3.96.0",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Disable video autoplay",
-            "description": "Videos stay paused until you tap them. Works in all feeds and profiles.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.bereal.ft",
-                    "name": "BeReal",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#111111",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "3.96.0",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Kill license blocking activity",
-            "description": "Backup: instantly closes the 'Get this app from Play' screen if it ever appears.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.bereal.ft",
-                    "name": "BeReal",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#111111",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "3.96.0",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Kill license delayed shutdown",
-            "description": "Backup: stops the app from force-closing itself after the license check.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.bereal.ft",
-                    "name": "BeReal",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#111111",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "3.96.0",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Kill license verdict handler",
-            "description": "Backup: prevents the license check from triggering the block screen.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.bereal.ft",
-                    "name": "BeReal",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#111111",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "3.96.0",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Remove ad/tracker auto-init providers",
-            "description": "Stops ad and tracker SDKs from starting with the app (Mobile Ads, InMobi, AppLovin, Datadog, Vungle, Adjust). Notifications keep working.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.bereal.ft",
-                    "name": "BeReal",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#111111",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "3.96.0",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Remove sponsored posts",
-            "description": "Removes sponsored posts from the Friends and Discovery feeds.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.bereal.ft",
-                    "name": "BeReal",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#111111",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "3.96.0",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Remove suggested-people card",
-            "description": "Removes the suggested-people card from the feed.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.bereal.ft",
-                    "name": "BeReal",
-                    "description": null,
-                    "apkFileType": "XAPK",
-                    "appIconColor": "#111111",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "3.96.0",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
-        },
-        {
-            "name": "Unlock premium",
-            "description": "Unlocks the full version. No real purchase is made.",
-            "default": true,
-            "dependencies": [],
-            "compatiblePackages": [
-                {
-                    "packageName": "com.newstargames.retrobowlcollege",
-                    "name": "Retro Bowl College",
-                    "description": null,
-                    "apkFileType": "APK",
-                    "appIconColor": "#1B3A5C",
-                    "signatures": null,
-                    "targets": [
-                        {
-                            "version": "1.1.2",
-                            "versionCodes": null,
-                            "isExperimental": false,
-                            "minSdk": null,
-                            "description": null
-                        }
-                    ]
-                }
-            ],
-            "options": []
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
         }
-    ]
+      ],
+      "options": []
+    },
+    {
+      "name": "Complete all levels",
+      "description": "Marks every official level 100% complete with all secret coins.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.robtopx.geometryjumplite",
+          "name": "Geometry Dash Lite",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#2DB3FF",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.2.147",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Adjust tracking",
+      "description": "Stops Adjust analytics tracking.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable AppLovin ads",
+      "description": "Blocks AppLovin ads from loading.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable video autoplay",
+      "description": "Videos stay paused until you tap them. Works in all feeds and profiles.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Kill license blocking activity",
+      "description": "Backup: instantly closes the 'Get this app from Play' screen if it ever appears.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Kill license delayed shutdown",
+      "description": "Backup: stops the app from force-closing itself after the license check.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Kill license verdict handler",
+      "description": "Backup: prevents the license check from triggering the block screen.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove ad/tracker auto-init providers",
+      "description": "Stops ad and tracker SDKs from starting with the app (Mobile Ads, InMobi, AppLovin, Datadog, Vungle, Adjust). Notifications keep working.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove sponsored posts",
+      "description": "Removes sponsored posts from the Friends and Discovery feeds.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove suggested-people card",
+      "description": "Removes the suggested-people card from the feed.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlock premium",
+      "description": "Unlocks the full version. No real purchase is made.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.newstargames.retrobowlcollege",
+          "name": "Retro Bowl College",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B3A5C",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "1.1.2",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    }
+  ]
 }
