@@ -77,9 +77,12 @@ public final class SaveCompleter {
             File dbgDir = context.getExternalFilesDir(null);
 
             if (!save.exists()) {
-                String probe = probeSaveLocations(context, dbgDir);
-                writeLog(dbgDir, "run: save file not present yet (fresh install). " + probe);
-                toast(context, "GD patch: no save yet \u2014 play a level, then reopen");
+                String report = probeSaveLocations(context, dbgDir);
+                writeLog(dbgDir, "run: save file not present yet (fresh install).");
+                toast(context, "GD patch: no save yet \u2014 screenshot the popup");
+                // Delayed: our hook runs before the Activity finishes onCreate,
+                // so wait a few seconds until it can safely show a dialog.
+                showReportDialog(context, report, 4000);
                 return;
             }
 
@@ -197,19 +200,20 @@ public final class SaveCompleter {
     /**
      * Writes a probe file into getFilesDir() (proves we can write there and
      * that the path is right) and lists every file the game has created in
-     * the candidate save locations. Returns a one-line summary.
+     * the candidate save locations. Returns the full human-readable report.
      */
     private static String probeSaveLocations(Context context, File dbgDir) {
-        StringBuilder summary = new StringBuilder();
+        StringBuilder report = new StringBuilder();
         try {
             File filesDir = context.getFilesDir();
+            report.append("filesDir: ").append(filesDir.getAbsolutePath()).append('\n');
             // Prove the path/writes work: drop a probe file of our own.
             try {
                 writeAll(new File(filesDir, "gdl_patch_probe.txt"),
                         "patch can write here".getBytes(StandardCharsets.UTF_8));
-                summary.append("probe write OK; ");
+                report.append("probe write: OK\n");
             } catch (Throwable t) {
-                summary.append("probe write FAILED: ").append(t).append("; ");
+                report.append("probe write FAILED: ").append(t).append('\n');
             }
 
             File[] candidates = new File[]{
@@ -218,31 +222,73 @@ public final class SaveCompleter {
                     context.getCacheDir(),
                     dbgDir,
             };
-            StringBuilder listing = new StringBuilder();
             int total = 0;
             for (File dir : candidates) {
                 if (dir == null) continue;
-                listing.append("[").append(dir.getAbsolutePath()).append("]\n");
+                report.append("\n[").append(dir.getAbsolutePath()).append("]\n");
                 File[] files = dir.listFiles();
                 if (files == null) {
-                    listing.append("  <unreadable>\n");
+                    report.append("  <unreadable>\n");
                     continue;
                 }
+                if (files.length == 0) {
+                    report.append("  <empty>\n");
+                }
                 for (File f : files) {
-                    listing.append("  ").append(f.getName());
-                    if (f.isFile()) listing.append(" (").append(f.length()).append("b)");
-                    listing.append("\n");
+                    report.append("  ").append(f.getName());
+                    if (f.isFile()) report.append(" (").append(f.length()).append("b)");
+                    report.append('\n');
                     total++;
                 }
             }
-            summary.append(total).append(" files seen; ");
-            writeAll(new File(dbgDir == null ? filesDir : dbgDir,
-                    "gdl_patch_filelist.txt"),
-                    listing.toString().getBytes(StandardCharsets.UTF_8));
+            report.append("\nTotal files seen: ").append(total).append('\n');
+            report.append("CCGameManager.dat present: ")
+                    .append(new File(filesDir, SAVE_NAME).exists()).append('\n');
+            try {
+                writeAll(new File(dbgDir == null ? filesDir : dbgDir,
+                        "gdl_patch_filelist.txt"),
+                        report.toString().getBytes(StandardCharsets.UTF_8));
+            } catch (Throwable ignored) {
+            }
         } catch (Throwable t) {
-            summary.append("probe crashed: ").append(t);
+            report.append("probe crashed: ").append(t).append('\n');
         }
-        return summary.toString();
+        return report.toString();
+    }
+
+    /**
+     * Shows the probe report in a scrollable popup so it can be screenshotted
+     * and sent back for diagnosis. Delayed because this hook runs before the
+     * Activity finishes onCreate.
+     */
+    private static void showReportDialog(final Context context, final String report,
+                                         long delayMs) {
+        try {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        android.widget.ScrollView sv =
+                                new android.widget.ScrollView(context);
+                        android.widget.TextView tv =
+                                new android.widget.TextView(context);
+                        tv.setText(report);
+                        tv.setTextIsSelectable(true);
+                        int pad = (int) (16 * context.getResources()
+                                .getDisplayMetrics().density);
+                        tv.setPadding(pad, pad, pad, pad);
+                        sv.addView(tv);
+                        new android.app.AlertDialog.Builder(context)
+                                .setTitle("GD patch: save not found")
+                                .setView(sv)
+                                .setPositiveButton("OK", null)
+                                .show();
+                    } catch (Throwable ignored) {
+                    }
+                }
+            }, delayMs);
+        } catch (Throwable ignored) {
+        }
     }
 
     // ------------------------------------------------------------------ //
