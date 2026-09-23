@@ -106,6 +106,8 @@ object VideoAutoplayFingerprint : Fingerprint(
  * verdict comes back NOT_LICENSED, and processResponse launches LicenseActivity
  * ("Get this app from Play" blocking screen) via startPaywallActivity.
  * The class name is the SDK's own (not obfuscated); the string pins the match.
+ * Verified: the string appears in exactly one method app-wide, and the class
+ * is defined in exactly one dex file — no ambiguity, no overloads.
  */
 object LicenseCheckBypassFingerprint : Fingerprint(
     definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
@@ -113,4 +115,54 @@ object LicenseCheckBypassFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Landroid/content/Context;"),
     strings = listOf("Cannot check license with null context."),
+)
+
+/**
+ * PairIP/Guardsquare license verdict handler.
+ *
+ * Verified against BeReal 3.96.0: Lcom/pairip/licensecheck/LicenseClient;->processResponse
+ * is the single choke point where a licensing verdict becomes action —
+ * response code 1 (NOT_LICENSED) launches the "Get this app from Play" screen
+ * via startPaywallActivity. Only reachable through the AIDL callback
+ * (LicenseClient$2.verifyLicense), downstream of checkLicense. The string
+ * pins the match (verified: appears only in this method).
+ */
+object LicenseVerdictKillFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
+    name = "processResponse",
+    returnType = "V",
+    parameters = listOf("I", "Landroid/os/Bundle;"),
+    strings = listOf("License check succeeded."),
+)
+
+/**
+ * PairIP/Guardsquare blocking activity ("Get this app from Play" screen).
+ *
+ * Verified against BeReal 3.96.0: Lcom/pairip/licensecheck/LicenseActivity;->onStart
+ * reads the "activitytype" extra and shows either the paywall or the error
+ * dialog. Runs in the main process, exported=false, referenced only from the
+ * license flow. The string pins the match (verified: appears only here).
+ */
+object LicenseActivityKillFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/licensecheck/LicenseActivity;",
+    name = "onStart",
+    returnType = "V",
+    parameters = listOf(),
+    strings = listOf("Couldn't process license activity correctly."),
+)
+
+/**
+ * PairIP/Guardsquare delayed app shutdown.
+ *
+ * Verified against BeReal 3.96.0: Lcom/pairip/licensecheck/LicenseClient;->scheduleAppShutdown
+ * posts the exitAction runnable (System.exit(0)) on a delay after an
+ * unlicensed verdict — the source of the "app has a bug" crash dialog.
+ * Only called from the paywall/error paths. Method name verified unique
+ * app-wide.
+ */
+object LicenseShutdownKillFingerprint : Fingerprint(
+    definingClass = "Lcom/pairip/licensecheck/LicenseClient;",
+    name = "scheduleAppShutdown",
+    returnType = "V",
+    parameters = listOf(),
 )

@@ -7,6 +7,15 @@ Patches for **BeReal** (`com.bereal.ft`, v3.96.0 XAPK) that remove sponsored con
 ### Bypass license check
 Skips BeReal's PairIP/Guardsquare license check, which blocks re-signed APKs with a "Get this app from Play" screen. Without this patch the patched app cannot launch at all.
 
+### Kill license verdict handler
+Backup layer behind the license bypass: makes the license-verdict handler a no-op so a NOT_LICENSED verdict can never trigger the blocking screen, no matter how the verdict callback fires.
+
+### Kill license blocking activity
+Backup layer: makes the "Get this app from Play" activity finish itself immediately on start, so it can never be displayed.
+
+### Kill license delayed shutdown
+Backup layer: disables the delayed process kill (System.exit) that PairIP schedules after an unlicensed verdict — the thing that shows up as an "app has a bug" crash dialog.
+
 ### Remove sponsored posts
 Filters sponsored posts out of the feed at the data layer by adding `AND isSponsored = 0` to BeReal's Room feed queries (`FeedItemEntity` cache). Applies to the Friends and Discovery feeds.
 
