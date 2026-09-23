@@ -1,7 +1,33 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "patches": [
+    {
+      "name": "Bypass license check",
+      "description": "Skips BeReal's PairIP license check so the re-signed app isn't blocked by the 'Get this app from Play' screen. Required for the patched app to launch at all.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
     {
       "name": "Complete all levels",
       "description": "Marks every official level 100% complete with all secret coins by updating the game's save file on launch. No gameplay code is modified.",

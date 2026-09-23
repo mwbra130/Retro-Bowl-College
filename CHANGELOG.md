@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.2.0...v1.3.0) (2026-09-23)
+
+### ✨ New Features
+
+* add BeReal license-check bypass patch (P7) ([863f3be](https://github.com/mwbra130/Retro-Bowl-College/commit/863f3be04440742c4a4bd2927b1e91bed5e246a1))
+
 ## [1.2.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.7...v1.2.0) (2026-09-23)
 
 ### ✨ New Features
