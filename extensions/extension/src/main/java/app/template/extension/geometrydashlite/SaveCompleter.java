@@ -199,15 +199,16 @@ public final class SaveCompleter {
 
     /**
      * Writes a probe file into getFilesDir() (proves we can write there and
-     * that the path is right) and lists every file the game has created in
-     * the candidate save locations. Returns the full human-readable report.
+     * that the path is right) and lists the most recently modified files
+     * anywhere under the app's private directories, recursively. The game
+     * must have written SOMETHING while being played; whatever it is, and
+     * wherever it is, this finds it. Returns the full human-readable report.
      */
     private static String probeSaveLocations(Context context, File dbgDir) {
         StringBuilder report = new StringBuilder();
         try {
             File filesDir = context.getFilesDir();
             report.append("filesDir: ").append(filesDir.getAbsolutePath()).append('\n');
-            // Prove the path/writes work: drop a probe file of our own.
             try {
                 writeAll(new File(filesDir, "gdl_patch_probe.txt"),
                         "patch can write here".getBytes(StandardCharsets.UTF_8));
@@ -216,34 +217,62 @@ public final class SaveCompleter {
                 report.append("probe write FAILED: ").append(t).append('\n');
             }
 
-            File[] candidates = new File[]{
+            File[] roots = new File[]{
                     filesDir,
                     context.getNoBackupFilesDir(),
                     context.getCacheDir(),
+                    context.getCodeCacheDir(),
                     dbgDir,
             };
-            int total = 0;
-            for (File dir : candidates) {
-                if (dir == null) continue;
-                report.append("\n[").append(dir.getAbsolutePath()).append("]\n");
-                File[] files = dir.listFiles();
-                if (files == null) {
-                    report.append("  <unreadable>\n");
+            java.util.ArrayList<File> all = new java.util.ArrayList<File>();
+            for (File root : roots) {
+                collectFiles(root, all, 0);
+            }
+            // Most recently modified first.
+            java.util.Collections.sort(all, new java.util.Comparator<File>() {
+                @Override
+                public int compare(File a, File b) {
+                    return Long.compare(b.lastModified(), a.lastModified());
+                }
+            });
+            long now = System.currentTimeMillis();
+            report.append("\nRecently modified files (newest first, top 40):\n");
+            int shown = 0;
+            int datHits = 0;
+            StringBuilder interesting = new StringBuilder();
+            for (File f : all) {
+                if (shown >= 40) break;
+                long ageMin = (now - f.lastModified()) / 60000;
+                String name = f.getName().toLowerCase();
+                boolean looksLikeSave = name.contains(".dat") || name.contains("save")
+                        || name.contains("game") || name.contains("manager")
+                        || name.contains("profile");
+                if (looksLikeSave) {
+                    datHits++;
+                    interesting.append("  [SAVE?] ").append(f.getAbsolutePath())
+                            .append(" (").append(f.length()).append("b, ")
+                            .append(ageMin).append(" min ago)\n");
+                }
+                // Skip our own debug files and ad-sdk noise in the main list,
+                // but still count them.
+                String p = f.getAbsolutePath();
+                if (p.contains("gdl_patch_") || p.contains("unityAds")
+                        || p.contains("vungle") || p.contains("inmobi")
+                        || p.contains("inneractive") || p.contains("ia-")
+                        || p.contains("supersonic") || p.contains("webview")
+                        || p.contains("WebView") || p.contains("oat")
+                        || p.contains("appmetrica") || p.contains("volley")
+                        || p.contains("Crash Reports") || p.contains("safedk")) {
                     continue;
                 }
-                if (files.length == 0) {
-                    report.append("  <empty>\n");
-                }
-                for (File f : files) {
-                    report.append("  ").append(f.getName());
-                    if (f.isFile()) report.append(" (").append(f.length()).append("b)");
-                    report.append('\n');
-                    total++;
-                }
+                report.append("  ").append(f.getAbsolutePath())
+                        .append(" (").append(f.length()).append("b, ")
+                        .append(ageMin).append(" min ago)\n");
+                shown++;
             }
-            report.append("\nTotal files seen: ").append(total).append('\n');
-            report.append("CCGameManager.dat present: ")
-                    .append(new File(filesDir, SAVE_NAME).exists()).append('\n');
+            report.append("\nFiles with save-like names: ").append(datHits).append('\n');
+            report.append(interesting);
+            report.append("\nTotal files scanned: ").append(all.size()).append('\n');
             try {
                 writeAll(new File(dbgDir == null ? filesDir : dbgDir,
                         "gdl_patch_filelist.txt"),
@@ -254,6 +283,28 @@ public final class SaveCompleter {
             report.append("probe crashed: ").append(t).append('\n');
         }
         return report.toString();
+    }
+
+    /** Recursively collects files up to depth 5, skipping unreadable dirs. */
+    private static void collectFiles(File dir, java.util.ArrayList<File> out, int depth) {
+        if (dir == null || depth > 5) return;
+        File[] files;
+        try {
+            files = dir.listFiles();
+        } catch (Throwable t) {
+            return;
+        }
+        if (files == null) return;
+        for (File f : files) {
+            try {
+                if (f.isDirectory()) {
+                    collectFiles(f, out, depth + 1);
+                } else {
+                    out.add(f);
+                }
+            } catch (Throwable ignored) {
+            }
+        }
     }
 
     /**
