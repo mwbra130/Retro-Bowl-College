@@ -15,7 +15,7 @@ Custom Morphe patches for Android apps. Add this repo as a source in Morphe Mana
 ## 🩹 What the patches do
 
 ### Retro Bowl College
-- **Unlock premium** — Unlocks the full version of Retro Bowl College (`com.newstargames.retrobowlcollege`, v1.1.2) by reporting a synthetic purchased entitlement to the game's purchase check. No real purchase is made.
+- **Unlock premium** — Unlocks the full version of Retro Bowl College (`com.newstargames.retrobowlcollege`, v1.1.2)
 
 ### Geometry Dash Lite
 - **Complete all levels** — Marks official levels 1–22 as 100% complete with all secret coins, stars, and demon completions (`com.robtopx.geometryjumplite`, v2.2.147 XAPK) by updating the game's save file on launch. No gameplay code is modified. Open the game **twice**: the first launch creates the save file, the second applies the completions. ⚠️ Fake completions sync to RobTop's servers, which carries a ban risk.
