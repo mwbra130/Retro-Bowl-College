@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-23T05:07:36",
-  "description": "## [1.1.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.4...v1.1.5) (2026-09-23)\n\n### 🐛 Bug Fixes\n\n* recursive recently-modified file scan to locate the real save ([30de5c9](https://github.com/mwbra130/Retro-Bowl-College/commit/30de5c914f24ace19d5665a79780ea0bac5545a7))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.1.5/patches-1.1.5.mpp",
+  "created_at": "2026-09-23T05:15:34",
+  "description": "## [1.1.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.5...v1.1.6) (2026-09-23)\n\n### 🐛 Bug Fixes\n\n* scan whole app data dir incl. shared_prefs to find real save location ([319aeb0](https://github.com/mwbra130/Retro-Bowl-College/commit/319aeb0ffc493a8f0ea4520dc7e01311305027dd))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.1.6/patches-1.1.6.mpp",
   "signature_download_url": "",
-  "version": "1.1.5"
+  "version": "1.1.6"
 }

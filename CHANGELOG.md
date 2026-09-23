@@ -1,3 +1,9 @@
+## [1.1.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.5...v1.1.6) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* scan whole app data dir incl. shared_prefs to find real save location ([319aeb0](https://github.com/mwbra130/Retro-Bowl-College/commit/319aeb0ffc493a8f0ea4520dc7e01311305027dd))
+
 ## [1.1.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.4...v1.1.5) (2026-09-23)
 
 ### 🐛 Bug Fixes
