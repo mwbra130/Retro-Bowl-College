@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.7...v1.2.0) (2026-09-23)
+
+### ✨ New Features
+
+* add BeReal cleanup patches (sponsored posts, ads, trackers, feed) ([bd9938e](https://github.com/mwbra130/Retro-Bowl-College/commit/bd9938ed3b5131e96e0bfdad0ae5d5349c3d09bd))
+
 ## [1.1.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.6...v1.1.7) (2026-09-23)
 
 ### 🐛 Bug Fixes

@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-23T05:23:08",
-  "description": "## [1.1.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.6...v1.1.7) (2026-09-23)\n\n### 🐛 Bug Fixes\n\n* read CCGameManager.dat from dataDir root, backup original, self-check output ([7db530b](https://github.com/mwbra130/Retro-Bowl-College/commit/7db530b5c70de92a4ea4f40a02919e45ae37e74d))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.1.7/patches-1.1.7.mpp",
+  "created_at": "2026-09-23T14:34:20",
+  "description": "## [1.2.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.7...v1.2.0) (2026-09-23)\n\n### ✨ New Features\n\n* add BeReal cleanup patches (sponsored posts, ads, trackers, feed) ([bd9938e](https://github.com/mwbra130/Retro-Bowl-College/commit/bd9938ed3b5131e96e0bfdad0ae5d5349c3d09bd))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.2.0/patches-1.2.0.mpp",
   "signature_download_url": "",
-  "version": "1.1.7"
+  "version": "1.2.0"
 }

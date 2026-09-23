@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.1.7",
+  "version": "1.2.0",
   "patches": [
     {
       "name": "Complete all levels",
@@ -18,6 +18,162 @@
           "targets": [
             {
               "version": "2.2.147",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Adjust tracking",
+      "description": "Prevents the Adjust analytics/attribution SDK from initializing by returning early from BeReal's Adjust setup routine. No Adjust session or events are started.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable AppLovin ads",
+      "description": "Prevents the AppLovin MAX SDK from initializing by returning early from BeReal's ad-setup routine. Stops SDK-served ads; use with 'Remove sponsored posts' to also clear sponsored feed items.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable video autoplay",
+      "description": "Stops feed videos from auto-playing by removing the play-when-ready trigger from the video player's visibility effect. Videos load paused; tap-to-play still works. Applies to the Discovery feed, friends feed, and profiles.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove ad/tracker auto-init providers",
+      "description": "Removes the manifest <provider> entries that auto-initialize ad and tracker SDKs at startup (Mobile Ads, InMobi, AppLovin, Datadog RUM, Vungle, Adjust). Push notifications and AndroidX Startup are left untouched.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove sponsored posts",
+      "description": "Filters sponsored posts out of the feed at the data layer by adding 'AND isSponsored = 0' to the Room feed queries. Applies to the Friends and Discovery feeds.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove suggested-people card",
+      "description": "Hides the 'suggested people / suggested friends' card from the feed by making its renderer a no-op.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.96.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
