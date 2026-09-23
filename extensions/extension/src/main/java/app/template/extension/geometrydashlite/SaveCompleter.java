@@ -43,7 +43,7 @@ import java.util.zip.GZIPOutputStream;
 public final class SaveCompleter {
 
     private static final String PREFS = "gdl_complete_all";
-    private static final String DONE_KEY = "done_v2";
+    private static final String DONE_KEY = "done_v3";
     private static final String SAVE_NAME = "CCGameManager.dat";
 
     /** Official demon levels: Clubstep (14), Theory of Everything 2 (18), Deadlocked (20). */
@@ -73,7 +73,12 @@ public final class SaveCompleter {
             SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
             if (prefs.getBoolean(DONE_KEY, false)) return;
 
-            File save = new File(context.getFilesDir(), SAVE_NAME);
+            File dataDir = getDataDirSafe(context);
+            File save = new File(dataDir, SAVE_NAME);
+            if (!save.exists()) {
+                // Fallback: some builds keep it under files/.
+                save = new File(context.getFilesDir(), SAVE_NAME);
+            }
             File dbgDir = context.getExternalFilesDir(null);
 
             if (!save.exists()) {
@@ -100,7 +105,15 @@ public final class SaveCompleter {
             writeDebugXml(dbgDir, "gdl_patch_after.xml", root);
             writeLog(dbgDir, "run: decode OK. " + summary);
 
-            writeAll(save, encodeSave(root));
+            // Back up the untouched original first, then self-check our
+            // own output before overwriting the real save.
+            try {
+                writeAll(new File(dataDir, SAVE_NAME + ".patchbak"), readAll(save));
+            } catch (Throwable ignored) {
+            }
+            byte[] encoded = encodeSave(root);
+            decodeSave(encoded); // throws if our output is unreadable; aborts before write
+            writeAll(save, encoded);
             prefs.edit().putBoolean(DONE_KEY, true).apply();
             toast(context, "GD patch: " + summary);
         } catch (Throwable ignored) {
@@ -190,6 +203,15 @@ public final class SaveCompleter {
         Dict created = new Dict();
         parent.map.put(key, created);
         return created;
+    }
+
+    /** getDataDir() needs API 24+; fall back to applicationInfo on older. */
+    private static File getDataDirSafe(Context context) {
+        try {
+            return context.getDataDir();
+        } catch (Throwable t) {
+            return new File(context.getApplicationInfo().dataDir);
+        }
     }
 
     // ------------------------------------------------------------------ //
