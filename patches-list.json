@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "patches": [
     {
       "name": "Satellite Data Optimization",
@@ -8,6 +8,32 @@
       "default": false,
       "dependencies": [],
       "compatiblePackages": null,
+      "options": []
+    },
+    {
+      "name": "Unlock premium",
+      "description": "Unlocks the full version of Retro Bowl College by reporting a synthetic purchased entitlement to the game's purchase check. No real purchase is made.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.newstargames.retrobowlcollege",
+          "name": "Retro Bowl College",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#1B3A5C",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "1.1.2",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
       "options": []
     }
   ]
