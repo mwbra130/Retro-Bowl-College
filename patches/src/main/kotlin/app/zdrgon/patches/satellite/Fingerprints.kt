@@ -27,3 +27,4 @@ object QueryPurchasesResponseFingerprint : Fingerprint(
         string("Malformed JSON data from queryPurchases."),
     ),
 )
+
