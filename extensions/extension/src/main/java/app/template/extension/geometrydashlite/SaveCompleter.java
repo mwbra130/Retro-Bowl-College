@@ -193,22 +193,33 @@ public final class SaveCompleter {
     }
 
     // ------------------------------------------------------------------ //
-    // Save-location probe: when CCGameManager.dat is missing, list what   //
-    // the game has actually created so the real location can be found.     //
+    // Save-location probe: when CCGameManager.dat is missing, scan the    //
+    // WHOLE app data dir (shared_prefs, databases, files, cache, ...)    //
+    // and dump shared_prefs contents, so the real progress store shows.   //
     // ------------------------------------------------------------------ //
 
     /**
      * Writes a probe file into getFilesDir() (proves we can write there and
-     * that the path is right) and lists the most recently modified files
-     * anywhere under the app's private directories, recursively. The game
-     * must have written SOMETHING while being played; whatever it is, and
-     * wherever it is, this finds it. Returns the full human-readable report.
+     * that the path is right), then recursively scans the entire app data
+     * directory — shared_prefs, databases, files, cache, no_backup and all —
+     * listing the most recently modified files, and dumps the contents of
+     * every shared_prefs XML file. The game must have written SOMETHING while
+     * being played; whatever it is, and wherever it is, this finds it.
+     * Returns the full human-readable report.
      */
     private static String probeSaveLocations(Context context, File dbgDir) {
         StringBuilder report = new StringBuilder();
         try {
+            File dataDir;
+            try {
+                dataDir = context.getDataDir();
+            } catch (Throwable t) {
+                dataDir = new File(context.getApplicationInfo().dataDir);
+            }
+            final String base = dataDir.getAbsolutePath();
+            report.append("dataDir: ").append(base).append('\n');
+
             File filesDir = context.getFilesDir();
-            report.append("filesDir: ").append(filesDir.getAbsolutePath()).append('\n');
             try {
                 writeAll(new File(filesDir, "gdl_patch_probe.txt"),
                         "patch can write here".getBytes(StandardCharsets.UTF_8));
@@ -217,17 +228,9 @@ public final class SaveCompleter {
                 report.append("probe write FAILED: ").append(t).append('\n');
             }
 
-            File[] roots = new File[]{
-                    filesDir,
-                    context.getNoBackupFilesDir(),
-                    context.getCacheDir(),
-                    context.getCodeCacheDir(),
-                    dbgDir,
-            };
             java.util.ArrayList<File> all = new java.util.ArrayList<File>();
-            for (File root : roots) {
-                collectFiles(root, all, 0);
-            }
+            collectFiles(dataDir, all, 0);
+            collectFiles(dbgDir, all, 0);
             // Most recently modified first.
             java.util.Collections.sort(all, new java.util.Comparator<File>() {
                 @Override
@@ -236,43 +239,86 @@ public final class SaveCompleter {
                 }
             });
             long now = System.currentTimeMillis();
-            report.append("\nRecently modified files (newest first, top 40):\n");
+            report.append("\nRecently modified files (newest first, top 80):\n");
             int shown = 0;
-            int datHits = 0;
+            int saveHits = 0;
             StringBuilder interesting = new StringBuilder();
             for (File f : all) {
-                if (shown >= 40) break;
+                String abs = f.getAbsolutePath();
+                String rel = abs.startsWith(base)
+                        ? abs.substring(base.length()) : abs;
                 long ageMin = (now - f.lastModified()) / 60000;
-                String name = f.getName().toLowerCase();
-                boolean looksLikeSave = name.contains(".dat") || name.contains("save")
-                        || name.contains("game") || name.contains("manager")
-                        || name.contains("profile");
+                String low = f.getName().toLowerCase();
+                boolean looksLikeSave = low.contains(".dat") || low.contains("save")
+                        || low.contains("game") || low.contains("manager")
+                        || low.contains("profile") || low.contains("local")
+                        || low.contains("level") || low.contains("stat")
+                        || low.contains("pref") || low.contains("progress")
+                        || low.contains("user") || low.contains("shared")
+                        || low.endsWith(".xml") || low.endsWith(".db")
+                        || low.endsWith(".bin");
                 if (looksLikeSave) {
-                    datHits++;
-                    interesting.append("  [SAVE?] ").append(f.getAbsolutePath())
+                    saveHits++;
+                    interesting.append("  [SAVE?] ").append(rel)
                             .append(" (").append(f.length()).append("b, ")
                             .append(ageMin).append(" min ago)\n");
                 }
-                // Skip our own debug files and ad-sdk noise in the main list,
-                // but still count them.
-                String p = f.getAbsolutePath();
-                if (p.contains("gdl_patch_") || p.contains("unityAds")
-                        || p.contains("vungle") || p.contains("inmobi")
-                        || p.contains("inneractive") || p.contains("ia-")
-                        || p.contains("supersonic") || p.contains("webview")
-                        || p.contains("WebView") || p.contains("oat")
-                        || p.contains("appmetrica") || p.contains("volley")
-                        || p.contains("Crash Reports") || p.contains("safedk")) {
-                    continue;
-                }
-                report.append("  ").append(f.getAbsolutePath())
+                if (shown >= 80) continue;
+                if (isNoise(abs)) continue;
+                report.append("  ").append(rel)
                         .append(" (").append(f.length()).append("b, ")
                         .append(ageMin).append(" min ago)\n");
                 shown++;
             }
-            report.append("\nFiles with save-like names: ").append(datHits).append('\n');
+            report.append("\nFiles with save-like names: ").append(saveHits).append('\n');
             report.append(interesting);
             report.append("\nTotal files scanned: ").append(all.size()).append('\n');
+
+            // Dump every shared_prefs XML: game progress often lives here.
+            report.append("\n--- shared_prefs contents ---\n");
+            File spDir = new File(dataDir, "shared_prefs");
+            File[] spFiles = null;
+            try {
+                spFiles = spDir.listFiles();
+            } catch (Throwable ignored) {
+            }
+            if (spFiles == null) {
+                report.append("(no shared_prefs dir)\n");
+            } else {
+                for (File x : spFiles) {
+                    if (!x.isFile() || !x.getName().endsWith(".xml")) continue;
+                    report.append("\n== ").append(x.getName()).append(" ==\n");
+                    try {
+                        String text = new String(readAll(x), StandardCharsets.UTF_8);
+                        if (text.length() > 2000) {
+                            text = text.substring(0, 2000) + "\n...[truncated]";
+                        }
+                        report.append(text).append('\n');
+                    } catch (Throwable t) {
+                        report.append("(unreadable: ").append(t).append(")\n");
+                    }
+                }
+            }
+
+            // List databases/ in case progress is SQLite.
+            report.append("\n--- databases ---\n");
+            File dbDir = new File(dataDir, "databases");
+            File[] dbFiles = null;
+            try {
+                dbFiles = dbDir.listFiles();
+            } catch (Throwable ignored) {
+            }
+            if (dbFiles == null) {
+                report.append("(no databases dir)\n");
+            } else {
+                for (File d : dbFiles) {
+                    long ageMin = (now - d.lastModified()) / 60000;
+                    report.append("  ").append(d.getName())
+                            .append(" (").append(d.length()).append("b, ")
+                            .append(ageMin).append(" min ago)\n");
+                }
+            }
+
             try {
                 writeAll(new File(dbgDir == null ? filesDir : dbgDir,
                         "gdl_patch_filelist.txt"),
@@ -285,9 +331,20 @@ public final class SaveCompleter {
         return report.toString();
     }
 
-    /** Recursively collects files up to depth 5, skipping unreadable dirs. */
+    /** Ad-SDK / build-artifact noise that never holds game progress. */
+    private static boolean isNoise(String absPath) {
+        return absPath.contains("gdl_patch_") || absPath.contains("unityAds")
+                || absPath.contains("vungle") || absPath.contains("inmobi")
+                || absPath.contains("inneractive") || absPath.contains("ia-")
+                || absPath.contains("supersonic") || absPath.contains("webview")
+                || absPath.contains("WebView") || absPath.contains("oat")
+                || absPath.contains("appmetrica") || absPath.contains("volley")
+                || absPath.contains("Crash Reports") || absPath.contains("safedk");
+    }
+
+    /** Recursively collects files up to depth 8, skipping unreadable dirs. */
     private static void collectFiles(File dir, java.util.ArrayList<File> out, int depth) {
-        if (dir == null || depth > 5) return;
+        if (dir == null || depth > 8) return;
         File[] files;
         try {
             files = dir.listFiles();
