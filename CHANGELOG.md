@@ -1,3 +1,9 @@
+## [1.1.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.1...v1.1.2) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* make Geometry Dash Lite save patch robust and diagnosable ([7347b33](https://github.com/mwbra130/Retro-Bowl-College/commit/7347b33977675ba19c5c2650d1ba4746b76181b8))
+
 ## [1.1.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.0...v1.1.1) (2026-09-23)
 
 ### 🐛 Bug Fixes
