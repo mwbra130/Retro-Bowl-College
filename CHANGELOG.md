@@ -1,3 +1,9 @@
+## [1.1.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.2...v1.1.3) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* probe save locations when Geometry Dash Lite save is missing ([062bdb4](https://github.com/mwbra130/Retro-Bowl-College/commit/062bdb4a13dfaffb96efd82eea8934a5f16c67df))
+
 ## [1.1.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.1...v1.1.2) (2026-09-23)
 
 ### 🐛 Bug Fixes
