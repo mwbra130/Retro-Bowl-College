@@ -1,3 +1,9 @@
+## [1.0.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.0.1...v1.0.2) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* use order-independent string matching for premium fingerprint ([66a683f](https://github.com/mwbra130/Retro-Bowl-College/commit/66a683fe7b68f2efa87c7ca197a875ce9ca5d6fd))
+
 ## [1.0.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.0.0...v1.0.1) (2026-09-23)
 
 ### 🐛 Bug Fixes
