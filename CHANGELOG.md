@@ -1,3 +1,9 @@
+## [1.1.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.3...v1.1.4) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* show save-location report on screen for screenshotting ([9fde689](https://github.com/mwbra130/Retro-Bowl-College/commit/9fde689392af94502c74b76df835228882f09475))
+
 ## [1.1.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.2...v1.1.3) (2026-09-23)
 
 ### 🐛 Bug Fixes
