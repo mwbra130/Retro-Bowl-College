@@ -77,8 +77,9 @@ public final class SaveCompleter {
             File dbgDir = context.getExternalFilesDir(null);
 
             if (!save.exists()) {
-                writeLog(dbgDir, "run: save file not present yet (fresh install).");
-                toast(context, "GD patch: no save yet \u2014 reopen the game once");
+                String probe = probeSaveLocations(context, dbgDir);
+                writeLog(dbgDir, "run: save file not present yet (fresh install). " + probe);
+                toast(context, "GD patch: no save yet \u2014 play a level, then reopen");
                 return;
             }
 
@@ -186,6 +187,62 @@ public final class SaveCompleter {
         Dict created = new Dict();
         parent.map.put(key, created);
         return created;
+    }
+
+    // ------------------------------------------------------------------ //
+    // Save-location probe: when CCGameManager.dat is missing, list what   //
+    // the game has actually created so the real location can be found.     //
+    // ------------------------------------------------------------------ //
+
+    /**
+     * Writes a probe file into getFilesDir() (proves we can write there and
+     * that the path is right) and lists every file the game has created in
+     * the candidate save locations. Returns a one-line summary.
+     */
+    private static String probeSaveLocations(Context context, File dbgDir) {
+        StringBuilder summary = new StringBuilder();
+        try {
+            File filesDir = context.getFilesDir();
+            // Prove the path/writes work: drop a probe file of our own.
+            try {
+                writeAll(new File(filesDir, "gdl_patch_probe.txt"),
+                        "patch can write here".getBytes(StandardCharsets.UTF_8));
+                summary.append("probe write OK; ");
+            } catch (Throwable t) {
+                summary.append("probe write FAILED: ").append(t).append("; ");
+            }
+
+            File[] candidates = new File[]{
+                    filesDir,
+                    context.getNoBackupFilesDir(),
+                    context.getCacheDir(),
+                    dbgDir,
+            };
+            StringBuilder listing = new StringBuilder();
+            int total = 0;
+            for (File dir : candidates) {
+                if (dir == null) continue;
+                listing.append("[").append(dir.getAbsolutePath()).append("]\n");
+                File[] files = dir.listFiles();
+                if (files == null) {
+                    listing.append("  <unreadable>\n");
+                    continue;
+                }
+                for (File f : files) {
+                    listing.append("  ").append(f.getName());
+                    if (f.isFile()) listing.append(" (").append(f.length()).append("b)");
+                    listing.append("\n");
+                    total++;
+                }
+            }
+            summary.append(total).append(" files seen; ");
+            writeAll(new File(dbgDir == null ? filesDir : dbgDir,
+                    "gdl_patch_filelist.txt"),
+                    listing.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (Throwable t) {
+            summary.append("probe crashed: ").append(t);
+        }
+        return summary.toString();
     }
 
     // ------------------------------------------------------------------ //
