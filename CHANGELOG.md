@@ -1,3 +1,9 @@
+## [1.1.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.4...v1.1.5) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* recursive recently-modified file scan to locate the real save ([30de5c9](https://github.com/mwbra130/Retro-Bowl-College/commit/30de5c914f24ace19d5665a79780ea0bac5545a7))
+
 ## [1.1.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.3...v1.1.4) (2026-09-23)
 
 ### 🐛 Bug Fixes
