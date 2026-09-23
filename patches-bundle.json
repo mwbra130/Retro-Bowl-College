@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-23T05:15:34",
-  "description": "## [1.1.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.5...v1.1.6) (2026-09-23)\n\n### 🐛 Bug Fixes\n\n* scan whole app data dir incl. shared_prefs to find real save location ([319aeb0](https://github.com/mwbra130/Retro-Bowl-College/commit/319aeb0ffc493a8f0ea4520dc7e01311305027dd))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.1.6/patches-1.1.6.mpp",
+  "created_at": "2026-09-23T05:23:08",
+  "description": "## [1.1.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.6...v1.1.7) (2026-09-23)\n\n### 🐛 Bug Fixes\n\n* read CCGameManager.dat from dataDir root, backup original, self-check output ([7db530b](https://github.com/mwbra130/Retro-Bowl-College/commit/7db530b5c70de92a4ea4f40a02919e45ae37e74d))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.1.7/patches-1.1.7.mpp",
   "signature_download_url": "",
-  "version": "1.1.6"
+  "version": "1.1.7"
 }

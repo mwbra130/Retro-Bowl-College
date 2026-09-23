@@ -1,3 +1,9 @@
+## [1.1.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.6...v1.1.7) (2026-09-23)
+
+### 🐛 Bug Fixes
+
+* read CCGameManager.dat from dataDir root, backup original, self-check output ([7db530b](https://github.com/mwbra130/Retro-Bowl-College/commit/7db530b5c70de92a4ea4f40a02919e45ae37e74d))
+
 ## [1.1.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.1.5...v1.1.6) (2026-09-23)
 
 ### 🐛 Bug Fixes

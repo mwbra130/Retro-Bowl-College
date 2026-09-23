@@ -40,7 +40,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.1.6](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.1.6)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;3 patches total
+> **[v1.1.7](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.1.7)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;3 patches total
 <details open>
 <summary>📦 Geometry Dash Lite&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
