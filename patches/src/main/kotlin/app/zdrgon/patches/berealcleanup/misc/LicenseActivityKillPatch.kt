@@ -20,9 +20,7 @@ import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CL
 @Suppress("unused")
 val licenseActivityKillPatch = bytecodePatch(
     name = "Kill license blocking activity",
-    description = "Makes BeReal's 'Get this app from Play' blocking activity " +
-        "finish itself immediately on start, so it can never be displayed. " +
-        "Backup layer behind the license-check bypass.",
+    description = "Backup: instantly closes the 'Get this app from Play' screen if it ever appears.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)

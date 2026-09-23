@@ -20,9 +20,7 @@ import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CL
 @Suppress("unused")
 val licenseShutdownKillPatch = bytecodePatch(
     name = "Kill license delayed shutdown",
-    description = "Disables BeReal's PairIP delayed process kill (System.exit) " +
-        "that fires after an unlicensed verdict and shows up as an app crash. " +
-        "Backup layer behind the license-check bypass.",
+    description = "Backup: stops the app from force-closing itself after the license check.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)

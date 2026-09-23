@@ -22,8 +22,7 @@ private const val FAKE_PURCHASE_JSON =
 @Suppress("unused")
 val unlockPremiumPatch = bytecodePatch(
     name = "Unlock premium",
-    description = "Unlocks the full version of Retro Bowl College by reporting a synthetic purchased " +
-        "entitlement to the game's purchase check. No real purchase is made.",
+    description = "Unlocks the full version. No real purchase is made.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_RETRO_BOWL_COLLEGE)

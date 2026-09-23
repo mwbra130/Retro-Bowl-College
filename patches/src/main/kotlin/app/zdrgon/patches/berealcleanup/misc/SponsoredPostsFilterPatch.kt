@@ -71,8 +71,7 @@ private fun filterFeedQueries(method: MutableMethod): Int {
 @Suppress("unused")
 val sponsoredPostsFilterPatch = bytecodePatch(
     name = "Remove sponsored posts",
-    description = "Filters sponsored posts out of the feed at the data layer by adding " +
-        "'AND isSponsored = 0' to the Room feed queries. Applies to the Friends and Discovery feeds.",
+    description = "Removes sponsored posts from the Friends and Discovery feeds.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)

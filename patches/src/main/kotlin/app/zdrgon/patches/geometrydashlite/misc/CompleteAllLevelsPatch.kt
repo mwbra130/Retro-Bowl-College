@@ -12,8 +12,7 @@ private const val SAVE_COMPLETER =
 @Suppress("unused")
 val completeAllLevelsPatch = bytecodePatch(
     name = "Complete all levels",
-    description = "Marks every official level 100% complete with all secret coins by updating the " +
-        "game's save file on launch. No gameplay code is modified.",
+    description = "Marks every official level 100% complete with all secret coins.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_GEOMETRY_DASH_LITE)

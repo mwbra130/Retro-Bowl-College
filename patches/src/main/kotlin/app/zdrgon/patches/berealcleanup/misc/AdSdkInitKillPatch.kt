@@ -20,9 +20,7 @@ import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CL
 @Suppress("unused")
 val adSdkInitKillPatch = bytecodePatch(
     name = "Disable AppLovin ads",
-    description = "Prevents the AppLovin MAX SDK from initializing by returning early from " +
-        "BeReal's ad-setup routine. Stops SDK-served ads; use with 'Remove sponsored posts' " +
-        "to also clear sponsored feed items.",
+    description = "Blocks AppLovin ads from loading.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)

@@ -17,8 +17,7 @@ import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CL
 @Suppress("unused")
 val suggestedPeopleCardPatch = bytecodePatch(
     name = "Remove suggested-people card",
-    description = "Hides the 'suggested people / suggested friends' card from the feed by " +
-        "making its renderer a no-op.",
+    description = "Removes the suggested-people card from the feed.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)

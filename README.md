@@ -1,8 +1,8 @@
-# 🎮 Matsen's Morphe Patches
+# Matsen's Morphe Patches
 
 Custom Morphe patches for Android apps. Add this repo as a source in Morphe Manager or Morphe Desktop, pick an app, and patch.
 
-## 📲 How to use
+## How to use
 
 1. Open **Morphe Manager** on your Android device.
 2. Go to **Settings** > **Patch Sources** and add:
@@ -12,7 +12,9 @@ Custom Morphe patches for Android apps. Add this repo as a source in Morphe Mana
    Or tap: [Add to Morphe](https://morphe.software/add-source?github=mwbra130/Retro-Bowl-College)
 3. Pick the app and the patch, then patch. **Uninstall the original app first** — patched builds are signed with a different key and won't install over the original.
 
-## 🛠️ Building Locally
+   Tip: if the patches don't show up or look outdated, remove this source and add it again. Morphe Manager caches the patch bundle.
+
+## Building locally
 
 To build the patch bundle (`.mpp`) on your machine:
 
@@ -28,81 +30,71 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.3.1](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.3.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;13 patches total
+> **[v1.3.1](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.3.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;12 patches total
 <details open>
-<summary>📦 BeReal&nbsp;&nbsp;•&nbsp;&nbsp;10 patches</summary>
+<summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;10 patches</summary>
 <br>
 
-**🎯 Supported versions:**
+**Supported versions:**
 
 | 3.96.0 |
 | :---: |
 
-| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+| Patch | Description | Options |
 |----------|----------------|-----------|
-| [Bypass license check](#bypass-license-check) | Skips BeReal's PairIP license check so the re-signed app isn't blocked by the 'Get this app from Play' screen. Required for the patched app to launch at all. |  |
-| [Disable Adjust tracking](#disable-adjust-tracking) | Prevents the Adjust analytics/attribution SDK from initializing by returning early from BeReal's Adjust setup routine. No Adjust session or events are started. |  |
-| [Disable AppLovin ads](#disable-applovin-ads) | Prevents the AppLovin MAX SDK from initializing by returning early from BeReal's ad-setup routine. Stops SDK-served ads; use with 'Remove sponsored posts' to also clear sponsored feed items. |  |
-| [Disable video autoplay](#disable-video-autoplay) | Stops feed videos from auto-playing by removing the play-when-ready trigger from the video player's visibility effect. Videos load paused; tap-to-play still works. Applies to the Discovery feed, friends feed, and profiles. |  |
-| [Kill license blocking activity](#kill-license-blocking-activity) | Makes BeReal's 'Get this app from Play' blocking activity finish itself immediately on start, so it can never be displayed. Backup layer behind the license-check bypass. |  |
-| [Kill license delayed shutdown](#kill-license-delayed-shutdown) | Disables BeReal's PairIP delayed process kill (System.exit) that fires after an unlicensed verdict and shows up as an app crash. Backup layer behind the license-check bypass. |  |
-| [Kill license verdict handler](#kill-license-verdict-handler) | Makes BeReal's PairIP license-verdict handler a no-op so a NOT_LICENSED verdict can never trigger the 'Get this app from Play' screen. Backup layer behind the license-check bypass. |  |
-| [Remove ad/tracker auto-init providers](#remove-ad-tracker-auto-init-providers) | Removes the manifest <provider> entries that auto-initialize ad and tracker SDKs at startup (Mobile Ads, InMobi, AppLovin, Datadog RUM, Vungle, Adjust). Push notifications and AndroidX Startup are left untouched. |  |
-| [Remove sponsored posts](#remove-sponsored-posts) | Filters sponsored posts out of the feed at the data layer by adding 'AND isSponsored = 0' to the Room feed queries. Applies to the Friends and Discovery feeds. |  |
-| [Remove suggested-people card](#remove-suggested-people-card) | Hides the 'suggested people / suggested friends' card from the feed by making its renderer a no-op. |  |
+| [Bypass license check](#bypass-license-check) | Lets the patched app open without the 'Get this app from Play' block. Required for the app to launch. |  |
+| [Disable Adjust tracking](#disable-adjust-tracking) | Stops Adjust analytics tracking. |  |
+| [Disable AppLovin ads](#disable-applovin-ads) | Blocks AppLovin ads from loading. |  |
+| [Disable video autoplay](#disable-video-autoplay) | Videos stay paused until you tap them. Works in all feeds and profiles. |  |
+| [Kill license blocking activity](#kill-license-blocking-activity) | Backup: instantly closes the 'Get this app from Play' screen if it ever appears. |  |
+| [Kill license delayed shutdown](#kill-license-delayed-shutdown) | Backup: stops the app from force-closing itself after the license check. |  |
+| [Kill license verdict handler](#kill-license-verdict-handler) | Backup: prevents the license check from triggering the block screen. |  |
+| [Remove ad/tracker auto-init providers](#remove-ad-tracker-auto-init-providers) | Stops ad and tracker SDKs from starting with the app (Mobile Ads, InMobi, AppLovin, Datadog, Vungle, Adjust). Notifications keep working. |  |
+| [Remove sponsored posts](#remove-sponsored-posts) | Removes sponsored posts from the Friends and Discovery feeds. |  |
+| [Remove suggested-people card](#remove-suggested-people-card) | Removes the suggested-people card from the feed. |  |
 
 </details>
 
 <details open>
-<summary>📦 Geometry Dash Lite&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<summary>Geometry Dash Lite&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
 
-**🎯 Supported versions:**
+**Supported versions:**
 
 | 2.2.147 |
 | :---: |
 
-| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+| Patch | Description | Options |
 |----------|----------------|-----------|
-| [Complete all levels](#complete-all-levels) | Marks every official level 100% complete with all secret coins by updating the game's save file on launch. No gameplay code is modified. |  |
+| [Complete all levels](#complete-all-levels) | Marks every official level 100% complete with all secret coins. |  |
 
 </details>
 
 <details open>
-<summary>📦 Retro Bowl College&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<summary>Retro Bowl College&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
 <br>
 
-**🎯 Supported versions:**
+**Supported versions:**
 
 | 1.1.2 |
 | :---: |
 
-| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+| Patch | Description | Options |
 |----------|----------------|-----------|
-| [Unlock premium](#unlock-premium) | Unlocks the full version of Retro Bowl College by reporting a synthetic purchased entitlement to the game's purchase check. No real purchase is made. |  |
-
-</details>
-
-<details open>
-<summary>🌐 Universal&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
-<br>
-
-| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
-|----------|----------------|-----------|
-| [Satellite Data Optimization](#satellite-data-optimization) | Injects PROPERTY_SATELLITE_DATA_OPTIMIZED meta-data tag into AndroidManifest.xml to enable Direct-To-Cell (DTC) satellite data on T-Mobile / SpaceX network. |  |
+| [Unlock premium](#unlock-premium) | Unlocks the full version. No real purchase is made. |  |
 
 </details>
 
 <!-- PATCHES_END -->
 
-## 📝 App notes
+## App notes
 
 **BeReal** (`com.bereal.ft`, XAPK) — the fingerprints target **3.96.0** specifically (the app is obfuscated, so class/method names change every release). If BeReal updates, patches may fail to apply until the fingerprints are re-derived. Uninstall the original first and log back in after installing the patched build — back up anything you care about first. No login, posting, or messaging functionality is touched.
 
-**Geometry Dash Lite** (`com.robtopx.geometryjumplite`, XAPK) — open the game **twice**: the first launch creates the save file, the second applies the completions. Each launch (until it succeeds once) shows a short toast: "no save yet — reopen the game once", "could not read save, will retry", or "marked N levels + M coins complete — reopen the game". Diagnostics land in the app's external files dir (`/Android/data/com.robtopx.geometryjumplite/files/`, readable over USB): `gdl_patch_before.xml`, `gdl_patch_after.xml`, `gdl_patch_log.txt`. ⚠️ Fake completions sync to RobTop's servers, which carries a ban risk.
+**Geometry Dash Lite** (`com.robtopx.geometryjumplite`, XAPK) — open the game **twice**: the first launch creates the save file, the second applies the completions. Each launch (until it succeeds once) shows a short toast: "no save yet — reopen the game once", "could not read save, will retry", or "marked N levels + M coins complete — reopen the game". Diagnostics land in the app's external files dir (`/Android/data/com.robtopx.geometryjumplite/files/`, readable over USB): `gdl_patch_before.xml`, `gdl_patch_after.xml`, `gdl_patch_log.txt`. Fake completions sync to RobTop's servers, which carries a ban risk.
 
 **Retro Bowl College** (`com.newstargames.retrobowlcollege`, v1.1.2) — uninstall the original game first (patched builds are signed with a different key and won't install over it), then install the patched APK.
 
-## 📜 License
+## License
 
 This project is licensed under the [GNU General Public License v3.0](LICENSE).

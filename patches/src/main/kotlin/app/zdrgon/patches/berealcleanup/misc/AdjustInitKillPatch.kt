@@ -18,8 +18,7 @@ import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CL
 @Suppress("unused")
 val adjustInitKillPatch = bytecodePatch(
     name = "Disable Adjust tracking",
-    description = "Prevents the Adjust analytics/attribution SDK from initializing by returning " +
-        "early from BeReal's Adjust setup routine. No Adjust session or events are started.",
+    description = "Stops Adjust analytics tracking.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)

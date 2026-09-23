@@ -24,9 +24,7 @@ import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CL
 @Suppress("unused")
 val licenseVerdictKillPatch = bytecodePatch(
     name = "Kill license verdict handler",
-    description = "Makes BeReal's PairIP license-verdict handler a no-op so a " +
-        "NOT_LICENSED verdict can never trigger the 'Get this app from Play' " +
-        "screen. Backup layer behind the license-check bypass.",
+    description = "Backup: prevents the license check from triggering the block screen.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)

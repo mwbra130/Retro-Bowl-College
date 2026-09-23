@@ -35,9 +35,8 @@ private val TRACKER_PROVIDERS = setOf(
 @Suppress("unused")
 val trackerProvidersPatch = resourcePatch(
     name = "Remove ad/tracker auto-init providers",
-    description = "Removes the manifest <provider> entries that auto-initialize ad and tracker " +
-        "SDKs at startup (Mobile Ads, InMobi, AppLovin, Datadog RUM, Vungle, Adjust). " +
-        "Push notifications and AndroidX Startup are left untouched.",
+    description = "Stops ad and tracker SDKs from starting with the app " +
+        "(Mobile Ads, InMobi, AppLovin, Datadog, Vungle, Adjust). Notifications keep working.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)

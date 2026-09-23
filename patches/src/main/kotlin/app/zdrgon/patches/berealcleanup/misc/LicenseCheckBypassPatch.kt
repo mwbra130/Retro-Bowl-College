@@ -38,8 +38,8 @@ import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CL
 @Suppress("unused")
 val licenseCheckBypassPatch = bytecodePatch(
     name = "Bypass license check",
-    description = "Skips BeReal's PairIP license check so the re-signed app isn't blocked " +
-        "by the 'Get this app from Play' screen. Required for the patched app to launch at all.",
+    description = "Lets the patched app open without the 'Get this app from Play' block. " +
+        "Required for the app to launch.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)

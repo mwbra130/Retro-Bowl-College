@@ -32,9 +32,7 @@ private const val SET_PLAY_WHEN_READY =
 @Suppress("unused")
 val videoAutoplayPatch = bytecodePatch(
     name = "Disable video autoplay",
-    description = "Stops feed videos from auto-playing by removing the play-when-ready trigger " +
-        "from the video player's visibility effect. Videos load paused; tap-to-play still works. " +
-        "Applies to the Discovery feed, friends feed, and profiles.",
+    description = "Videos stay paused until you tap them. Works in all feeds and profiles.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)
