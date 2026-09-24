@@ -57,6 +57,15 @@ import java.util.zip.GZIPOutputStream;
  * active and re-applies on every launch, which covers the case where the
  * game reverts the save on exit. The verdict is written to the log file.
  *
+ * Forensics: when a previous run's after-dump exists, the current save is
+ * compared against it key by key, so the log shows exactly which of our
+ * writes the game kept, reset, or rejected (per secret coin, aggregate,
+ * completion flag, and level record).
+ *
+ * Level records are rebuilt by cloning a genuine game-written GLM_01
+ * record (only k1/k2/k19/k20 are overridden), because the game may reject
+ * sparse synthetic records. Genuine records are merged in place instead.
+ *
  * Diagnostics: shows a short Toast describing the outcome of every run until
  * it succeeds, and dumps the decoded saves before/after the edit plus a log
  * file into the app's external files dir
@@ -66,7 +75,7 @@ import java.util.zip.GZIPOutputStream;
 public final class SaveCompleter {
 
     private static final String PREFS = "gdl_complete_all";
-    private static final String DONE_KEY = "done_v6";
+    private static final String DONE_KEY = "done_v7";
     private static final String SAVE_GM = "CCGameManager.dat";
     private static final String SAVE_LL = "CCLocalLevels.dat";
 
@@ -172,12 +181,23 @@ public final class SaveCompleter {
                 return;
             }
 
+            // Forensics: compare what the previous run wrote (its after-dump)
+            // with what is on disk now, to see exactly what the game kept,
+            // reset, or rejected when it last exited.
+            String forensics = forensicVsPrevious(dbgDir, "gdl_patch_after_gm.xml", gmRoot);
+            if (!forensics.isEmpty()) {
+                writeLog(dbgDir, "run: forensics vs previous run (" + SAVE_GM + "): " + forensics);
+            }
+
             writeDebugXml(dbgDir, "gdl_patch_before_gm.xml", gmRoot);
             // Diagnostic: did the game keep our previous writes, or revert
             // the save on exit? The answer decides the next fix, so it is
             // logged and reflected in the Toast.
             boolean gmKept = hasFingerprints(gmRoot);
-            String summary = processGameManager(gmRoot);
+            Dict templateGm = findTemplateRecord(dict(gmRoot, "GLM_01"));
+            writeLog(dbgDir, "run: level template: "
+                    + (templateGm != null ? "genuine record found" : "none, minimal records"));
+            String summary = processGameManager(gmRoot, templateGm);
             writeDebugXml(dbgDir, "gdl_patch_after_gm.xml", gmRoot);
             rewriteSave(dataDir, gmSave, gmRoot);
             writeLog(dbgDir, "run: " + SAVE_GM + " OK. " + summary
@@ -193,9 +213,13 @@ public final class SaveCompleter {
             if (llSave != null) {
                 try {
                     Dict llRoot = decodeSave(readAll(llSave));
+                    String llForensics = forensicVsPrevious(dbgDir, "gdl_patch_after_ll.xml", llRoot);
+                    if (!llForensics.isEmpty()) {
+                        writeLog(dbgDir, "run: forensics vs previous run (" + SAVE_LL + "): " + llForensics);
+                    }
                     llKept = hasLevelFingerprints(llRoot);
                     writeDebugXml(dbgDir, "gdl_patch_before_ll.xml", llRoot);
-                    processLocalLevels(llRoot);
+                    processLocalLevels(llRoot, findTemplateRecord(dict(llRoot, "GLM_01")));
                     writeDebugXml(dbgDir, "gdl_patch_after_ll.xml", llRoot);
                     rewriteSave(dataDir, llSave, llRoot);
                     writeLog(dbgDir, "run: " + SAVE_LL + " OK. fingerprints before patch: "
@@ -220,6 +244,12 @@ public final class SaveCompleter {
                 // would change nothing.
                 prefs.edit().putBoolean(DONE_KEY, true).apply();
                 toast(context, "GD patch: already applied" + llNote);
+            } else if (!forensics.isEmpty()) {
+                // Tell the user how much of the previous patch survived, so
+                // the report back identifies what the game rejected.
+                String lv = levelsKeptShort(forensics);
+                String extra = lv.isEmpty() ? "" : " \u2014 game kept " + lv + " levels";
+                toast(context, "GD patch: re-applied" + extra + llNote);
             } else {
                 // Writes were missing (first run, or the game reverted them
                 // on exit): stay active and re-apply on every launch until
@@ -258,7 +288,7 @@ public final class SaveCompleter {
      * Stats and completion flags in CCGameManager.dat. Returns a short
      * human-readable summary for the Toast/log.
      */
-    private static String processGameManager(Dict root) {
+    private static String processGameManager(Dict root, Dict template) {
         Dict gsValue = dict(root, "GS_value");
         Dict gsCompleted = dict(root, "GS_completed");
         Dict glm01 = dict(root, "GLM_01");
@@ -279,7 +309,7 @@ public final class SaveCompleter {
 
             // Also keep this file's GLM_01 copy well-formed, in case the
             // game reads level objects from here instead of CCLocalLevels.dat.
-            mergeLevelRecord(glm01, id);
+            mergeLevelRecord(glm01, id, template);
 
             for (int coin : COINS[id]) {
                 String uniqueKey = "unique_" + id + "_" + coin;
@@ -304,45 +334,90 @@ public final class SaveCompleter {
     }
 
     /** Level objects in CCLocalLevels.dat. */
-    private static void processLocalLevels(Dict root) {
+    private static void processLocalLevels(Dict root, Dict template) {
         Dict glm01 = dict(root, "GLM_01");
         for (int id = 1; id <= 22; id++) {
-            mergeLevelRecord(glm01, id);
+            mergeLevelRecord(glm01, id, template);
         }
     }
 
     /**
      * Ensures GLM_01 holds a well-formed GJGameLevel record for the level:
-     * kCEK=4 (serialized GJGameLevel), k1=level id, k2=official name,
+     * kCEK (serialized GJGameLevel tag), k1=level id, k2=official name,
      * k19=100 (normal %), k20=100 (practice %), k21=1 (official type).
-     * Existing game-written records are merged in place: their own values
-     * are kept and only missing identity keys are filled, while the
-     * percentages are always set to 100.
+     *
+     * Genuine game-written records are merged in place: their own values are
+     * kept and only the percentages are forced to 100. Missing records, or
+     * sparse stubs left by earlier patch versions, are rebuilt by cloning a
+     * genuine template record (only k1/k2/k19/k20 overridden), because the
+     * game may reject sparse synthetic records outright.
      */
-    private static void mergeLevelRecord(Dict glm01, int id) {
+    private static void mergeLevelRecord(Dict glm01, int id, Dict template) {
         String key = Integer.toString(id);
         Node existing = glm01.map.get(key);
         Dict entry;
-        if (existing instanceof Dict) {
+        if (existing instanceof Dict && looksGenuine((Dict) existing)) {
             entry = (Dict) existing;
         } else {
-            entry = new Dict();
+            entry = (template != null) ? cloneDict(template) : new Dict();
             glm01.map.put(key, entry);
         }
         if (!(entry.map.get("kCEK") instanceof IntNum)) {
             entry.map.put("kCEK", new IntNum(4));
         }
-        if (!(entry.map.get("k1") instanceof IntNum)) {
-            entry.map.put("k1", new IntNum(id));
-        }
-        if (!(entry.map.get("k2") instanceof Str)) {
-            entry.map.put("k2", new Str(NAMES[id]));
-        }
+        entry.map.put("k1", new IntNum(id));
+        entry.map.put("k2", new Str(NAMES[id]));
         entry.map.put("k19", new IntNum(100));
         entry.map.put("k20", new IntNum(100));
         if (!(entry.map.get("k21") instanceof IntNum)) {
             entry.map.put("k21", new IntNum(1));
         }
+    }
+
+    /**
+     * A record counts as genuine when it carries the type tag plus keys the
+     * patch never writes itself. Sparse stubs from earlier patch versions
+     * (kCEK/k1/k2/k19/k20/k21 only) do not count.
+     */
+    private static boolean looksGenuine(Dict entry) {
+        if (!(entry.map.get("kCEK") instanceof IntNum)) return false;
+        for (String k : entry.map.keySet()) {
+            if (!k.equals("kCEK") && !k.equals("k1") && !k.equals("k2")
+                    && !k.equals("k19") && !k.equals("k20") && !k.equals("k21")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** First genuine game-written level record, used as a cloning template. */
+    private static Dict findTemplateRecord(Dict glm01) {
+        for (int id = 1; id <= 22; id++) {
+            Node e = glm01.map.get(Integer.toString(id));
+            if (e instanceof Dict && looksGenuine((Dict) e)) {
+                return (Dict) e;
+            }
+        }
+        return null;
+    }
+
+    private static Dict cloneDict(Dict src) {
+        Dict dst = new Dict();
+        for (Map.Entry<String, Node> e : src.map.entrySet()) {
+            dst.map.put(e.getKey(), cloneNode(e.getValue()));
+        }
+        return dst;
+    }
+
+    private static Node cloneNode(Node n) {
+        if (n instanceof Dict) return cloneDict((Dict) n);
+        if (n instanceof Str) return new Str(((Str) n).value);
+        if (n instanceof IntNum) return new IntNum(((IntNum) n).value);
+        if (n instanceof Raw) {
+            Raw r = (Raw) n;
+            return new Raw(r.type, r.text);
+        }
+        return n; // TrueNode / FalseNode are singletons
     }
 
     /**
@@ -366,6 +441,115 @@ public final class SaveCompleter {
         Node entry = dict(root, "GLM_01").map.get("1");
         if (!(entry instanceof Dict)) return false;
         Node k19 = ((Dict) entry).map.get("k19");
+        return (k19 instanceof IntNum) && ((IntNum) k19).value == 100;
+    }
+
+    /**
+     * Compares the previous run's after-dump with the save as it exists now,
+     * key by key, and reports what the game kept vs reset on exit, e.g.
+     * "unique 61/61, aggregates 4/4, completed 91/91, levels@100 0/22".
+     * Sections absent from either side are skipped.
+     */
+    private static String forensicVsPrevious(File dbgDir, String afterName, Dict current) {
+        if (dbgDir == null) return "";
+        File prevFile = new File(dbgDir, afterName);
+        if (!prevFile.exists()) return "";
+        try {
+            Dict prev = parsePlist(new String(readAll(prevFile), StandardCharsets.UTF_8));
+            return forensicReport(prev, current);
+        } catch (Throwable t) {
+            return "unreadable (" + t + ")";
+        }
+    }
+
+    private static String forensicReport(Dict prev, Dict cur) {
+        StringBuilder sb = new StringBuilder();
+        Dict pv = getDict(prev, "GS_value");
+        Dict cv = getDict(cur, "GS_value");
+        if (pv != null && cv != null) {
+            int uniqKept = 0, uniqTotal = 0, aggKept = 0, aggTotal = 0;
+            for (Map.Entry<String, Node> e : pv.map.entrySet()) {
+                String k = e.getKey();
+                Node cn = cv.map.get(k);
+                if (k.startsWith("unique_")) {
+                    uniqTotal++;
+                    if (nodeEquals(e.getValue(), cn)) uniqKept++;
+                } else if (k.equals("3") || k.equals("5") || k.equals("6") || k.equals("8")) {
+                    aggTotal++;
+                    if (nodeEquals(e.getValue(), cn)) aggKept++;
+                }
+            }
+            sb.append("unique ").append(uniqKept).append('/').append(uniqTotal);
+            sb.append(", aggregates ").append(aggKept).append('/').append(aggTotal);
+        }
+        Dict pc = getDict(prev, "GS_completed");
+        Dict cc = getDict(cur, "GS_completed");
+        if (pc != null && cc != null) {
+            int compKept = 0, compTotal = 0;
+            for (Map.Entry<String, Node> e : pc.map.entrySet()) {
+                String k = e.getKey();
+                if (!(k.startsWith("n_") || k.startsWith("c_")
+                        || k.startsWith("star_") || k.startsWith("demon_"))) {
+                    continue;
+                }
+                compTotal++;
+                if (nodeEquals(e.getValue(), cc.map.get(k))) compKept++;
+            }
+            if (sb.length() > 0) sb.append(", ");
+            sb.append("completed ").append(compKept).append('/').append(compTotal);
+        }
+        Dict pl = getDict(prev, "GLM_01");
+        Dict cl = getDict(cur, "GLM_01");
+        if (pl != null && cl != null) {
+            int lvlKept = 0, lvlTotal = 0;
+            for (int id = 1; id <= 22; id++) {
+                if (levelAt100(pl, id)) {
+                    lvlTotal++;
+                    if (levelAt100(cl, id)) lvlKept++;
+                }
+            }
+            if (sb.length() > 0) sb.append(", ");
+            sb.append("levels@100 ").append(lvlKept).append('/').append(lvlTotal);
+        }
+        return sb.toString();
+    }
+
+    /** Short "A/B" from a "levels@100 A/B" forensic fragment, or "". */
+    private static String levelsKeptShort(String forensics) {
+        try {
+            int i = forensics.indexOf("levels@100 ");
+            if (i < 0) return "";
+            String sub = forensics.substring(i + "levels@100 ".length());
+            int slash = sub.indexOf('/');
+            if (slash < 0) return "";
+            int end = slash + 1;
+            while (end < sub.length() && Character.isDigit(sub.charAt(end))) end++;
+            return sub.substring(0, slash).trim() + "/" + sub.substring(slash + 1, end).trim();
+        } catch (Throwable t) {
+            return "";
+        }
+    }
+
+    private static Dict getDict(Dict parent, String key) {
+        Node n = parent.map.get(key);
+        return (n instanceof Dict) ? (Dict) n : null;
+    }
+
+    private static boolean nodeEquals(Node a, Node b) {
+        if (a instanceof IntNum && b instanceof IntNum) {
+            return ((IntNum) a).value == ((IntNum) b).value;
+        }
+        if (a instanceof Str && b instanceof Str) {
+            return ((Str) a).value.equals(((Str) b).value);
+        }
+        return (a instanceof TrueNode && b instanceof TrueNode)
+                || (a instanceof FalseNode && b instanceof FalseNode);
+    }
+
+    private static boolean levelAt100(Dict glm01, int id) {
+        Node e = glm01.map.get(Integer.toString(id));
+        if (!(e instanceof Dict)) return false;
+        Node k19 = ((Dict) e).map.get("k19");
         return (k19 instanceof IntNum) && ((IntNum) k19).value == 100;
     }
 
