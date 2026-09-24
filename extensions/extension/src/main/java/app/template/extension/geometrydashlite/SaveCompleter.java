@@ -43,7 +43,7 @@ import java.util.zip.GZIPOutputStream;
 public final class SaveCompleter {
 
     private static final String PREFS = "gdl_complete_all";
-    private static final String DONE_KEY = "done_v3";
+    private static final String DONE_KEY = "done_v4";
     private static final String SAVE_NAME = "CCGameManager.dat";
 
     /** Official demon levels: Clubstep (14), Theory of Everything 2 (18), Deadlocked (20). */
@@ -158,14 +158,21 @@ public final class SaveCompleter {
             }
 
             // GLM_01 holds the in-memory level objects; k19 = normal %,
-            // k20 = practice %. Only update entries the game already wrote;
-            // never invent level objects from scratch.
+            // k20 = practice %. Fresh saves have no level object for levels
+            // the player never touched, so create the record when it is
+            // missing instead of only updating entries the game already
+            // wrote. The game's loader tolerates sparse level objects
+            // (unknown keys default), so k19/k20 alone are enough.
             Node entryNode = glm01.map.get(key);
+            Dict entry;
             if (entryNode instanceof Dict) {
-                Dict entry = (Dict) entryNode;
-                entry.map.put("k19", new IntNum(100));
-                entry.map.put("k20", new IntNum(100));
+                entry = (Dict) entryNode;
+            } else {
+                entry = new Dict();
+                glm01.map.put(key, entry);
             }
+            entry.map.put("k19", new IntNum(100));
+            entry.map.put("k20", new IntNum(100));
 
             for (int coin : COINS[id]) {
                 // Two candidate locations (both inert if the game ignores
