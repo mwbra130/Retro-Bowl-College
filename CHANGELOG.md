@@ -1,3 +1,9 @@
+## [1.3.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.5...v1.3.6) (2026-09-24)
+
+### 🐛 Bug Fixes
+
+* diagnose whether the game keeps or reverts the patched save ([5beb5ce](https://github.com/mwbra130/Retro-Bowl-College/commit/5beb5ce50612f56cd64e14a1485c58f719aca5b6))
+
 ## [1.3.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.4...v1.3.5) (2026-09-24)
 
 ### 🐛 Bug Fixes
