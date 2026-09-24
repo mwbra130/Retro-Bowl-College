@@ -1,3 +1,9 @@
+## [1.3.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.6...v1.3.7) (2026-09-24)
+
+### 🐛 Bug Fixes
+
+* forensics for reverted saves + clone genuine level records ([2dfe878](https://github.com/mwbra130/Retro-Bowl-College/commit/2dfe8789dfa75f37fb40f1d7571d7f002ca303c9))
+
 ## [1.3.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.5...v1.3.6) (2026-09-24)
 
 ### 🐛 Bug Fixes
