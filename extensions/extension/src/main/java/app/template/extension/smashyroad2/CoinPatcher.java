@@ -46,6 +46,16 @@ import java.util.regex.Pattern;
  * <p>Upgrade-card keys (exact, taken from the game's own string table):
  * {@code {common,rare,epic,legendary}Upgrade{,Value,Value2,ValuePerson}}.
  *
+ * <p>Pro Pass: sets the local entitlement flags {@code proPassEnabled},
+ * {@code hasProPass} (and the lowercase variant) to 1 / "true" — the same
+ * flags the game sets in {@code purchaseProPassComplete}.
+ *
+ * <p>Red Slot Machine: no definitive save key was found in the game's string
+ * table, so any int pref that looks like a red-slot-machine flag is set to 1
+ * as a best effort. If the upgrade is bought with in-game cash, the
+ * 9,999,999 cash covers it directly; the sr2_debug/ dump identifies the real
+ * key from a live save for a follow-up if needed.
+ *
  * <p>Never crashes the game: every failure is swallowed after logging.
  */
 public final class CoinPatcher {
@@ -60,9 +70,30 @@ public final class CoinPatcher {
     private static final Pattern CASH_KEY = Pattern.compile(
             "^(cash|money).*$", Pattern.CASE_INSENSITIVE);
 
+    /**
+     * Pro Pass entitlement flags (exact key names from the game's string table;
+     * set by purchaseProPassComplete after a real purchase).
+     */
+    private static final String[] PRO_PASS_KEYS =
+            {"proPassEnabled", "hasProPass", "propassenabled"};
+
+    /**
+     * Red Slot Machine ownership (best effort): no definitive key name was
+     * found in the game's string table, so match any int pref that looks like
+     * a red-slot-machine flag. Most likely a no-op; the sr2_debug/ dump lets
+     * us identify the real key from a live save afterwards.
+     */
+    private static final Pattern RED_SLOT_KEY = Pattern.compile(
+            "^(.*red.*slot.*|.*slot.*red.*|.*red.*machine.*|.*machine.*red.*)$",
+            Pattern.CASE_INSENSITIVE);
+
     /** Unity's PlayerPrefs emission: <int name="..." value="..." /> */
     private static final Pattern INT_TAG = Pattern.compile(
             "<(int|long)\\s+name=\"([^\"]+)\"\\s+value=\"(-?\\d+)\"\\s*/>");
+
+    /** Unity's PlayerPrefs emission: <string name="...">...</string> */
+    private static final Pattern STRING_TAG = Pattern.compile(
+            "<string\\s+name=\"([^\"]+)\">([^<]*)</string>");
 
     private static final String BACKUP_DIR = "morphe_backup";
     private static final String BACKUP_MARKER = "BACKUP_DONE";
@@ -129,6 +160,7 @@ public final class CoinPatcher {
         int changedTotal = 0;
         int cashTotal = 0;
         int cardTotal = 0;
+        int unlockTotal = 0;
         List<String> changedKeys = new ArrayList<>();
         debugDir.mkdirs();
         for (File prefs : prefsFiles) {
@@ -145,17 +177,20 @@ public final class CoinPatcher {
                 changedTotal += r.changes;
                 cashTotal += r.cashChanges;
                 cardTotal += r.cardChanges;
+                unlockTotal += r.unlockChanges;
                 changedKeys.addAll(r.keys);
             }
         }
 
         appendLog(extDir, "run: patched " + prefsFiles.size() + " prefs file(s), "
                 + changedTotal + " value(s) changed "
-                + "(cash=" + cashTotal + ", cards=" + cardTotal + "): " + changedKeys);
+                + "(cash=" + cashTotal + ", cards=" + cardTotal
+                + ", unlocks=" + unlockTotal + "): " + changedKeys);
         if (changedTotal == 0) {
             toast(context, "SR2 patch: no coin/card keys found \u2014 recon saved, send me the log");
         } else {
-            toast(context, "SR2 patch: cash 9,999,999 + " + cardTotal + " card keys set");
+            toast(context, "SR2 patch: cash 9,999,999 + " + cardTotal
+                    + " cards + " + unlockTotal + " unlocks set");
         }
     }
 
@@ -233,27 +268,46 @@ public final class CoinPatcher {
         int changes;
         int cashChanges;
         int cardChanges;
+        int unlockChanges;
         final List<String> keys = new ArrayList<>();
     }
 
+    private static boolean isProPassKey(String name) {
+        for (String k : PRO_PASS_KEYS) {
+            if (k.equals(name)) return true;
+        }
+        return false;
+    }
+
     /**
-     * Rewrites matching int/long values in a PlayerPrefs XML string.
-     * Only the value attributes of matched keys change; everything else in
-     * the file is preserved byte-for-byte.
+     * Rewrites matching int/long/string values in a PlayerPrefs XML string.
+     * Only the value attributes/text of matched keys change; everything else
+     * in the file is preserved byte-for-byte.
      */
     private static PatchResult patchPrefsXml(String xml) {
         PatchResult r = new PatchResult();
+        String current = patchIntTags(xml, r);
+        current = patchStringTags(current, r);
+        r.xml = current;
+        return r;
+    }
+
+    private static String patchIntTags(String xml, PatchResult r) {
         Matcher m = INT_TAG.matcher(xml);
         StringBuffer out = new StringBuffer();
         while (m.find()) {
             String name = m.group(2);
             long newValue;
-            boolean isCard = UPGRADE_KEY.matcher(name).matches();
-            boolean isCash = !isCard && CASH_KEY.matcher(name).matches();
-            if (isCard) {
+            String kind;
+            if (UPGRADE_KEY.matcher(name).matches()) {
                 newValue = CARD_AMOUNT;
-            } else if (isCash) {
+                kind = "card";
+            } else if (isProPassKey(name) || RED_SLOT_KEY.matcher(name).matches()) {
+                newValue = 1L;
+                kind = "unlock";
+            } else if (CASH_KEY.matcher(name).matches()) {
                 newValue = CASH_AMOUNT;
+                kind = "cash";
             } else {
                 continue;
             }
@@ -268,12 +322,39 @@ public final class CoinPatcher {
                     + "\" value=\"" + newValue + "\" />";
             m.appendReplacement(out, Matcher.quoteReplacement(replacement));
             r.changes++;
-            if (isCard) r.cardChanges++; else r.cashChanges++;
+            if ("card".equals(kind)) r.cardChanges++;
+            else if ("cash".equals(kind)) r.cashChanges++;
+            else r.unlockChanges++;
             r.keys.add(name + "=" + oldValue + "->" + newValue);
         }
         m.appendTail(out);
-        r.xml = out.toString();
-        return r;
+        return out.toString();
+    }
+
+    /**
+     * Flips exact Pro Pass keys stored as strings ("false"->"true",
+     * "0"->"1"). Only touches the known entitlement key names.
+     */
+    private static String patchStringTags(String xml, PatchResult r) {
+        Matcher m = STRING_TAG.matcher(xml);
+        StringBuffer out = new StringBuffer();
+        while (m.find()) {
+            String name = m.group(1);
+            if (!isProPassKey(name)) continue;
+            String val = m.group(2);
+            String newVal = null;
+            if ("false".equalsIgnoreCase(val)) newVal = "true";
+            else if ("0".equals(val)) newVal = "1";
+            if (newVal == null || newVal.equals(val)) continue;
+            String replacement = "<string name=\"" + name + "\">"
+                    + newVal + "</string>";
+            m.appendReplacement(out, Matcher.quoteReplacement(replacement));
+            r.changes++;
+            r.unlockChanges++;
+            r.keys.add(name + "=" + val + "->" + newVal);
+        }
+        m.appendTail(out);
+        return out.toString();
     }
 
     private static List<File> listXml(File dir) {
