@@ -1,3 +1,9 @@
+## [1.4.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.7...v1.4.0) (2026-09-24)
+
+### ✨ New Features
+
+* Smashy Road 2 unlimited coins & upgrade cards patch ([ca5b8e6](https://github.com/mwbra130/Retro-Bowl-College/commit/ca5b8e63801dc986adce4ae4f85ed729ce2a78ef))
+
 ## [1.3.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.6...v1.3.7) (2026-09-24)
 
 ### 🐛 Bug Fixes
