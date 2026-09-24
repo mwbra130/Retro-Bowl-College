@@ -50,11 +50,11 @@ import java.util.regex.Pattern;
  * {@code hasProPass} (and the lowercase variant) to 1 / "true" — the same
  * flags the game sets in {@code purchaseProPassComplete}.
  *
- * <p>Red Slot Machine: no definitive save key was found in the game's string
- * table, so any int pref that looks like a red-slot-machine flag is set to 1
- * as a best effort. If the upgrade is bought with in-game cash, the
- * 9,999,999 cash covers it directly; the sr2_debug/ dump identifies the real
- * key from a live save for a follow-up if needed.
+ * <p>Slot machine upgrades: the ownership flags {@code hasMachine1},
+ * {@code hasMachine2} (blue, 50/spin), {@code hasMachine3} (red, 25/spin,
+ * always 3 items) are set to 1 — the same flags the game sets in
+ * {@code purchaseMachine1/2/3} after a real purchase. A leftover
+ * red-slot-machine name heuristic is kept as a fallback.
  *
  * <p>Never crashes the game: every failure is swallowed after logging.
  */
@@ -76,6 +76,15 @@ public final class CoinPatcher {
      */
     private static final String[] PRO_PASS_KEYS =
             {"proPassEnabled", "hasProPass", "propassenabled"};
+
+    /**
+     * Slot machine ownership flags (exact key names from the game's string
+     * table). machine1 = default, machine2 = blue (50/spin), machine3 = red
+     * (25/spin, always 3 items). Set by purchaseMachine1/2/3 after a real
+     * purchase.
+     */
+    private static final String[] MACHINE_KEYS =
+            {"hasMachine1", "hasMachine2", "hasMachine3"};
 
     /**
      * Red Slot Machine ownership (best effort): no definitive key name was
@@ -279,6 +288,17 @@ public final class CoinPatcher {
         return false;
     }
 
+    private static boolean isMachineKey(String name) {
+        for (String k : MACHINE_KEYS) {
+            if (k.equals(name)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isUnlockKey(String name) {
+        return isProPassKey(name) || isMachineKey(name);
+    }
+
     /**
      * Rewrites matching int/long/string values in a PlayerPrefs XML string.
      * Only the value attributes/text of matched keys change; everything else
@@ -327,6 +347,15 @@ public final class CoinPatcher {
                 r.keys.add(key + "=NEW->1");
             }
         }
+        for (String key : MACHINE_KEYS) {
+            if (!xml.contains("name=\"" + key + "\"")) {
+                missing.append("    <int name=\"").append(key)
+                        .append("\" value=\"1\" />\n");
+                r.changes++;
+                r.unlockChanges++;
+                r.keys.add(key + "=NEW->1");
+            }
+        }
         if (missing.length() == 0) return xml;
         return xml.substring(0, mapEnd) + missing + xml.substring(mapEnd);
     }
@@ -341,7 +370,7 @@ public final class CoinPatcher {
             if (UPGRADE_KEY.matcher(name).matches()) {
                 newValue = CARD_AMOUNT;
                 kind = "card";
-            } else if (isProPassKey(name) || RED_SLOT_KEY.matcher(name).matches()) {
+            } else if (isUnlockKey(name) || RED_SLOT_KEY.matcher(name).matches()) {
                 newValue = 1L;
                 kind = "unlock";
             } else if (CASH_KEY.matcher(name).matches()) {
@@ -379,7 +408,7 @@ public final class CoinPatcher {
         StringBuffer out = new StringBuffer();
         while (m.find()) {
             String name = m.group(1);
-            if (!isProPassKey(name)) continue;
+            if (!isUnlockKey(name)) continue;
             String val = m.group(2);
             String newVal = null;
             if ("false".equalsIgnoreCase(val)) newVal = "true";
