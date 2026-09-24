@@ -283,13 +283,52 @@ public final class CoinPatcher {
      * Rewrites matching int/long/string values in a PlayerPrefs XML string.
      * Only the value attributes/text of matched keys change; everything else
      * in the file is preserved byte-for-byte.
+     *
+     * <p>Keys that don't exist yet (e.g. a rarity the player never earned, or
+     * the Pro Pass entitlement) are inserted before {@code </map>} so
+     * first-time grants work too.
      */
     private static PatchResult patchPrefsXml(String xml) {
         PatchResult r = new PatchResult();
         String current = patchIntTags(xml, r);
         current = patchStringTags(current, r);
+        current = insertMissingKeys(current, r);
         r.xml = current;
         return r;
+    }
+
+    /**
+     * Inserts target keys that are absent from the prefs file. Without this,
+     * rarities/entitlements the player never earned can't be granted because
+     * there is no existing value to rewrite.
+     */
+    private static String insertMissingKeys(String xml, PatchResult r) {
+        int mapEnd = xml.lastIndexOf("</map>");
+        if (mapEnd < 0) return xml;
+        StringBuilder missing = new StringBuilder();
+        for (String rarity : new String[]{"common", "rare", "epic", "legendary"}) {
+            for (String suffix : new String[]{"Upgrade", "UpgradeValue", "UpgradeValue2", "UpgradeValuePerson"}) {
+                String key = rarity + suffix;
+                if (!xml.contains("name=\"" + key + "\"")) {
+                    missing.append("    <int name=\"").append(key)
+                            .append("\" value=\"").append(CARD_AMOUNT).append("\" />\n");
+                    r.changes++;
+                    r.cardChanges++;
+                    r.keys.add(key + "=NEW->" + CARD_AMOUNT);
+                }
+            }
+        }
+        for (String key : PRO_PASS_KEYS) {
+            if (!xml.contains("name=\"" + key + "\"")) {
+                missing.append("    <int name=\"").append(key)
+                        .append("\" value=\"1\" />\n");
+                r.changes++;
+                r.unlockChanges++;
+                r.keys.add(key + "=NEW->1");
+            }
+        }
+        if (missing.length() == 0) return xml;
+        return xml.substring(0, mapEnd) + missing + xml.substring(mapEnd);
     }
 
     private static String patchIntTags(String xml, PatchResult r) {
