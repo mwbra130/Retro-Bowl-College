@@ -1,3 +1,9 @@
+## [1.6.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.5.1...v1.6.0) (2026-09-24)
+
+### ✨ New Features
+
+* unlock red/blue slot machines via real hasMachine flags ([0d6536d](https://github.com/mwbra130/Retro-Bowl-College/commit/0d6536dcb82cc666d11760b52a66e6d233f708a2))
+
 ## [1.5.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.5.0...v1.5.1) (2026-09-24)
 
 ### 🐛 Bug Fixes
