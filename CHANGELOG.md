@@ -1,3 +1,9 @@
+## [1.5.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.5.0...v1.5.1) (2026-09-24)
+
+### 🐛 Bug Fixes
+
+* insert missing Smashy Road 2 upgrade/pro-pass keys instead of only rewriting existing ones ([c5c093a](https://github.com/mwbra130/Retro-Bowl-College/commit/c5c093a257e013793a12e7c67549f646990de2e8))
+
 ## [1.5.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.4.0...v1.5.0) (2026-09-24)
 
 ### ✨ New Features
