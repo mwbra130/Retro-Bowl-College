@@ -30,7 +30,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.4.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.4.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;14 patches total
+> **[v1.5.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.5.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;14 patches total
 <details open>
 <summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;11 patches</summary>
 <br>
@@ -82,7 +82,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
-| [Unlimited coins & upgrade cards](#unlimited-coins-upgrade-cards) | Sets cash to 9,999,999 and every upgrade card (common/rare/epic/legendary) to 10,000. Backs up your save before touching it. To revert: place an empty file named SR2_RESTORE.txt in Android/data/com.rkgames.basisgame/files/ and open the game. |  |
+| [Unlimited coins & upgrade cards](#unlimited-coins-upgrade-cards) | Sets cash to 9,999,999, every upgrade card (common/rare/epic/legendary) to 10,000, unlocks the Pro Pass, and tries to unlock the Red Slot Machine. Backs up your save before touching it. To revert: place an empty file named SR2_RESTORE.txt in Android/data/com.rkgames.basisgame/files/ and open the game. |  |
 
 </details>
 

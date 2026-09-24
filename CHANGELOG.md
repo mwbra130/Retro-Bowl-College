@@ -1,3 +1,9 @@
+## [1.5.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.4.0...v1.5.0) (2026-09-24)
+
+### ✨ New Features
+
+* Smashy Road 2 pro pass unlock + red slot machine attempt ([f09d4a6](https://github.com/mwbra130/Retro-Bowl-College/commit/f09d4a6c924862102a6447c1fa13fdcb099bd13e))
+
 ## [1.4.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.7...v1.4.0) (2026-09-24)
 
 ### ✨ New Features
