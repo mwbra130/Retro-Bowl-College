@@ -2,6 +2,7 @@ package app.zdrgon.patches.berealcleanup.misc
 
 import app.morphe.patcher.Fingerprint
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 
 /**
  * Room DAO lambda that reads feed items from the FeedItemEntity cache table.
@@ -165,4 +166,33 @@ object LicenseShutdownKillFingerprint : Fingerprint(
     name = "scheduleAppShutdown",
     returnType = "V",
     parameters = listOf(),
+)
+
+/**
+ * PairIP/Guardsquare native library load.
+ *
+ * Derived from the 2026-09-24 logcat, not from dex inspection: the device's
+ * nativeloader log shows `libpairipcore.so` being loaded out of classes6.dex
+ * ~0.4s after launch, and ~0.12s later the process dies with a SIGSEGV whose
+ * single-frame backtrace is inside that same .so (deterministic across
+ * launches — a deliberate native tamper-response kill, not a Java
+ * exception). The Java-layer license patches (v1.3.0/v1.3.1) can never fire
+ * because the process dies in native code during library init.
+ *
+ * The string "pairipcore" must appear at the load call site — either as the
+ * System.loadLibrary argument or as a substring of a full path passed to
+ * System.load(".../libpairipcore.so"). The custom check pins the match to
+ * the method that actually invokes System.loadLibrary/System.load, so a
+ * stray log string can't false-positive. The patch no-ops only that invoke,
+ * leaving the rest of the method (e.g. the rest of <clinit>) intact.
+ */
+object PairipNativeLoadFingerprint : Fingerprint(
+    strings = listOf("pairipcore"),
+    custom = { method, _ ->
+        method.implementation?.instructions?.any { instruction ->
+            val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
+            reference?.definingClass == "Ljava/lang/System;" &&
+                (reference.name == "loadLibrary" || reference.name == "load")
+        } == true
+    },
 )
