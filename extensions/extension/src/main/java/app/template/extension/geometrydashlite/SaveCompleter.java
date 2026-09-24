@@ -25,17 +25,33 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * Marks every official Geometry Dash Lite level 100% complete with all secret
- * coins by rewriting the game's own save file (CCGameManager.dat) before the
- * game loads it.
+ * coins by rewriting the game's own save files before the game loads them.
  *
- * Save pipeline: file bytes -> XOR 0x0B -> URL-safe Base64 -> gzip ->
- * custom XML plist. There is no checksum, so the file can be freely rewritten.
+ * Save pipeline (both files): file bytes -> XOR 0x0B -> URL-safe Base64 ->
+ * gzip -> custom XML plist. There is no checksum, so the files can be freely
+ * rewritten.
  *
- * Runs until it succeeds once (SharedPreferences marker). Everything is
- * additive and idempotent: re-running only fills in what is still missing.
+ * Two files are patched, because the game keeps the two halves of progress
+ * in different places:
+ *  - CCGameManager.dat: stats and completion flags (GS_value, GS_completed)
+ *    and a copy of the level objects (GLM_01).
+ *  - CCLocalLevels.dat: the authoritative in-memory level objects (GLM_01).
+ *
+ * What is written (all additive and idempotent):
+ *  - GS_completed: n_&lt;id&gt;, c_&lt;id&gt;, star_&lt;id&gt; for levels 1-22,
+ *    plus demon_&lt;id&gt; for the three demons (14, 18, 20).
+ *  - GS_value: unique_&lt;id&gt;_&lt;coin&gt; per collected coin, and the
+ *    aggregate counters "3" (completed official levels = 22), "5" (completed
+ *    demons = 3), "6" (total stars), "8" (secret coins collected = 61).
+ *  - GLM_01 (in both files): well-formed GJGameLevel records with kCEK=4,
+ *    k1=level id, k2=official name, k19=100 (normal %), k20=100 (practice %),
+ *    k21=1 (official level type). Existing game-written records are merged,
+ *    never wiped.
+ *
+ * Runs until it succeeds once (SharedPreferences marker).
  *
  * Diagnostics: shows a short Toast describing the outcome of every run until
- * it succeeds, and dumps the decoded save before/after the edit plus a log
+ * it succeeds, and dumps the decoded saves before/after the edit plus a log
  * file into the app's external files dir
  * (/Android/data/com.robtopx.geometryjumplite/files/), which is readable
  * over USB file transfer, so a failed run can be diagnosed from real data.
@@ -43,8 +59,9 @@ import java.util.zip.GZIPOutputStream;
 public final class SaveCompleter {
 
     private static final String PREFS = "gdl_complete_all";
-    private static final String DONE_KEY = "done_v4";
-    private static final String SAVE_NAME = "CCGameManager.dat";
+    private static final String DONE_KEY = "done_v5";
+    private static final String SAVE_GM = "CCGameManager.dat";
+    private static final String SAVE_LL = "CCLocalLevels.dat";
 
     /** Official demon levels: Clubstep (14), Theory of Everything 2 (18), Deadlocked (20). */
     private static final int[] DEMONS = {14, 18, 20};
@@ -55,6 +72,12 @@ public final class SaveCompleter {
      */
     private static final int[][] COINS = new int[23][];
 
+    /** Official level id -> star rating (2.2 values; used for the star aggregate). */
+    private static final int[] STARS = new int[23];
+
+    /** Official level id -> official level name (used for k2 in new records). */
+    private static final String[] NAMES = new String[23];
+
     static {
         for (int id = 1; id <= 22; id++) {
             COINS[id] = new int[]{1, 2, 3};
@@ -63,6 +86,52 @@ public final class SaveCompleter {
         COINS[14] = new int[]{1, 2}; // Clubstep
         COINS[15] = new int[]{2};    // Electrodynamix
         COINS[18] = new int[]{1, 3}; // Theory of Everything 2
+
+        STARS[1] = 1;   // Stereo Madness
+        STARS[2] = 2;   // Back on Track
+        STARS[3] = 3;   // Polargeist
+        STARS[4] = 4;   // Dry Out
+        STARS[5] = 5;   // Base After Base
+        STARS[6] = 6;   // Can't Let Go
+        STARS[7] = 7;   // Jumper
+        STARS[8] = 8;   // Time Machine
+        STARS[9] = 9;   // Cycles
+        STARS[10] = 10; // xStep
+        STARS[11] = 11; // Clutterfunk
+        STARS[12] = 12; // Theory of Everything
+        STARS[13] = 13; // Electroman Adventures
+        STARS[14] = 14; // Clubstep
+        STARS[15] = 15; // Electrodynamix
+        STARS[16] = 12; // Hexagon Force
+        STARS[17] = 10; // Blast Processing
+        STARS[18] = 14; // Theory of Everything 2
+        STARS[19] = 10; // Geometrical Dominator
+        STARS[20] = 15; // Deadlocked
+        STARS[21] = 12; // Fingerdash
+        STARS[22] = 12; // Dash
+
+        NAMES[1] = "Stereo Madness";
+        NAMES[2] = "Back on Track";
+        NAMES[3] = "Polargeist";
+        NAMES[4] = "Dry Out";
+        NAMES[5] = "Base After Base";
+        NAMES[6] = "Can't Let Go";
+        NAMES[7] = "Jumper";
+        NAMES[8] = "Time Machine";
+        NAMES[9] = "Cycles";
+        NAMES[10] = "xStep";
+        NAMES[11] = "Clutterfunk";
+        NAMES[12] = "Theory of Everything";
+        NAMES[13] = "Electroman Adventures";
+        NAMES[14] = "Clubstep";
+        NAMES[15] = "Electrodynamix";
+        NAMES[16] = "Hexagon Force";
+        NAMES[17] = "Blast Processing";
+        NAMES[18] = "Theory of Everything 2";
+        NAMES[19] = "Geometrical Dominator";
+        NAMES[20] = "Deadlocked";
+        NAMES[21] = "Fingerdash";
+        NAMES[22] = "Dash";
     }
 
     private SaveCompleter() {
@@ -74,14 +143,10 @@ public final class SaveCompleter {
             if (prefs.getBoolean(DONE_KEY, false)) return;
 
             File dataDir = getDataDirSafe(context);
-            File save = new File(dataDir, SAVE_NAME);
-            if (!save.exists()) {
-                // Fallback: some builds keep it under files/.
-                save = new File(context.getFilesDir(), SAVE_NAME);
-            }
             File dbgDir = context.getExternalFilesDir(null);
 
-            if (!save.exists()) {
+            File gmSave = findSave(dataDir, context, SAVE_GM);
+            if (gmSave == null) {
                 String report = probeSaveLocations(context, dbgDir);
                 writeLog(dbgDir, "run: save file not present yet (fresh install).");
                 toast(context, "GD patch: no save yet \u2014 screenshot the popup");
@@ -91,34 +156,73 @@ public final class SaveCompleter {
                 return;
             }
 
-            Dict root;
+            Dict gmRoot;
             try {
-                root = decodeSave(readAll(save));
+                gmRoot = decodeSave(readAll(gmSave));
             } catch (Exception e) {
-                writeLog(dbgDir, "run: FAILED to decode save: " + e);
+                writeLog(dbgDir, "run: FAILED to decode " + SAVE_GM + ": " + e);
                 toast(context, "GD patch: could not read save, will retry");
                 return;
             }
 
-            writeDebugXml(dbgDir, "gdl_patch_before.xml", root);
-            String summary = completeAll(root);
-            writeDebugXml(dbgDir, "gdl_patch_after.xml", root);
-            writeLog(dbgDir, "run: decode OK. " + summary);
+            writeDebugXml(dbgDir, "gdl_patch_before_gm.xml", gmRoot);
+            String summary = processGameManager(gmRoot);
+            writeDebugXml(dbgDir, "gdl_patch_after_gm.xml", gmRoot);
+            rewriteSave(dataDir, gmSave, gmRoot);
+            writeLog(dbgDir, "run: " + SAVE_GM + " OK. " + summary);
 
-            // Back up the untouched original first, then self-check our
-            // own output before overwriting the real save.
-            try {
-                writeAll(new File(dataDir, SAVE_NAME + ".patchbak"), readAll(save));
-            } catch (Throwable ignored) {
+            // Level objects: patch CCLocalLevels.dat too, since GLM_01 is the
+            // authoritative level store there. If the file is absent there is
+            // nothing more we can do for it, so it does not block completion.
+            File llSave = findSave(dataDir, context, SAVE_LL);
+            boolean llOk = true;
+            String llNote = "";
+            if (llSave != null) {
+                try {
+                    Dict llRoot = decodeSave(readAll(llSave));
+                    writeDebugXml(dbgDir, "gdl_patch_before_ll.xml", llRoot);
+                    processLocalLevels(llRoot);
+                    writeDebugXml(dbgDir, "gdl_patch_after_ll.xml", llRoot);
+                    rewriteSave(dataDir, llSave, llRoot);
+                    writeLog(dbgDir, "run: " + SAVE_LL + " OK.");
+                } catch (Exception e) {
+                    llOk = false;
+                    writeLog(dbgDir, "run: FAILED to process " + SAVE_LL + ": " + e);
+                }
+            } else {
+                llNote = " (no " + SAVE_LL + " found)";
+                writeLog(dbgDir, "run: " + SAVE_LL + " not present; skipped.");
             }
-            byte[] encoded = encodeSave(root);
-            decodeSave(encoded); // throws if our output is unreadable; aborts before write
-            writeAll(save, encoded);
-            prefs.edit().putBoolean(DONE_KEY, true).apply();
-            toast(context, "GD patch: " + summary);
+
+            writeLog(dbgDir, "run: finished. " + summary + llNote);
+            if (llOk) {
+                prefs.edit().putBoolean(DONE_KEY, true).apply();
+                toast(context, "GD patch: " + summary + " \u2014 reopen the game" + llNote);
+            } else {
+                toast(context, "GD patch: level file unreadable, will retry");
+            }
         } catch (Throwable ignored) {
             // Never crash the game: a failed edit just means no completions.
         }
+    }
+
+    /** Backs up the original, self-checks our encoding, then overwrites. */
+    private static void rewriteSave(File dataDir, File save, Dict root) throws Exception {
+        try {
+            writeAll(new File(dataDir, save.getName() + ".patchbak"), readAll(save));
+        } catch (Throwable ignored) {
+        }
+        byte[] encoded = encodeSave(root);
+        decodeSave(encoded); // throws if our output is unreadable; aborts before write
+        writeAll(save, encoded);
+    }
+
+    private static File findSave(File dataDir, Context context, String name) {
+        File f = new File(dataDir, name);
+        if (f.exists()) return f;
+        // Fallback: some builds keep saves under files/.
+        f = new File(context.getFilesDir(), name);
+        return f.exists() ? f : null;
     }
 
     // ------------------------------------------------------------------ //
@@ -126,75 +230,106 @@ public final class SaveCompleter {
     // ------------------------------------------------------------------ //
 
     /**
-     * Sets 100% + all coins for levels 1..22. Only touches keys the game is
-     * known to read; unknown save keys are left byte-identical. Returns a
-     * short human-readable summary for the Toast/log.
+     * Stats and completion flags in CCGameManager.dat. Returns a short
+     * human-readable summary for the Toast/log.
      */
-    private static String completeAll(Dict root) {
+    private static String processGameManager(Dict root) {
         Dict gsValue = dict(root, "GS_value");
         Dict gsCompleted = dict(root, "GS_completed");
-        Dict gs10 = dict(root, "GS_10");
-        Dict gs3 = dict(root, "GS_3");
         Dict glm01 = dict(root, "GLM_01");
 
         int newlyCompleted = 0;
         int newCoins = 0;
 
         for (int id = 1; id <= 22; id++) {
-            String key = Integer.toString(id);
-
-            Node existing = gs10.map.get(key);
-            boolean wasComplete = existing instanceof Str
-                    && ((Str) existing).value.equals("100");
-            if (!wasComplete) {
+            if (!(gsCompleted.map.get("n_" + id) instanceof TrueNode)) {
                 newlyCompleted++;
             }
-            gs10.map.put(key, new Str("100"));
-
             gsCompleted.map.put("n_" + id, TrueNode.INSTANCE);
+            gsCompleted.map.put("c_" + id, TrueNode.INSTANCE);
             gsCompleted.map.put("star_" + id, TrueNode.INSTANCE);
             if (isDemon(id)) {
                 gsCompleted.map.put("demon_" + id, TrueNode.INSTANCE);
             }
 
-            // GLM_01 holds the in-memory level objects; k19 = normal %,
-            // k20 = practice %. Fresh saves have no level object for levels
-            // the player never touched, so create the record when it is
-            // missing instead of only updating entries the game already
-            // wrote. The game's loader tolerates sparse level objects
-            // (unknown keys default), so k19/k20 alone are enough.
-            Node entryNode = glm01.map.get(key);
-            Dict entry;
-            if (entryNode instanceof Dict) {
-                entry = (Dict) entryNode;
-            } else {
-                entry = new Dict();
-                glm01.map.put(key, entry);
-            }
-            entry.map.put("k19", new IntNum(100));
-            entry.map.put("k20", new IntNum(100));
+            // Also keep this file's GLM_01 copy well-formed, in case the
+            // game reads level objects from here instead of CCLocalLevels.dat.
+            mergeLevelRecord(glm01, id);
 
             for (int coin : COINS[id]) {
-                // Two candidate locations (both inert if the game ignores
-                // the key): the game's "unique_<id>_<coin>" keys in GS_value
-                // and the "<id>_<coin>" table in GS_3.
                 String uniqueKey = "unique_" + id + "_" + coin;
                 if (!gsValue.map.containsKey(uniqueKey)) {
-                    gsValue.map.put(uniqueKey, new Str("1"));
                     newCoins++;
                 }
-                String tableKey = id + "_" + coin;
-                if (!gs3.map.containsKey(tableKey)) {
-                    gs3.map.put(tableKey, new Str("1"));
-                }
+                gsValue.map.put(uniqueKey, new IntNum(1));
             }
         }
+
+        // Aggregate counters (integers): "3" = completed official levels,
+        // "5" = completed demons, "6" = total stars, "8" = secret coins.
+        gsValue.map.put("3", new IntNum(22));
+        gsValue.map.put("5", new IntNum(DEMONS.length));
+        gsValue.map.put("6", new IntNum(totalStars()));
+        gsValue.map.put("8", new IntNum(totalCoins()));
 
         if (newlyCompleted == 0 && newCoins == 0) {
             return "levels already complete";
         }
-        return "marked " + newlyCompleted + " levels + " + newCoins
-                + " coins complete \u2014 reopen the game";
+        return "marked " + newlyCompleted + " levels + " + newCoins + " coins complete";
+    }
+
+    /** Level objects in CCLocalLevels.dat. */
+    private static void processLocalLevels(Dict root) {
+        Dict glm01 = dict(root, "GLM_01");
+        for (int id = 1; id <= 22; id++) {
+            mergeLevelRecord(glm01, id);
+        }
+    }
+
+    /**
+     * Ensures GLM_01 holds a well-formed GJGameLevel record for the level:
+     * kCEK=4 (serialized GJGameLevel), k1=level id, k2=official name,
+     * k19=100 (normal %), k20=100 (practice %), k21=1 (official type).
+     * Existing game-written records are merged in place: their own values
+     * are kept and only missing identity keys are filled, while the
+     * percentages are always set to 100.
+     */
+    private static void mergeLevelRecord(Dict glm01, int id) {
+        String key = Integer.toString(id);
+        Node existing = glm01.map.get(key);
+        Dict entry;
+        if (existing instanceof Dict) {
+            entry = (Dict) existing;
+        } else {
+            entry = new Dict();
+            glm01.map.put(key, entry);
+        }
+        if (!(entry.map.get("kCEK") instanceof IntNum)) {
+            entry.map.put("kCEK", new IntNum(4));
+        }
+        if (!(entry.map.get("k1") instanceof IntNum)) {
+            entry.map.put("k1", new IntNum(id));
+        }
+        if (!(entry.map.get("k2") instanceof Str)) {
+            entry.map.put("k2", new Str(NAMES[id]));
+        }
+        entry.map.put("k19", new IntNum(100));
+        entry.map.put("k20", new IntNum(100));
+        if (!(entry.map.get("k21") instanceof IntNum)) {
+            entry.map.put("k21", new IntNum(1));
+        }
+    }
+
+    private static int totalStars() {
+        int total = 0;
+        for (int id = 1; id <= 22; id++) total += STARS[id];
+        return total;
+    }
+
+    private static int totalCoins() {
+        int total = 0;
+        for (int id = 1; id <= 22; id++) total += COINS[id].length;
+        return total;
     }
 
     private static boolean isDemon(int id) {
