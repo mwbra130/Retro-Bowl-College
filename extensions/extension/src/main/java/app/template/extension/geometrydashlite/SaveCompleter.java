@@ -50,6 +50,13 @@ import java.util.zip.GZIPOutputStream;
  *
  * Runs until it succeeds once (SharedPreferences marker).
  *
+ * Diagnostic fingerprinting: before patching, the code checks whether the
+ * save already contains the patch's own writes (coin aggregate "8",
+ * n_1 flag, level-1 k19=100). If the game kept them, the patch reports
+ * "already applied" and stops re-running; if they are missing, it stays
+ * active and re-applies on every launch, which covers the case where the
+ * game reverts the save on exit. The verdict is written to the log file.
+ *
  * Diagnostics: shows a short Toast describing the outcome of every run until
  * it succeeds, and dumps the decoded saves before/after the edit plus a log
  * file into the app's external files dir
@@ -59,7 +66,7 @@ import java.util.zip.GZIPOutputStream;
 public final class SaveCompleter {
 
     private static final String PREFS = "gdl_complete_all";
-    private static final String DONE_KEY = "done_v5";
+    private static final String DONE_KEY = "done_v6";
     private static final String SAVE_GM = "CCGameManager.dat";
     private static final String SAVE_LL = "CCLocalLevels.dat";
 
@@ -166,25 +173,33 @@ public final class SaveCompleter {
             }
 
             writeDebugXml(dbgDir, "gdl_patch_before_gm.xml", gmRoot);
+            // Diagnostic: did the game keep our previous writes, or revert
+            // the save on exit? The answer decides the next fix, so it is
+            // logged and reflected in the Toast.
+            boolean gmKept = hasFingerprints(gmRoot);
             String summary = processGameManager(gmRoot);
             writeDebugXml(dbgDir, "gdl_patch_after_gm.xml", gmRoot);
             rewriteSave(dataDir, gmSave, gmRoot);
-            writeLog(dbgDir, "run: " + SAVE_GM + " OK. " + summary);
+            writeLog(dbgDir, "run: " + SAVE_GM + " OK. " + summary
+                    + ". fingerprints before patch: " + (gmKept ? "KEPT" : "MISSING"));
 
             // Level objects: patch CCLocalLevels.dat too, since GLM_01 is the
             // authoritative level store there. If the file is absent there is
             // nothing more we can do for it, so it does not block completion.
             File llSave = findSave(dataDir, context, SAVE_LL);
             boolean llOk = true;
+            boolean llKept = true;
             String llNote = "";
             if (llSave != null) {
                 try {
                     Dict llRoot = decodeSave(readAll(llSave));
+                    llKept = hasLevelFingerprints(llRoot);
                     writeDebugXml(dbgDir, "gdl_patch_before_ll.xml", llRoot);
                     processLocalLevels(llRoot);
                     writeDebugXml(dbgDir, "gdl_patch_after_ll.xml", llRoot);
                     rewriteSave(dataDir, llSave, llRoot);
-                    writeLog(dbgDir, "run: " + SAVE_LL + " OK.");
+                    writeLog(dbgDir, "run: " + SAVE_LL + " OK. fingerprints before patch: "
+                            + (llKept ? "KEPT" : "MISSING"));
                 } catch (Exception e) {
                     llOk = false;
                     writeLog(dbgDir, "run: FAILED to process " + SAVE_LL + ": " + e);
@@ -194,12 +209,22 @@ public final class SaveCompleter {
                 writeLog(dbgDir, "run: " + SAVE_LL + " not present; skipped.");
             }
 
-            writeLog(dbgDir, "run: finished. " + summary + llNote);
-            if (llOk) {
-                prefs.edit().putBoolean(DONE_KEY, true).apply();
-                toast(context, "GD patch: " + summary + " \u2014 reopen the game" + llNote);
-            } else {
+            boolean kept = gmKept && llKept;
+            writeLog(dbgDir, "run: finished. " + summary + llNote
+                    + ". verdict: " + (kept ? "GAME_KEPT_PATCH" : "PATCH_MISSING_BEFORE_RUN"));
+            if (!llOk) {
                 toast(context, "GD patch: level file unreadable, will retry");
+            } else if (kept) {
+                // Our writes survive on disk, so the game is ignoring their
+                // content rather than wiping them: re-running every launch
+                // would change nothing.
+                prefs.edit().putBoolean(DONE_KEY, true).apply();
+                toast(context, "GD patch: already applied" + llNote);
+            } else {
+                // Writes were missing (first run, or the game reverted them
+                // on exit): stay active and re-apply on every launch until
+                // they stick.
+                toast(context, "GD patch: " + summary + " \u2014 reopen the game" + llNote);
             }
         } catch (Throwable ignored) {
             // Never crash the game: a failed edit just means no completions.
@@ -318,6 +343,30 @@ public final class SaveCompleter {
         if (!(entry.map.get("k21") instanceof IntNum)) {
             entry.map.put("k21", new IntNum(1));
         }
+    }
+
+    /**
+     * True when the save already contains this patch's writes: the secret-
+     * coin aggregate, a completion flag, and a 100% level record. Tells us
+     * whether the game kept our edits or reverted them on exit.
+     */
+    private static boolean hasFingerprints(Dict root) {
+        Node eight = dict(root, "GS_value").map.get("8");
+        if (!(eight instanceof IntNum) || ((IntNum) eight).value != totalCoins()) {
+            return false;
+        }
+        if (!(dict(root, "GS_completed").map.get("n_1") instanceof TrueNode)) {
+            return false;
+        }
+        return hasLevelFingerprints(root);
+    }
+
+    /** True when GLM_01 already holds our 100% record for level 1. */
+    private static boolean hasLevelFingerprints(Dict root) {
+        Node entry = dict(root, "GLM_01").map.get("1");
+        if (!(entry instanceof Dict)) return false;
+        Node k19 = ((Dict) entry).map.get("k19");
+        return (k19 instanceof IntNum) && ((IntNum) k19).value == 100;
     }
 
     private static int totalStars() {
