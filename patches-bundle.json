@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-23T16:53:30",
-  "description": "## [1.3.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.1...v1.3.2) (2026-09-23)\n\n### 🐛 Bug Fixes\n\n* remove unrelated satellite patch, fix Retro Bowl folder layout, clean up README ([30df9a7](https://github.com/mwbra130/Retro-Bowl-College/commit/30df9a752bf3f266b81ce22fba41f30d87c23bfd))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.3.2/patches-1.3.2.mpp",
+  "created_at": "2026-09-24T22:09:55",
+  "description": "## [1.3.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.2...v1.3.3) (2026-09-24)\n\n### 🐛 Bug Fixes\n\n* create missing Geometry Dash Lite level records in GLM_01 ([3d5567a](https://github.com/mwbra130/Retro-Bowl-College/commit/3d5567a31a5e9b09f3b82d6a43c4d883967cea8f))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.3.3/patches-1.3.3.mpp",
   "signature_download_url": "",
-  "version": "1.3.2"
+  "version": "1.3.3"
 }

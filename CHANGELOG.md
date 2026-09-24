@@ -1,3 +1,9 @@
+## [1.3.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.2...v1.3.3) (2026-09-24)
+
+### 🐛 Bug Fixes
+
+* create missing Geometry Dash Lite level records in GLM_01 ([3d5567a](https://github.com/mwbra130/Retro-Bowl-College/commit/3d5567a31a5e9b09f3b82d6a43c4d883967cea8f))
+
 ## [1.3.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.1...v1.3.2) (2026-09-23)
 
 ### 🐛 Bug Fixes
