@@ -1,3 +1,9 @@
+## [1.3.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.3...v1.3.4) (2026-09-24)
+
+### 🐛 Bug Fixes
+
+* well-formed level records, correct stats, and dual-file patching for GD Lite ([bd8bb9d](https://github.com/mwbra130/Retro-Bowl-College/commit/bd8bb9d0d4af7905fe3e1b272cf1493c9fbafd16))
+
 ## [1.3.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.2...v1.3.3) (2026-09-24)
 
 ### 🐛 Bug Fixes
