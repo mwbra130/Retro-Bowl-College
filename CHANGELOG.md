@@ -1,3 +1,9 @@
+## [1.3.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.4...v1.3.5) (2026-09-24)
+
+### 🐛 Bug Fixes
+
+* stop PairIP native library from loading to prevent tamper-kill crash ([4dd4fc6](https://github.com/mwbra130/Retro-Bowl-College/commit/4dd4fc61d4cbcafc264dba1329c1bd6f960077cc))
+
 ## [1.3.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.3.3...v1.3.4) (2026-09-24)
 
 ### 🐛 Bug Fixes
