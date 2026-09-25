@@ -192,6 +192,9 @@ public final class SaveCompleter {
                 return;
             }
 
+            // Watch whether the game rewrites the saves during this session.
+            scheduleMtimeRecheck(dbgDir, dataDir);
+
             boolean anyPatched = gm.patched || gm2.patched || ll.patched || ll2.patched;
             boolean kept = anyPatched;
             for (FileResult r : new FileResult[]{gm, gm2, ll, ll2}) {
@@ -251,7 +254,7 @@ public final class SaveCompleter {
         }
         r.found = true;
         writeLog(dbgDir, "run: " + saveName + " path: " + save.getAbsolutePath()
-                + " (" + save.length() + "b)");
+                + " (" + save.length() + "b, mtime " + save.lastModified() + ")");
         Dict root;
         try {
             root = decodeSave(readAll(save));
@@ -260,10 +263,10 @@ public final class SaveCompleter {
             return r;
         }
         writeDebugXml(dbgDir, "gdl_patch_before_" + dumpTag + ".xml", root);
-        if (!looksLikeGdSave(root)) {
-            writeLog(dbgDir, "run: " + saveName + " is not a GD save (stub keys); left untouched.");
-            return r;
-        }
+        // Always merge our completion data, even into stub/fresh saves that
+        // lack GD sections: the game may need the sections to exist before it
+        // recognizes completions. Existing keys are never deleted, so this is
+        // safe on any decodable file.
         // Forensics: compare what the previous run wrote (its after-dump)
         // with what is on disk now, to see what the game kept or reset.
         r.forensics = forensicVsPrevious(dbgDir, "gdl_patch_after_" + dumpTag + ".xml", root);
@@ -303,6 +306,30 @@ public final class SaveCompleter {
             }
         }
         return false;
+    }
+
+    /**
+     * Logs save-file mtimes again after a delay, revealing whether the game
+     * rewrote them during the session (which would explain vanishing edits).
+     */
+    private static void scheduleMtimeRecheck(final File dbgDir, final File dataDir) {
+        Thread t = new Thread(new Runnable() {
+            @Override public void run() {
+                try {
+                    Thread.sleep(20000);
+                    StringBuilder sb = new StringBuilder("run: mtime recheck (+20s):");
+                    for (String n : new String[]{SAVE_GM, SAVE_GM2, SAVE_LL, SAVE_LL2}) {
+                        File f = new File(dataDir, n);
+                        sb.append(" ").append(n).append("=")
+                          .append(f.exists() ? (f.length() + "b@" + f.lastModified()) : "gone");
+                    }
+                    writeLog(dbgDir, sb.toString());
+                } catch (Throwable ignored) {
+                }
+            }
+        });
+        t.setDaemon(true);
+        t.start();
     }
 
     /** Backs up the original, self-checks our encoding, then overwrites. */
@@ -386,36 +413,90 @@ public final class SaveCompleter {
     }
 
     /**
-     * Ensures GLM_01 holds a well-formed GJGameLevel record for the level:
-     * kCEK (serialized GJGameLevel tag), k1=level id, k2=official name,
-     * k19=100 (normal %), k20=100 (practice %), k21=1 (official type).
+     * Ensures GLM_01 holds a well-formed GJGameLevel record for the level.
      *
-     * Genuine game-written records are merged in place: their own values are
-     * kept and only the percentages are forced to 100. Missing records, or
-     * sparse stubs left by earlier patch versions, are rebuilt by cloning a
-     * genuine template record (only k1/k2/k19/k20 overridden), because the
-     * game may reject sparse synthetic records outright.
+     * Genuine game-written records are merged in place (percentages forced
+     * to 100). Missing records, or sparse stubs left by earlier patch
+     * versions, are rebuilt: a genuine template is cloned when one exists,
+     * otherwise a FULL record is built from the documented client key table
+     * (gddocs), so the loader accepts it with no game-written example.
      */
     private static void mergeLevelRecord(Dict glm01, int id, Dict template) {
         String key = Integer.toString(id);
         Node existing = glm01.map.get(key);
-        Dict entry;
         if (existing instanceof Dict && looksGenuine((Dict) existing)) {
-            entry = (Dict) existing;
-        } else {
-            entry = (template != null) ? cloneDict(template) : new Dict();
-            glm01.map.put(key, entry);
+            Dict entry = (Dict) existing;
+            entry.map.put("k19", new IntNum(100));
+            entry.map.put("k20", new IntNum(100));
+            return;
         }
-        if (!(entry.map.get("kCEK") instanceof IntNum)) {
-            entry.map.put("kCEK", new IntNum(4));
+        Dict entry;
+        if (template != null) {
+            entry = cloneDict(template);
+            if (!(entry.map.get("kCEK") instanceof IntNum)) {
+                entry.map.put("kCEK", new IntNum(4));
+            }
+            if (!(entry.map.get("k21") instanceof IntNum)) {
+                entry.map.put("k21", new IntNum(1));
+            }
+        } else {
+            entry = buildFullRecord(id);
         }
         entry.map.put("k1", new IntNum(id));
         entry.map.put("k2", new Str(NAMES[id]));
         entry.map.put("k19", new IntNum(100));
         entry.map.put("k20", new IntNum(100));
-        if (!(entry.map.get("k21") instanceof IntNum)) {
-            entry.map.put("k21", new IntNum(1));
+        glm01.map.put(key, entry);
+    }
+
+    /**
+     * Builds a complete GJGameLevel record for an official level from the
+     * documented client key table. Used when the save contains no genuine
+     * record to clone.
+     */
+    private static Dict buildFullRecord(int id) {
+        Dict r = new Dict();
+        boolean demon = isDemon(id);
+        r.map.put("kCEK", new IntNum(4));
+        r.map.put("k1", new IntNum(id));
+        r.map.put("k2", new Str(NAMES[id]));
+        r.map.put("k3", new Str(""));
+        r.map.put("k5", new Str("RobTop"));
+        r.map.put("k7", new IntNum(difficulty(id)));
+        r.map.put("k8", new IntNum(id)); // official song id == level id (1-22)
+        r.map.put("k13", FalseNode.INSTANCE); // not editable
+        r.map.put("k14", TrueNode.INSTANCE);  // verified
+        r.map.put("k18", new IntNum(1));      // attempts
+        r.map.put("k19", new IntNum(100));
+        r.map.put("k20", new IntNum(100));
+        r.map.put("k21", new IntNum(1));      // official type
+        r.map.put("k25", demon ? TrueNode.INSTANCE : FalseNode.INSTANCE);
+        r.map.put("k26", new IntNum(STARS[id]));
+        r.map.put("k33", FalseNode.INSTANCE); // not auto
+        r.map.put("k38", TrueNode.INSTANCE);  // unlocked
+        // Secret coins: k61/k62/k63 acquired flags, k64 total, k65 verified.
+        for (int c = 1; c <= 3; c++) {
+            r.map.put("k" + (60 + c),
+                    contains(COINS[id], c) ? TrueNode.INSTANCE : FalseNode.INSTANCE);
         }
+        r.map.put("k64", new IntNum(COINS[id].length));
+        r.map.put("k65", TrueNode.INSTANCE);
+        return r;
+    }
+
+    /** Rough official difficulty (1=Easy .. 5=Insane, 6=Demon). */
+    private static int difficulty(int id) {
+        if (isDemon(id)) return 6;
+        if (id <= 2) return 1;
+        if (id <= 4) return 2;
+        if (id <= 6) return 3;
+        if (id <= 9) return 4;
+        return 5;
+    }
+
+    private static boolean contains(int[] a, int v) {
+        for (int x : a) if (x == v) return true;
+        return false;
     }
 
     /**
