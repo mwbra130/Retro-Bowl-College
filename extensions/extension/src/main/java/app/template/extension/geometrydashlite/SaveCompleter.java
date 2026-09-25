@@ -80,7 +80,7 @@ import java.util.zip.GZIPOutputStream;
 public final class SaveCompleter {
 
     private static final String PREFS = "gdl_complete_all";
-    private static final String DONE_KEY = "done_v7";
+    private static final String DONE_KEY = "done_v8";
     private static final String SAVE_GM = "CCGameManager.dat";
     private static final String SAVE_LL = "CCLocalLevels.dat";
 
