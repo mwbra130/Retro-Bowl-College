@@ -56,6 +56,15 @@ import java.util.regex.Pattern;
  * {@code purchaseMachine1/2/3} after a real purchase. A leftover
  * red-slot-machine name heuristic is kept as a fallback.
  *
+ * <p>Missions: every quest completion flag ({@code questDone*} /
+ * {@code questDoneMain*}, from the game's string table) is set to 1, and
+ * missing flags are seeded for numeric ids 0-50 plus known mission names,
+ * so main and side missions show as complete.
+ *
+ * <p>Durability: the per-rarity health upgrade levels ({@code commonHealth},
+ * {@code rareHealth}, {@code epicHealth}, {@code legendaryHealth},
+ * {@code mysteryHealth}) are set to 999 so vehicles are at max durability.
+ *
  * <p>Never crashes the game: every failure is swallowed after logging.
  */
 public final class CoinPatcher {
@@ -95,6 +104,43 @@ public final class CoinPatcher {
     private static final Pattern RED_SLOT_KEY = Pattern.compile(
             "^(.*red.*slot.*|.*slot.*red.*|.*red.*machine.*|.*machine.*red.*)$",
             Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Mission/quest completion flags (from the game's string table:
+     * questDone, questDoneMain, questCompleted, questID). The game stores one
+     * flag per quest as questDone&lt;id&gt; / questDoneMain&lt;id&gt;; the id
+     * may be numeric or the mission name. Match any int pref that looks like
+     * a quest completion flag.
+     */
+    private static final Pattern QUEST_DONE_KEY = Pattern.compile(
+            "^(.*quest.*(done|complete|finish).*|.*(done|complete|finish).*quest.*)$",
+            Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Known mission names (Smashy Road: Wanted 2 wiki). Inserted as
+     * questDone&lt;name&gt; / questDoneMain&lt;name&gt; so missions the player
+     * never started are marked complete too.
+     */
+    private static final String[] MISSION_NAMES = {
+            "BusDriver", "CowboyStandoff", "CollectSRLetters", "Number1",
+            "ZombieSmasher", "ZombieApocalypse", "BankRobbery", "KeytoSuccess",
+            "FireFighter", "PerformAStunt", "LivingontheEdge", "AlienInvasion",
+            "SwimSwimSwim", "ThatsATank", "Pilot", "BigAirtime", "Zombies"
+    };
+
+    /** Highest numeric quest id to pre-seed (covers questDone0..N pattern). */
+    private static final int MAX_QUEST_ID = 50;
+
+    /**
+     * Vehicle durability/health upgrade levels (exact key names from the
+     * game's string table). Set to max so all vehicles are at 100% durability.
+     */
+    private static final String[] HEALTH_KEYS = {
+            "commonHealth", "rareHealth", "epicHealth", "legendaryHealth", "mysteryHealth"
+    };
+
+    /** Durability level that effectively maxes vehicle health. */
+    private static final long DURABILITY_LEVEL = 999L;
 
     /** Unity's PlayerPrefs emission: <int name="..." value="..." /> */
     private static final Pattern INT_TAG = Pattern.compile(
@@ -170,6 +216,8 @@ public final class CoinPatcher {
         int cashTotal = 0;
         int cardTotal = 0;
         int unlockTotal = 0;
+        int questTotal = 0;
+        int durabilityTotal = 0;
         List<String> changedKeys = new ArrayList<>();
         debugDir.mkdirs();
         for (File prefs : prefsFiles) {
@@ -187,6 +235,8 @@ public final class CoinPatcher {
                 cashTotal += r.cashChanges;
                 cardTotal += r.cardChanges;
                 unlockTotal += r.unlockChanges;
+                questTotal += r.questChanges;
+                durabilityTotal += r.durabilityChanges;
                 changedKeys.addAll(r.keys);
             }
         }
@@ -194,12 +244,14 @@ public final class CoinPatcher {
         appendLog(extDir, "run: patched " + prefsFiles.size() + " prefs file(s), "
                 + changedTotal + " value(s) changed "
                 + "(cash=" + cashTotal + ", cards=" + cardTotal
-                + ", unlocks=" + unlockTotal + "): " + changedKeys);
+                + ", unlocks=" + unlockTotal + ", quests=" + questTotal
+                + ", durability=" + durabilityTotal + "): " + changedKeys);
         if (changedTotal == 0) {
             toast(context, "SR2 patch: no coin/card keys found \u2014 recon saved, send me the log");
         } else {
             toast(context, "SR2 patch: cash 9,999,999 + " + cardTotal
-                    + " cards + " + unlockTotal + " unlocks set");
+                    + " cards + " + unlockTotal + " unlocks + "
+                    + questTotal + " missions + durability maxed");
         }
     }
 
@@ -278,6 +330,8 @@ public final class CoinPatcher {
         int cashChanges;
         int cardChanges;
         int unlockChanges;
+        int questChanges;
+        int durabilityChanges;
         final List<String> keys = new ArrayList<>();
     }
 
@@ -290,6 +344,13 @@ public final class CoinPatcher {
 
     private static boolean isMachineKey(String name) {
         for (String k : MACHINE_KEYS) {
+            if (k.equals(name)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isHealthKey(String name) {
+        for (String k : HEALTH_KEYS) {
             if (k.equals(name)) return true;
         }
         return false;
@@ -356,6 +417,42 @@ public final class CoinPatcher {
                 r.keys.add(key + "=NEW->1");
             }
         }
+        // Mission/quest completion: seed questDone<id> and questDoneMain<id>
+        // for numeric ids and known mission names so unstarted missions count
+        // as complete too.
+        for (String prefix : new String[]{"questDone", "questDoneMain"}) {
+            for (int i = 0; i <= MAX_QUEST_ID; i++) {
+                String key = prefix + i;
+                if (!xml.contains("name=\"" + key + "\"")) {
+                    missing.append("    <int name=\"").append(key)
+                            .append("\" value=\"1\" />\n");
+                    r.changes++;
+                    r.questChanges++;
+                }
+            }
+            for (String name : MISSION_NAMES) {
+                String key = prefix + name;
+                if (!xml.contains("name=\"" + key + "\"")) {
+                    missing.append("    <int name=\"").append(key)
+                            .append("\" value=\"1\" />\n");
+                    r.changes++;
+                    r.questChanges++;
+                }
+            }
+        }
+        if (r.questChanges > 0) {
+            r.keys.add("quests=NEW->" + r.questChanges + " flags");
+        }
+        // Vehicle durability: seed missing health upgrade levels at max.
+        for (String key : HEALTH_KEYS) {
+            if (!xml.contains("name=\"" + key + "\"")) {
+                missing.append("    <int name=\"").append(key)
+                        .append("\" value=\"").append(DURABILITY_LEVEL).append("\" />\n");
+                r.changes++;
+                r.durabilityChanges++;
+                r.keys.add(key + "=NEW->" + DURABILITY_LEVEL);
+            }
+        }
         if (missing.length() == 0) return xml;
         return xml.substring(0, mapEnd) + missing + xml.substring(mapEnd);
     }
@@ -370,9 +467,15 @@ public final class CoinPatcher {
             if (UPGRADE_KEY.matcher(name).matches()) {
                 newValue = CARD_AMOUNT;
                 kind = "card";
+            } else if (isHealthKey(name)) {
+                newValue = DURABILITY_LEVEL;
+                kind = "durability";
             } else if (isUnlockKey(name) || RED_SLOT_KEY.matcher(name).matches()) {
                 newValue = 1L;
                 kind = "unlock";
+            } else if (QUEST_DONE_KEY.matcher(name).matches()) {
+                newValue = 1L;
+                kind = "quest";
             } else if (CASH_KEY.matcher(name).matches()) {
                 newValue = CASH_AMOUNT;
                 kind = "cash";
@@ -392,6 +495,8 @@ public final class CoinPatcher {
             r.changes++;
             if ("card".equals(kind)) r.cardChanges++;
             else if ("cash".equals(kind)) r.cashChanges++;
+            else if ("quest".equals(kind)) r.questChanges++;
+            else if ("durability".equals(kind)) r.durabilityChanges++;
             else r.unlockChanges++;
             r.keys.add(name + "=" + oldValue + "->" + newValue);
         }

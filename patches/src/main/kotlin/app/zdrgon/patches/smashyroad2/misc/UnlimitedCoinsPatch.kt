@@ -13,7 +13,8 @@ private const val COIN_PATCHER =
 val unlimitedCoinsPatch = bytecodePatch(
     name = "Unlimited coins & upgrade cards",
     description = "Sets cash to 9,999,999, every upgrade card (common/rare/epic/legendary) to 10,000, " +
-        "unlocks the Pro Pass, and tries to unlock the Red Slot Machine. " +
+        "unlocks the Pro Pass and slot machines, completes all main + side missions, " +
+        "and maxes vehicle durability. " +
         "Backs up your save before touching it. To revert: place an empty file named " +
         "SR2_RESTORE.txt in Android/data/com.rkgames.basisgame/files/ and open the game.",
     default = true,
