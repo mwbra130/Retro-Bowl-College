@@ -1,3 +1,10 @@
+## [1.8.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.2...v1.8.3) (2026-09-25)
+
+### 🐛 Bug Fixes
+
+* bump run-once marker to done_v8 ([106da15](https://github.com/mwbra130/Retro-Bowl-College/commit/106da15f355c9e34e8a53b1b9dbdd314e0c0c552))
+* storage scan to locate the real save + append log lines ([2181626](https://github.com/mwbra130/Retro-Bowl-College/commit/21816262488c3910139d056bd40bf23e98ac1d17))
+
 ## [1.8.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.1...v1.8.2) (2026-09-25)
 
 ### 🐛 Bug Fixes
