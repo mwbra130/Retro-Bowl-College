@@ -565,32 +565,11 @@ public final class CoinPatcher {
                 r.keys.add(key + "=NEW->" + DURABILITY_LEVEL);
             }
         }
-        // Vehicle/character unlocks: seed check<Rarity>Veh<N> and
-        // check<Rarity>Char<N> as unlocked (1) so all vehicles/characters
-        // are available.
-        for (String rarity : new String[]{"Common", "Rare", "Epic", "Legendary", "Mystery"}) {
-            for (int i = 0; i <= MAX_VEHICLE_INDEX; i++) {
-                String key = "check" + rarity + "Veh" + i;
-                if (!xml.contains("name=\"" + key + "\"")) {
-                    missing.append("    <int name=\"").append(key)
-                            .append("\" value=\"1\" />\n");
-                    r.changes++;
-                    r.vehicleChanges++;
-                }
-            }
-            for (int i = 0; i <= MAX_CHAR_INDEX; i++) {
-                String key = "check" + rarity + "Char" + i;
-                if (!xml.contains("name=\"" + key + "\"")) {
-                    missing.append("    <int name=\"").append(key)
-                            .append("\" value=\"1\" />\n");
-                    r.changes++;
-                    r.vehicleChanges++;
-                }
-            }
-        }
-        if (r.vehicleChanges > 0) {
-            r.keys.add("vehicles=NEW->" + r.vehicleChanges + " unlocks");
-        }
+        // Vehicle/character unlocks: DISABLED in v1.8.3. Setting check* keys
+        // for all vehicles interfered with the game's legitimate win tracking
+        // (user's slot-machine wins were deleted on reopen). The user keeps
+        // 9,999,999 cash to win vehicles/characters legitimately. We still
+        // remove explicit lock* keys (above) which doesn't interfere.
         if (missing.length() == 0) return xml;
         return xml.substring(0, mapEnd) + missing + xml.substring(mapEnd);
     }
@@ -608,9 +587,6 @@ public final class CoinPatcher {
             } else if (isHealthKey(name)) {
                 newValue = DURABILITY_LEVEL;
                 kind = "durability";
-            } else if (VEHICLE_UNLOCK_KEY.matcher(name).matches()) {
-                newValue = 1L;
-                kind = "vehicle";
             } else if (VEHICLE_LOCK_KEY.matcher(name).matches()) {
                 // Remove explicit vehicle locks (0 = unlocked).
                 newValue = 0L;
