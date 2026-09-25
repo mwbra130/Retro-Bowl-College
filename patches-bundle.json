@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-24T23:49:45",
-  "description": "## [1.6.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.5.1...v1.6.0) (2026-09-24)\n\n### ✨ New Features\n\n* unlock red/blue slot machines via real hasMachine flags ([0d6536d](https://github.com/mwbra130/Retro-Bowl-College/commit/0d6536dcb82cc666d11760b52a66e6d233f708a2))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.6.0/patches-1.6.0.mpp",
+  "created_at": "2026-09-25T00:04:01",
+  "description": "## [1.7.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.6.0...v1.7.0) (2026-09-25)\n\n### ✨ New Features\n\n* Smashy Road 2 complete all missions and max vehicle durability ([bedaa8a](https://github.com/mwbra130/Retro-Bowl-College/commit/bedaa8ad36d43d3d17a80420e6766797a82837d0))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.7.0/patches-1.7.0.mpp",
   "signature_download_url": "",
-  "version": "1.6.0"
+  "version": "1.7.0"
 }

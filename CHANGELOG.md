@@ -1,3 +1,9 @@
+## [1.7.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.6.0...v1.7.0) (2026-09-25)
+
+### ✨ New Features
+
+* Smashy Road 2 complete all missions and max vehicle durability ([bedaa8a](https://github.com/mwbra130/Retro-Bowl-College/commit/bedaa8ad36d43d3d17a80420e6766797a82837d0))
+
 ## [1.6.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.5.1...v1.6.0) (2026-09-24)
 
 ### ✨ New Features
