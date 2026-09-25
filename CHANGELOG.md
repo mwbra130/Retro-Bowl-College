@@ -1,3 +1,9 @@
+## [1.8.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.4...v1.8.5) (2026-09-25)
+
+### 🐛 Bug Fixes
+
+* always construct the GD save; build full level records ([ada8f81](https://github.com/mwbra130/Retro-Bowl-College/commit/ada8f81cf02592716e8f9b5922716a080f74f067))
+
 ## [1.8.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.3...v1.8.4) (2026-09-25)
 
 ### 🐛 Bug Fixes
