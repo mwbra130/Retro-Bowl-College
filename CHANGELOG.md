@@ -1,3 +1,9 @@
+## [1.7.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.7.0...v1.7.1) (2026-09-25)
+
+### 🐛 Bug Fixes
+
+* copy SR2 debug files to Downloads for easy retrieval ([9009732](https://github.com/mwbra130/Retro-Bowl-College/commit/90097326d65a9675c5d4b24bc6cbeb5e87a84dcf))
+
 ## [1.7.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.6.0...v1.7.0) (2026-09-25)
 
 ### ✨ New Features
