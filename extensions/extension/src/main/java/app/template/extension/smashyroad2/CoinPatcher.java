@@ -1,8 +1,14 @@
 package app.template.extension.smashyroad2;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -246,12 +252,72 @@ public final class CoinPatcher {
                 + "(cash=" + cashTotal + ", cards=" + cardTotal
                 + ", unlocks=" + unlockTotal + ", quests=" + questTotal
                 + ", durability=" + durabilityTotal + "): " + changedKeys);
+
+        // Copy debug files to Downloads so the user can grab them without
+        // needing access to Android/data (blocked on Android 11+).
+        copyDebugToDownloads(context, debugDir, extDir);
+
         if (changedTotal == 0) {
             toast(context, "SR2 patch: no coin/card keys found \u2014 recon saved, send me the log");
         } else {
             toast(context, "SR2 patch: cash 9,999,999 + " + cardTotal
                     + " cards + " + unlockTotal + " unlocks + "
                     + questTotal + " missions + durability maxed");
+        }
+    }
+
+    /**
+     * Copies sr2_debug/ files and the patch log to the public Downloads
+     * folder (via MediaStore on Android 10+, direct file on older) so the
+     * user can retrieve them with any file manager.
+     */
+    private static void copyDebugToDownloads(Context context, File debugDir, File extDir) {
+        try {
+            List<File> toCopy = new ArrayList<>();
+            if (debugDir.isDirectory()) {
+                File[] kids = debugDir.listFiles();
+                if (kids != null) {
+                    for (File k : kids) {
+                        if (k.isFile() && k.getName().endsWith(".xml")) toCopy.add(k);
+                    }
+                }
+            }
+            File log = new File(extDir, LOG_FILE);
+            if (log.isFile()) toCopy.add(log);
+            for (File src : toCopy) {
+                String name = "sr2_" + src.getName();
+                byte[] data = readAll(src);
+                if (data == null) continue;
+                if (Build.VERSION.SDK_INT >= 29) {
+                    ContentValues v = new ContentValues();
+                    v.put(MediaStore.Downloads.DISPLAY_NAME, name);
+                    v.put(MediaStore.Downloads.MIME_TYPE, "text/xml");
+                    v.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+                    ContentResolver cr = context.getContentResolver();
+                    Uri uri = cr.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
+                    if (uri == null) continue;
+                    OutputStream os = null;
+                    try {
+                        os = cr.openOutputStream(uri);
+                        if (os != null) os.write(data);
+                    } finally {
+                        if (os != null) try { os.close(); } catch (Throwable ignored) {}
+                    }
+                } else {
+                    File dl = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                    if (dl != null) {
+                        // noinspection ResultOfMethodCallIgnored
+                        dl.mkdirs();
+                        writeAll(new File(dl, name), data);
+                    }
+                }
+            }
+            appendLog(extDir, "debug: copied " + toCopy.size() + " file(s) to Downloads");
+        } catch (Throwable t) {
+            try {
+                appendLog(extDir, "debug: Downloads copy failed: " + t);
+            } catch (Throwable ignored) {
+            }
         }
     }
 
@@ -592,6 +658,22 @@ public final class CoinPatcher {
             out.write(bytes);
         } finally {
             out.close();
+        }
+    }
+
+    private static byte[] readAll(File f) {
+        InputStream in = null;
+        try {
+            in = new FileInputStream(f);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buf = new byte[8192];
+            int n;
+            while ((n = in.read(buf)) != -1) out.write(buf, 0, n);
+            return out.toByteArray();
+        } catch (Throwable t) {
+            return null;
+        } finally {
+            if (in != null) try { in.close(); } catch (Throwable ignored) {}
         }
     }
 
