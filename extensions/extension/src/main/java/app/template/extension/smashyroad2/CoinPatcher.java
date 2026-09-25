@@ -62,10 +62,11 @@ import java.util.regex.Pattern;
  * {@code purchaseMachine1/2/3} after a real purchase. A leftover
  * red-slot-machine name heuristic is kept as a fallback.
  *
- * <p>Missions: every quest completion flag ({@code questDone*} /
- * {@code questDoneMain*}, from the game's string table) is set to 1, and
- * missing flags are seeded for numeric ids 0-50 plus known mission names,
- * so main and side missions show as complete.
+ * <p>Missions (REAL key format from a live save, 2026-09-25): every
+ * {@code mainQuestProgress<N>} is set to 1 (completed) and every
+ * {@code sideQuestProgress<N>} is maxed to 999999 so all progress targets
+ * are exceeded; missing keys are seeded (main 0-50, side 0-30) so main and
+ * side missions show as complete.
  *
  * <p>Durability: the per-rarity health upgrade levels ({@code commonHealth},
  * {@code rareHealth}, {@code epicHealth}, {@code legendaryHealth},
@@ -112,30 +113,19 @@ public final class CoinPatcher {
             Pattern.CASE_INSENSITIVE);
 
     /**
-     * Mission/quest completion flags (from the game's string table:
-     * questDone, questDoneMain, questCompleted, questID). The game stores one
-     * flag per quest as questDone&lt;id&gt; / questDoneMain&lt;id&gt;; the id
-     * may be numeric or the mission name. Match any int pref that looks like
-     * a quest completion flag.
+     * Mission/quest completion flags — REAL format discovered from a live save
+     * (2026-09-25). The game does NOT use questDone*; it uses:
+     *   mainQuestProgress<N> = 1 (1 = completed)
+     *   sideQuestProgress<N> = <progress counter> (e.g. 470/500 kills)
+     * Seen in the wild: mainQuestProgress29-32=1, sideQuestProgress1=17,
+     * sideQuestProgress2=2, sideQuestProgress6=470.
+     * The old questDone* pattern is kept for rewriting existing keys but no
+     * longer seeded.
      */
-    private static final Pattern QUEST_DONE_KEY = Pattern.compile(
-            "^(.*quest.*(done|complete|finish).*|.*(done|complete|finish).*quest.*)$",
-            Pattern.CASE_INSENSITIVE);
-
-    /**
-     * Known mission names (Smashy Road: Wanted 2 wiki). Inserted as
-     * questDone&lt;name&gt; / questDoneMain&lt;name&gt; so missions the player
-     * never started are marked complete too.
-     */
-    private static final String[] MISSION_NAMES = {
-            "BusDriver", "CowboyStandoff", "CollectSRLetters", "Number1",
-            "ZombieSmasher", "ZombieApocalypse", "BankRobbery", "KeytoSuccess",
-            "FireFighter", "PerformAStunt", "LivingontheEdge", "AlienInvasion",
-            "SwimSwimSwim", "ThatsATank", "Pilot", "BigAirtime", "Zombies"
-    };
-
-    /** Highest numeric quest id to pre-seed (covers questDone0..N pattern). */
-    private static final int MAX_QUEST_ID = 50;
+    private static final Pattern MAIN_QUEST_KEY = Pattern.compile(
+            "^mainQuestProgress\\d+$");
+    private static final Pattern SIDE_QUEST_KEY = Pattern.compile(
+            "^sideQuestProgress\\d+$");
 
     /**
      * Vehicle durability/health upgrade levels (exact key names from the
@@ -503,27 +493,27 @@ public final class CoinPatcher {
                 r.keys.add(key + "=NEW->1");
             }
         }
-        // Mission/quest completion: seed questDone<id> and questDoneMain<id>
-        // for numeric ids and known mission names so unstarted missions count
-        // as complete too.
-        for (String prefix : new String[]{"questDone", "questDoneMain"}) {
-            for (int i = 0; i <= MAX_QUEST_ID; i++) {
-                String key = prefix + i;
-                if (!xml.contains("name=\"" + key + "\"")) {
-                    missing.append("    <int name=\"").append(key)
-                            .append("\" value=\"1\" />\n");
-                    r.changes++;
-                    r.questChanges++;
-                }
+        // Mission/quest completion (REAL key format from a live save):
+        // mainQuestProgress<N>=1 marks main quest N complete (seen 29-32 in
+        // the wild; seed 0-50 to cover them all). sideQuestProgress<N> is a
+        // progress counter (seen 2, 17, 470); seed 0-30 at 999999 so every
+        // side-quest target is exceeded.
+        for (int i = 0; i <= 50; i++) {
+            String key = "mainQuestProgress" + i;
+            if (!xml.contains("name=\"" + key + "\"")) {
+                missing.append("    <int name=\"").append(key)
+                        .append("\" value=\"1\" />\n");
+                r.changes++;
+                r.questChanges++;
             }
-            for (String name : MISSION_NAMES) {
-                String key = prefix + name;
-                if (!xml.contains("name=\"" + key + "\"")) {
-                    missing.append("    <int name=\"").append(key)
-                            .append("\" value=\"1\" />\n");
-                    r.changes++;
-                    r.questChanges++;
-                }
+        }
+        for (int i = 0; i <= 30; i++) {
+            String key = "sideQuestProgress" + i;
+            if (!xml.contains("name=\"" + key + "\"")) {
+                missing.append("    <int name=\"").append(key)
+                        .append("\" value=\"999999\" />\n");
+                r.changes++;
+                r.questChanges++;
             }
         }
         if (r.questChanges > 0) {
@@ -588,8 +578,13 @@ public final class CoinPatcher {
             } else if (isUnlockKey(name) || RED_SLOT_KEY.matcher(name).matches()) {
                 newValue = 1L;
                 kind = "unlock";
-            } else if (QUEST_DONE_KEY.matcher(name).matches()) {
+            } else if (MAIN_QUEST_KEY.matcher(name).matches()) {
+                // Main quest: 1 = completed.
                 newValue = 1L;
+                kind = "quest";
+            } else if (SIDE_QUEST_KEY.matcher(name).matches()) {
+                // Side quest: progress counter — max it out so any target is met.
+                newValue = 999999L;
                 kind = "quest";
             } else if (CASH_KEY.matcher(name).matches()) {
                 newValue = CASH_AMOUNT;
