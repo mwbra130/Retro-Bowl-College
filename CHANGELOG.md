@@ -1,3 +1,9 @@
+## [1.8.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.3...v1.8.4) (2026-09-25)
+
+### 🐛 Bug Fixes
+
+* patch the real save files (CCGameManager2.dat / CCLocalLevels2.dat) ([8a28ecf](https://github.com/mwbra130/Retro-Bowl-College/commit/8a28ecffcf1be3520548e24226db6b65bb15fd25))
+
 ## [1.8.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.2...v1.8.3) (2026-09-25)
 
 ### 🐛 Bug Fixes
