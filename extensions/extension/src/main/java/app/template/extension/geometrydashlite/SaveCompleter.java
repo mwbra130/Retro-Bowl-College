@@ -57,6 +57,11 @@ import java.util.zip.GZIPOutputStream;
  * active and re-applies on every launch, which covers the case where the
  * game reverts the save on exit. The verdict is written to the log file.
  *
+ * Storage scan: each run writes gdl_patch_filescan.txt, a recursive
+ * listing of the app's private data dir and external app dir, so we can
+ * locate the game's real save file. (The CCGameManager.dat found earlier
+ * held only stub keys, not real player progress.)
+ *
  * Forensics: when a previous run's after-dump exists, the current save is
  * compared against it key by key, so the log shows exactly which of our
  * writes the game kept, reset, or rejected (per secret coin, aggregate,
@@ -161,6 +166,10 @@ public final class SaveCompleter {
             File dataDir = getDataDirSafe(context);
             File dbgDir = context.getExternalFilesDir(null);
 
+            // Diagnostic: where does the game's real save live? The
+            // CCGameManager.dat we found earlier held only stub keys.
+            writeStorageScan(dbgDir, dataDir, context);
+
             File gmSave = findSave(dataDir, context, SAVE_GM);
             if (gmSave == null) {
                 String report = probeSaveLocations(context, dbgDir);
@@ -171,6 +180,8 @@ public final class SaveCompleter {
                 showReportDialog(context, report, 4000);
                 return;
             }
+            writeLog(dbgDir, "run: gmSave path: " + gmSave.getAbsolutePath()
+                    + " (" + gmSave.length() + "b)");
 
             Dict gmRoot;
             try {
@@ -211,6 +222,8 @@ public final class SaveCompleter {
             boolean llKept = true;
             String llNote = "";
             if (llSave != null) {
+                writeLog(dbgDir, "run: llSave path: " + llSave.getAbsolutePath()
+                        + " (" + llSave.length() + "b)");
                 try {
                     Dict llRoot = decodeSave(readAll(llSave));
                     String llForensics = forensicVsPrevious(dbgDir, "gdl_patch_after_ll.xml", llRoot);
@@ -832,9 +845,69 @@ public final class SaveCompleter {
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(line).append('\n');
-            writeAll(new File(dir, "gdl_patch_log.txt"),
+            appendAll(new File(dir, "gdl_patch_log.txt"),
                     sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (Throwable ignored) {
+        }
+    }
+
+    private static void appendAll(File file, byte[] bytes) throws Exception {
+        OutputStream out = new FileOutputStream(file, true);
+        try {
+            out.write(bytes);
+        } finally {
+            out.close();
+        }
+    }
+
+    /**
+     * Diagnostic: recursively lists the app's private data dir and its
+     * external app dir (names, sizes, mtimes) so we can see where the
+     * game's real save lives. Written to gdl_patch_filescan.txt.
+     */
+    private static void writeStorageScan(File dbgDir, File dataDir, Context context) {
+        if (dbgDir == null || dataDir == null) return;
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append("dataDir: ").append(dataDir.getAbsolutePath()).append('\n');
+            int[] count = new int[]{0};
+            scanTree(sb, dataDir, dataDir.getAbsolutePath().length() + 1, 0, count);
+            File ext = context.getExternalFilesDir(null);
+            if (ext != null) {
+                File appExt = ext.getParentFile();
+                File scanRoot = (appExt != null) ? appExt : ext;
+                sb.append("appExternalDir: ").append(scanRoot.getAbsolutePath()).append('\n');
+                scanTree(sb, scanRoot, scanRoot.getAbsolutePath().length() + 1, 0, count);
+            }
+            sb.append("total entries: ").append(count[0]).append('\n');
+            writeAll(new File(dbgDir, "gdl_patch_filescan.txt"),
+                    sb.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (Throwable t) {
+            writeLog(dbgDir, "run: storage scan failed: " + t);
+        }
+    }
+
+    private static void scanTree(StringBuilder sb, File dir, int prefixLen,
+                                 int depth, int[] count) {
+        if (depth > 5 || count[0] > 800) return;
+        File[] kids = dir.listFiles();
+        if (kids == null) return;
+        for (File f : kids) {
+            if (count[0] > 800) return;
+            count[0]++;
+            String rel = f.getAbsolutePath();
+            if (rel.length() > prefixLen) rel = rel.substring(prefixLen);
+            String name = f.getName().toLowerCase();
+            boolean interesting = name.contains("save") || name.contains("game")
+                    || name.contains("manager") || name.contains("level")
+                    || name.endsWith(".dat") || name.endsWith(".xml")
+                    || name.endsWith(".db");
+            sb.append(interesting ? "* " : "  ").append(rel)
+              .append(" (").append(f.isDirectory() ? "dir" : (f.length() + "b"))
+              .append(")\n");
+            if (f.isDirectory()) {
+                scanTree(sb, f, prefixLen, depth + 1, count);
+            }
         }
     }
 
