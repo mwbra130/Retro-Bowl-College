@@ -62,11 +62,12 @@ import java.util.regex.Pattern;
  * {@code purchaseMachine1/2/3} after a real purchase. A leftover
  * red-slot-machine name heuristic is kept as a fallback.
  *
- * <p>Missions (REAL key format from a live save, 2026-09-25): every
- * {@code mainQuestProgress<N>} is set to 1 (completed) and every
- * {@code sideQuestProgress<N>} is maxed to 999999 so all progress targets
- * are exceeded; missing keys are seeded (main 0-50, side 0-30) so main and
- * side missions show as complete.
+ * <p>Missions (REAL mechanism from code analysis, 2026-09-25):
+ * {@code mainQuestProgress<N>=1} means "available/in-progress", not complete.
+ * The game hardcodes 21 quest IDs; their progress is set to 99. The actual
+ * completion flag is {@code mainQuestClaimed<N>=1} (reward claimed = done).
+ * Every {@code sideQuestProgress<N>} is maxed to 999999 so all progress
+ * targets are exceeded.
  *
  * <p>Durability: the per-rarity health upgrade levels ({@code commonHealth},
  * {@code rareHealth}, {@code epicHealth}, {@code legendaryHealth},
@@ -148,6 +149,31 @@ public final class CoinPatcher {
      */
     private static final Pattern VEHICLE_UNLOCK_KEY = Pattern.compile(
             "^check(Common|Rare|Epic|Legendary|Mystery)(Veh|Char)\\d+$");
+
+    /**
+     * Vehicle/character lock keys — the game explicitly locks specific
+     * vehicles with lock&lt;Rarity&gt;&lt;N&gt;=1 (e.g. lockCommon0,
+     * lockRare5, lockCommonPerson0). Setting to 0 removes the lock.
+     */
+    private static final Pattern VEHICLE_LOCK_KEY = Pattern.compile(
+            "^lock(Common|Rare|Epic|Legendary|Mystery)(Person)?\\d+$");
+
+    /**
+     * Main quest claimed flags — the REAL completion mechanism.
+     * mainQuestClaimed&lt;N&gt;=1 means quest N's reward was claimed (done).
+     * The game hardcodes: 1, 2, 3, 4, 5, 8, 9.
+     */
+    private static final Pattern MAIN_QUEST_CLAIMED_KEY = Pattern.compile(
+            "^mainQuestClaimed\\d+$");
+
+    /**
+     * The 21 hardcoded main quest IDs (from the game's string table).
+     * mainQuestProgress&lt;N&gt;=1 means "available/in-progress", not complete.
+     */
+    private static final int[] MAIN_QUEST_IDS = {
+            0, 1, 3, 6, 7, 8, 9, 10, 11, 12, 14, 15, 18, 19, 20, 21, 22,
+            29, 30, 31, 32
+    };
 
     /** Max index to pre-seed per vehicle/character rarity group. */
     private static final int MAX_VEHICLE_INDEX = 44;
@@ -493,13 +519,23 @@ public final class CoinPatcher {
                 r.keys.add(key + "=NEW->1");
             }
         }
-        // Mission/quest completion (REAL key format from a live save):
-        // mainQuestProgress<N>=1 marks main quest N complete (seen 29-32 in
-        // the wild; seed 0-50 to cover them all). sideQuestProgress<N> is a
-        // progress counter (seen 2, 17, 470); seed 0-30 at 999999 so every
-        // side-quest target is exceeded.
-        for (int i = 0; i <= 50; i++) {
-            String key = "mainQuestProgress" + i;
+        // Mission/quest completion (REAL mechanism from code analysis):
+        // mainQuestProgress<N>=1 means "available/in-progress", NOT complete.
+        // The game hardcodes 21 quest IDs; set their progress to 99 (max steps).
+        // The REAL completion flag is mainQuestClaimed<N>=1 (reward claimed).
+        // Hardcoded claimed IDs: 1, 2, 3, 4, 5, 8, 9.
+        for (int id : MAIN_QUEST_IDS) {
+            String key = "mainQuestProgress" + id;
+            if (!xml.contains("name=\"" + key + "\"")) {
+                missing.append("    <int name=\"").append(key)
+                        .append("\" value=\"99\" />\n");
+                r.changes++;
+                r.questChanges++;
+            }
+        }
+        // Seed the 7 hardcoded claimed flags.
+        for (int id : new int[]{1, 2, 3, 4, 5, 8, 9}) {
+            String key = "mainQuestClaimed" + id;
             if (!xml.contains("name=\"" + key + "\"")) {
                 missing.append("    <int name=\"").append(key)
                         .append("\" value=\"1\" />\n");
@@ -575,12 +611,20 @@ public final class CoinPatcher {
             } else if (VEHICLE_UNLOCK_KEY.matcher(name).matches()) {
                 newValue = 1L;
                 kind = "vehicle";
+            } else if (VEHICLE_LOCK_KEY.matcher(name).matches()) {
+                // Remove explicit vehicle locks (0 = unlocked).
+                newValue = 0L;
+                kind = "unlock";
+            } else if (MAIN_QUEST_CLAIMED_KEY.matcher(name).matches()) {
+                // Quest reward claimed = quest complete.
+                newValue = 1L;
+                kind = "quest";
             } else if (isUnlockKey(name) || RED_SLOT_KEY.matcher(name).matches()) {
                 newValue = 1L;
                 kind = "unlock";
             } else if (MAIN_QUEST_KEY.matcher(name).matches()) {
-                // Main quest: 1 = completed.
-                newValue = 1L;
+                // Main quest progress: max out steps so all are done.
+                newValue = 99L;
                 kind = "quest";
             } else if (SIDE_QUEST_KEY.matcher(name).matches()) {
                 // Side quest: progress counter — max it out so any target is met.
