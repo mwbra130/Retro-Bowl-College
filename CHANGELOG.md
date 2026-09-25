@@ -1,3 +1,9 @@
+## [1.8.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.5...v1.8.6) (2026-09-25)
+
+### 🐛 Bug Fixes
+
+* disable check* vehicle/character unlocking (broke legit wins) ([7440348](https://github.com/mwbra130/Retro-Bowl-College/commit/7440348c2bc3cb6024d3c743ecf41e76cb71c724))
+
 ## [1.8.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.4...v1.8.5) (2026-09-25)
 
 ### 🐛 Bug Fixes
