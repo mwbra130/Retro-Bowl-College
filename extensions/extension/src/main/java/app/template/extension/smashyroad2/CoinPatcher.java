@@ -148,6 +148,21 @@ public final class CoinPatcher {
     /** Durability level that effectively maxes vehicle health. */
     private static final long DURABILITY_LEVEL = 999L;
 
+    /**
+     * Vehicle/character unlock flags (exact key format from a live save:
+     * check&lt;Rarity&gt;Veh&lt;N&gt; / check&lt;Rarity&gt;Char&lt;N&gt;).
+     * 0 = locked, 1 = unlocked. Seen in the wild: checkCommonVeh0-44,
+     * checkRareVeh10-20, checkLegendaryVeh0-8, checkMysteryVeh0-9,
+     * checkCommonChar20-29, checkRareChar10-13, checkEpicChar5,
+     * checkLegendaryChar0-5.
+     */
+    private static final Pattern VEHICLE_UNLOCK_KEY = Pattern.compile(
+            "^check(Common|Rare|Epic|Legendary|Mystery)(Veh|Char)\\d+$");
+
+    /** Max index to pre-seed per vehicle/character rarity group. */
+    private static final int MAX_VEHICLE_INDEX = 44;
+    private static final int MAX_CHAR_INDEX = 29;
+
     /** Unity's PlayerPrefs emission: <int name="..." value="..." /> */
     private static final Pattern INT_TAG = Pattern.compile(
             "<(int|long)\\s+name=\"([^\"]+)\"\\s+value=\"(-?\\d+)\"\\s*/>");
@@ -224,6 +239,7 @@ public final class CoinPatcher {
         int unlockTotal = 0;
         int questTotal = 0;
         int durabilityTotal = 0;
+        int vehicleTotal = 0;
         List<String> changedKeys = new ArrayList<>();
         debugDir.mkdirs();
         for (File prefs : prefsFiles) {
@@ -243,6 +259,7 @@ public final class CoinPatcher {
                 unlockTotal += r.unlockChanges;
                 questTotal += r.questChanges;
                 durabilityTotal += r.durabilityChanges;
+                vehicleTotal += r.vehicleChanges;
                 changedKeys.addAll(r.keys);
             }
         }
@@ -251,7 +268,8 @@ public final class CoinPatcher {
                 + changedTotal + " value(s) changed "
                 + "(cash=" + cashTotal + ", cards=" + cardTotal
                 + ", unlocks=" + unlockTotal + ", quests=" + questTotal
-                + ", durability=" + durabilityTotal + "): " + changedKeys);
+                + ", durability=" + durabilityTotal + ", vehicles=" + vehicleTotal
+                + "): " + changedKeys);
 
         // Copy debug files to Downloads so the user can grab them without
         // needing access to Android/data (blocked on Android 11+).
@@ -262,7 +280,8 @@ public final class CoinPatcher {
         } else {
             toast(context, "SR2 patch: cash 9,999,999 + " + cardTotal
                     + " cards + " + unlockTotal + " unlocks + "
-                    + questTotal + " missions + durability maxed");
+                    + questTotal + " missions + durability maxed + "
+                    + vehicleTotal + " vehicles/chars");
         }
     }
 
@@ -398,6 +417,7 @@ public final class CoinPatcher {
         int unlockChanges;
         int questChanges;
         int durabilityChanges;
+        int vehicleChanges;
         final List<String> keys = new ArrayList<>();
     }
 
@@ -519,6 +539,32 @@ public final class CoinPatcher {
                 r.keys.add(key + "=NEW->" + DURABILITY_LEVEL);
             }
         }
+        // Vehicle/character unlocks: seed check<Rarity>Veh<N> and
+        // check<Rarity>Char<N> as unlocked (1) so all vehicles/characters
+        // are available.
+        for (String rarity : new String[]{"Common", "Rare", "Epic", "Legendary", "Mystery"}) {
+            for (int i = 0; i <= MAX_VEHICLE_INDEX; i++) {
+                String key = "check" + rarity + "Veh" + i;
+                if (!xml.contains("name=\"" + key + "\"")) {
+                    missing.append("    <int name=\"").append(key)
+                            .append("\" value=\"1\" />\n");
+                    r.changes++;
+                    r.vehicleChanges++;
+                }
+            }
+            for (int i = 0; i <= MAX_CHAR_INDEX; i++) {
+                String key = "check" + rarity + "Char" + i;
+                if (!xml.contains("name=\"" + key + "\"")) {
+                    missing.append("    <int name=\"").append(key)
+                            .append("\" value=\"1\" />\n");
+                    r.changes++;
+                    r.vehicleChanges++;
+                }
+            }
+        }
+        if (r.vehicleChanges > 0) {
+            r.keys.add("vehicles=NEW->" + r.vehicleChanges + " unlocks");
+        }
         if (missing.length() == 0) return xml;
         return xml.substring(0, mapEnd) + missing + xml.substring(mapEnd);
     }
@@ -536,6 +582,9 @@ public final class CoinPatcher {
             } else if (isHealthKey(name)) {
                 newValue = DURABILITY_LEVEL;
                 kind = "durability";
+            } else if (VEHICLE_UNLOCK_KEY.matcher(name).matches()) {
+                newValue = 1L;
+                kind = "vehicle";
             } else if (isUnlockKey(name) || RED_SLOT_KEY.matcher(name).matches()) {
                 newValue = 1L;
                 kind = "unlock";
@@ -563,6 +612,7 @@ public final class CoinPatcher {
             else if ("cash".equals(kind)) r.cashChanges++;
             else if ("quest".equals(kind)) r.questChanges++;
             else if ("durability".equals(kind)) r.durabilityChanges++;
+            else if ("vehicle".equals(kind)) r.vehicleChanges++;
             else r.unlockChanges++;
             r.keys.add(name + "=" + oldValue + "->" + newValue);
         }
