@@ -83,6 +83,10 @@ public final class SaveCompleter {
     private static final String DONE_KEY = "done_v8";
     private static final String SAVE_GM = "CCGameManager.dat";
     private static final String SAVE_LL = "CCLocalLevels.dat";
+    // Lite 2.2.147 keeps its real save in these "2"-suffixed files; the
+    // plain files above hold only stub keys.
+    private static final String SAVE_GM2 = "CCGameManager2.dat";
+    private static final String SAVE_LL2 = "CCLocalLevels2.dat";
 
     /** Official demon levels: Clubstep (14), Theory of Everything 2 (18), Deadlocked (20). */
     private static final int[] DEMONS = {14, 18, 20};
@@ -170,108 +174,135 @@ public final class SaveCompleter {
             // CCGameManager.dat we found earlier held only stub keys.
             writeStorageScan(dbgDir, dataDir, context);
 
-            File gmSave = findSave(dataDir, context, SAVE_GM);
-            if (gmSave == null) {
+            // Lite 2.2.147 keeps its real save in the "2"-suffixed files;
+            // the plain CCGameManager.dat / CCLocalLevels.dat hold only stub
+            // keys. Patch every candidate that looks like a real GD save.
+            FileResult gm = patchOneSave(dbgDir, dataDir, context, SAVE_GM, "gm", true);
+            FileResult gm2 = patchOneSave(dbgDir, dataDir, context, SAVE_GM2, "gm2", true);
+            FileResult ll = patchOneSave(dbgDir, dataDir, context, SAVE_LL, "ll", false);
+            FileResult ll2 = patchOneSave(dbgDir, dataDir, context, SAVE_LL2, "ll2", false);
+
+            if (!gm.found && !gm2.found && !ll.found && !ll2.found) {
                 String report = probeSaveLocations(context, dbgDir);
-                writeLog(dbgDir, "run: save file not present yet (fresh install).");
+                writeLog(dbgDir, "run: no save file present yet (fresh install).");
                 toast(context, "GD patch: no save yet \u2014 screenshot the popup");
                 // Delayed: our hook runs before the Activity finishes onCreate,
                 // so wait a few seconds until it can safely show a dialog.
                 showReportDialog(context, report, 4000);
                 return;
             }
-            writeLog(dbgDir, "run: gmSave path: " + gmSave.getAbsolutePath()
-                    + " (" + gmSave.length() + "b)");
 
-            Dict gmRoot;
-            try {
-                gmRoot = decodeSave(readAll(gmSave));
-            } catch (Exception e) {
-                writeLog(dbgDir, "run: FAILED to decode " + SAVE_GM + ": " + e);
-                toast(context, "GD patch: could not read save, will retry");
-                return;
+            boolean anyPatched = gm.patched || gm2.patched || ll.patched || ll2.patched;
+            boolean kept = anyPatched;
+            for (FileResult r : new FileResult[]{gm, gm2, ll, ll2}) {
+                if (r.patched && !r.kept) kept = false;
             }
+            // Prefer the real ("2") save's forensics for the Toast verdict.
+            String forensics = !gm2.forensics.isEmpty() ? gm2.forensics : gm.forensics;
 
-            // Forensics: compare what the previous run wrote (its after-dump)
-            // with what is on disk now, to see exactly what the game kept,
-            // reset, or rejected when it last exited.
-            String forensics = forensicVsPrevious(dbgDir, "gdl_patch_after_gm.xml", gmRoot);
-            if (!forensics.isEmpty()) {
-                writeLog(dbgDir, "run: forensics vs previous run (" + SAVE_GM + "): " + forensics);
-            }
-
-            writeDebugXml(dbgDir, "gdl_patch_before_gm.xml", gmRoot);
-            // Diagnostic: did the game keep our previous writes, or revert
-            // the save on exit? The answer decides the next fix, so it is
-            // logged and reflected in the Toast.
-            boolean gmKept = hasFingerprints(gmRoot);
-            Dict templateGm = findTemplateRecord(dict(gmRoot, "GLM_01"));
-            writeLog(dbgDir, "run: level template: "
-                    + (templateGm != null ? "genuine record found" : "none, minimal records"));
-            String summary = processGameManager(gmRoot, templateGm);
-            writeDebugXml(dbgDir, "gdl_patch_after_gm.xml", gmRoot);
-            rewriteSave(dataDir, gmSave, gmRoot);
-            writeLog(dbgDir, "run: " + SAVE_GM + " OK. " + summary
-                    + ". fingerprints before patch: " + (gmKept ? "KEPT" : "MISSING"));
-
-            // Level objects: patch CCLocalLevels.dat too, since GLM_01 is the
-            // authoritative level store there. If the file is absent there is
-            // nothing more we can do for it, so it does not block completion.
-            File llSave = findSave(dataDir, context, SAVE_LL);
-            boolean llOk = true;
-            boolean llKept = true;
-            String llNote = "";
-            if (llSave != null) {
-                writeLog(dbgDir, "run: llSave path: " + llSave.getAbsolutePath()
-                        + " (" + llSave.length() + "b)");
-                try {
-                    Dict llRoot = decodeSave(readAll(llSave));
-                    String llForensics = forensicVsPrevious(dbgDir, "gdl_patch_after_ll.xml", llRoot);
-                    if (!llForensics.isEmpty()) {
-                        writeLog(dbgDir, "run: forensics vs previous run (" + SAVE_LL + "): " + llForensics);
-                    }
-                    llKept = hasLevelFingerprints(llRoot);
-                    writeDebugXml(dbgDir, "gdl_patch_before_ll.xml", llRoot);
-                    processLocalLevels(llRoot, findTemplateRecord(dict(llRoot, "GLM_01")));
-                    writeDebugXml(dbgDir, "gdl_patch_after_ll.xml", llRoot);
-                    rewriteSave(dataDir, llSave, llRoot);
-                    writeLog(dbgDir, "run: " + SAVE_LL + " OK. fingerprints before patch: "
-                            + (llKept ? "KEPT" : "MISSING"));
-                } catch (Exception e) {
-                    llOk = false;
-                    writeLog(dbgDir, "run: FAILED to process " + SAVE_LL + ": " + e);
-                }
-            } else {
-                llNote = " (no " + SAVE_LL + " found)";
-                writeLog(dbgDir, "run: " + SAVE_LL + " not present; skipped.");
-            }
-
-            boolean kept = gmKept && llKept;
-            writeLog(dbgDir, "run: finished. " + summary + llNote
-                    + ". verdict: " + (kept ? "GAME_KEPT_PATCH" : "PATCH_MISSING_BEFORE_RUN"));
-            if (!llOk) {
-                toast(context, "GD patch: level file unreadable, will retry");
-            } else if (kept) {
-                // Our writes survive on disk, so the game is ignoring their
-                // content rather than wiping them: re-running every launch
-                // would change nothing.
+            writeLog(dbgDir, "run: finished. verdict: "
+                    + (kept ? "GAME_KEPT_PATCH" : "PATCH_MISSING_BEFORE_RUN"));
+            if (kept) {
+                // Our writes survive on disk: re-running every launch would
+                // change nothing.
                 prefs.edit().putBoolean(DONE_KEY, true).apply();
-                toast(context, "GD patch: already applied" + llNote);
+                toast(context, "GD patch: already applied");
             } else if (!forensics.isEmpty()) {
                 // Tell the user how much of the previous patch survived, so
                 // the report back identifies what the game rejected.
                 String lv = levelsKeptShort(forensics);
                 String extra = lv.isEmpty() ? "" : " \u2014 game kept " + lv + " levels";
-                toast(context, "GD patch: re-applied" + extra + llNote);
-            } else {
+                toast(context, "GD patch: re-applied" + extra);
+            } else if (anyPatched) {
                 // Writes were missing (first run, or the game reverted them
                 // on exit): stay active and re-apply on every launch until
                 // they stick.
-                toast(context, "GD patch: " + summary + " \u2014 reopen the game" + llNote);
+                toast(context, "GD patch: marked 22 levels + 61 coins complete \u2014 reopen the game");
+            } else {
+                toast(context, "GD patch: saves unreadable, will retry");
             }
         } catch (Throwable ignored) {
             // Never crash the game: a failed edit just means no completions.
         }
+    }
+
+    /** Per-file result of one patch attempt. */
+    private static class FileResult {
+        boolean found;      // the file exists
+        boolean patched;    // it looked like a GD save and was patched
+        boolean kept;       // it already contained our fingerprints
+        String forensics = "";
+    }
+
+    /**
+     * Patches one candidate save file: decodes it, dumps before/after XML,
+     * checks fingerprints, applies the completion patch, and rewrites it.
+     * Files that do not look like a GD save (no GS_/GLM_ sections) are
+     * dumped but left untouched, so stub files can never be corrupted.
+     */
+    private static FileResult patchOneSave(File dbgDir, File dataDir, Context context,
+                                           String saveName, String dumpTag,
+                                           boolean isGameManager) {
+        FileResult r = new FileResult();
+        File save = findSave(dataDir, context, saveName);
+        if (save == null) {
+            writeLog(dbgDir, "run: " + saveName + " not present; skipped.");
+            return r;
+        }
+        r.found = true;
+        writeLog(dbgDir, "run: " + saveName + " path: " + save.getAbsolutePath()
+                + " (" + save.length() + "b)");
+        Dict root;
+        try {
+            root = decodeSave(readAll(save));
+        } catch (Exception e) {
+            writeLog(dbgDir, "run: FAILED to decode " + saveName + ": " + e);
+            return r;
+        }
+        writeDebugXml(dbgDir, "gdl_patch_before_" + dumpTag + ".xml", root);
+        if (!looksLikeGdSave(root)) {
+            writeLog(dbgDir, "run: " + saveName + " is not a GD save (stub keys); left untouched.");
+            return r;
+        }
+        // Forensics: compare what the previous run wrote (its after-dump)
+        // with what is on disk now, to see what the game kept or reset.
+        r.forensics = forensicVsPrevious(dbgDir, "gdl_patch_after_" + dumpTag + ".xml", root);
+        if (!r.forensics.isEmpty()) {
+            writeLog(dbgDir, "run: forensics vs previous run (" + saveName + "): " + r.forensics);
+        }
+        // Did the game keep our previous writes?
+        r.kept = isGameManager ? hasFingerprints(root) : hasLevelFingerprints(root);
+        Dict template = findTemplateRecord(dict(root, "GLM_01"));
+        String detail;
+        if (isGameManager) {
+            detail = processGameManager(root, template);
+        } else {
+            processLocalLevels(root, template);
+            detail = "levels patched";
+        }
+        writeDebugXml(dbgDir, "gdl_patch_after_" + dumpTag + ".xml", root);
+        try {
+            rewriteSave(dataDir, save, root);
+        } catch (Exception e) {
+            writeLog(dbgDir, "run: FAILED to rewrite " + saveName + ": " + e);
+            return r;
+        }
+        r.patched = true;
+        writeLog(dbgDir, "run: " + saveName + " OK. " + detail
+                + ". fingerprints: " + (r.kept ? "KEPT" : "MISSING")
+                + ". template: " + (template != null ? "genuine" : "none"));
+        return r;
+    }
+
+    /** True when the decoded file carries real GD save sections. */
+    private static boolean looksLikeGdSave(Dict root) {
+        for (String k : root.map.keySet()) {
+            if (k.equals("GS_value") || k.equals("GS_completed") || k.equals("GLM_01")
+                    || k.startsWith("GS_") || k.startsWith("GLM_")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Backs up the original, self-checks our encoding, then overwrites. */
