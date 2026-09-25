@@ -1,3 +1,9 @@
+## [1.8.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.7.1...v1.8.0) (2026-09-25)
+
+### ✨ New Features
+
+* unlock all Smashy Road 2 vehicles and characters ([1cd4b76](https://github.com/mwbra130/Retro-Bowl-College/commit/1cd4b7612c408b7e21dd3c75edac793bb7b3eb8a))
+
 ## [1.7.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.7.0...v1.7.1) (2026-09-25)
 
 ### 🐛 Bug Fixes
