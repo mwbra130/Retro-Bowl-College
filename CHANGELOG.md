@@ -1,3 +1,9 @@
+## [1.8.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.0...v1.8.1) (2026-09-25)
+
+### 🐛 Bug Fixes
+
+* use real mainQuestProgress/sideQuestProgress keys for mission completion ([030a069](https://github.com/mwbra130/Retro-Bowl-College/commit/030a069d50a44bb257bc892301d70036eb2a48cf))
+
 ## [1.8.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.7.1...v1.8.0) (2026-09-25)
 
 ### ✨ New Features
