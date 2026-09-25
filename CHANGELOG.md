@@ -1,3 +1,9 @@
+## [1.8.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.1...v1.8.2) (2026-09-25)
+
+### 🐛 Bug Fixes
+
+* use mainQuestClaimed flags for missions, remove vehicle lock keys ([4cbd504](https://github.com/mwbra130/Retro-Bowl-College/commit/4cbd504cee2b21b46574c10007ef70d28d0d8c71))
+
 ## [1.8.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.0...v1.8.1) (2026-09-25)
 
 ### 🐛 Bug Fixes
