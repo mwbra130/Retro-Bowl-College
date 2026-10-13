@@ -1,3 +1,9 @@
+## [1.9.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.9.0...v1.9.1) (2026-10-13)
+
+### 🐛 Bug Fixes
+
+* hook Adjust SDK initSdk directly instead of obfuscated wrapper ([7a2226b](https://github.com/mwbra130/Retro-Bowl-College/commit/7a2226baed264a63e798014cac6184374d3e6ad1))
+
 ## [1.9.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.6...v1.9.0) (2026-10-13)
 
 ### ✨ New Features
