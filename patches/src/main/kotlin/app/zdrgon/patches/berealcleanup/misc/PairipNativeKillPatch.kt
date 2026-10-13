@@ -11,17 +11,21 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 /**
  * Stops BeReal's PairIP/Guardsquare native library from loading.
  *
- * The 2026-09-24 logcat proved the v1.3.0/v1.3.1 Java-layer bypasses were
- * aimed at the wrong layer: the process dies with a native SIGSEGV inside
- * `libpairipcore.so` ~0.12s after the library loads — a deterministic,
- * deliberate tamper-response kill that fires during native init, before any
- * Java license-check code can matter. There is no Java stack trace because
- * the JVM never throws; the process simply dies in native code.
+ * The 2026-09-24 logcat proved the Java-layer bypasses were aimed at the
+ * wrong layer: the process dies with a native SIGSEGV inside the
+ * Guardsquare protection .so ~0.12s after the library loads — a
+ * deterministic, deliberate tamper-response kill that fires during native
+ * init, before any Java license-check code can matter. There is no Java
+ * stack trace because the JVM never throws; the process simply dies in
+ * native code.
  *
- * This patch no-ops the `System.loadLibrary("pairipcore")` (or
- * `System.load(".../libpairipcore.so")`) call, so the native tamper check
- * never runs. Only the load invoke itself is replaced with `nop` — the rest
- * of the method (e.g. the remainder of `<clinit>`) is left intact.
+ * This patch no-ops the `System.loadLibrary("PhoenixAndroid")` (or
+ * `System.load(".../libPhoenixAndroid.so")`) call, so the native tamper
+ * check never runs. Only the load invoke itself is replaced with `nop` —
+ * the rest of the method (e.g. the remainder of `<clinit>`) is left intact.
+ *
+ * Note: on BeReal 3.96.0 the library was `libpairipcore.so`; on 3.97.1 it
+ * is `libPhoenixAndroid.so` (Guardsquare's "Phoenix" rebrand).
  *
  * Known follow-up risk: if BeReal's Java code calls native methods declared
  * in the PairIP bridge classes during startup, those calls will now throw

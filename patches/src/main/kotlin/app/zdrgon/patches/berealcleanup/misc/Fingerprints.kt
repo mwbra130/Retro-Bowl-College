@@ -7,7 +7,7 @@ import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 /**
  * Room DAO lambda that reads feed items from the FeedItemEntity cache table.
  *
- * Verified against BeReal 3.96.0 (com.bereal.ft): Lig7;->invoke holds the two
+ * Verified against BeReal 3.97.1 (com.bereal.ft): Lig7;->invoke holds the two
  * feed queries, both parameterized by feedId and ordered by orderIndex:
  *   "SELECT DISTINCT * FROM FeedItemEntity WHERE feedId = ? ORDER BY orderIndex LIMIT ?"
  *   and a whitespace-padded variant of "SELECT * FROM FeedItemEntity WHERE ...".
@@ -25,19 +25,22 @@ object FeedItemsQueryFingerprint : Fingerprint(
 /**
  * Companion Room DAO lambda returning the post-id list for a feed.
  * Same table, same WHERE clause shape; patched for consistency.
+ *
+ * Verified against BeReal 3.97.1: the query lost its trailing `LIMIT ?`
+ * compared to 3.96.0 (now ends at `ORDER BY orderIndex`).
  */
 object FeedPostIdsQueryFingerprint : Fingerprint(
     returnType = "Ljava/lang/Object;",
     parameters = listOf("Ljava/lang/Object;"),
     strings = listOf(
-        "SELECT DISTINCT postId FROM FeedItemEntity WHERE feedId = ? ORDER BY orderIndex LIMIT ?",
+        "SELECT DISTINCT postId FROM FeedItemEntity WHERE feedId = ? ORDER BY orderIndex",
     ),
 )
 
 /**
  * BeReal's AppLovin MAX initialization entry point.
  *
- * Verified against BeReal 3.96.0: Lcq;->invokeSuspend builds
+ * Verified against BeReal 3.97.1: Lcq;->invokeSuspend builds
  * AppLovinSdkInitializationConfiguration (mediation provider "max"), then
  * calls AppLovinSdk.initialize after the unique "INIT_ADS with segments "
  * log string.
@@ -52,7 +55,7 @@ object AppLovinInitFingerprint : Fingerprint(
 /**
  * BeReal's Adjust SDK initialization entry point.
  *
- * Verified against BeReal 3.96.0: Lm6a;->a(Ljv4;) constructs AdjustConfig,
+ * Verified against BeReal 3.97.1: Lm6a;->a(Ljv4;) constructs AdjustConfig,
  * calls Adjust.initSdk, then registers BeReal's own Adjust lifecycle
  * callbacks (Lsx). The custom check pins the match to the method that
  * actually references AdjustConfig, since the name "a" alone is too generic.
@@ -72,7 +75,7 @@ object AdjustInitFingerprint : Fingerprint(
 /**
  * The "suggested people" card composable.
  *
- * Verified against BeReal 3.96.0: Luhi;->a renders the card identified by the
+ * Verified against BeReal 3.97.1: Luhi;->a renders the card identified by the
  * "suggested_people_card" string; it is invoked from the feed-item renderer
  * Lfd8;->a when the item content is of type Lhc8.
  */
@@ -86,7 +89,7 @@ object SuggestedPeopleCardFingerprint : Fingerprint(
  * The LaunchedEffect lambda inside the in-feed video composable (Le5o;->a)
  * that triggers autoplay.
  *
- * Verified against BeReal 3.96.0: Lcvd;->invokeSuspend reads the autoplay
+ * Verified against BeReal 3.97.1: Lcvd;->invokeSuspend reads the autoplay
  * boolean (iget-boolean ..., Lcvd;->t Z) and, for a non-ended player, calls
  * Player;->setPlayWhenReady(Z)V — that invoke is the autoplay trigger.
  * Tap-to-play (Luf;->onClick) uses separate call sites and is untouched.
@@ -101,7 +104,7 @@ object VideoAutoplayFingerprint : Fingerprint(
 /**
  * PairIP/Guardsquare license check entry point.
  *
- * Verified against BeReal 3.96.0: Lcom/pairip/licensecheck/LicenseClient;->checkLicense
+ * Verified against BeReal 3.97.1: Lcom/pairip/licensecheck/LicenseClient;->checkLicense
  * runs from the PairIP Application wrapper's attachBaseContext (before the real
  * app attaches) and from LicenseContentProvider.onCreate. On a re-signed APK the
  * verdict comes back NOT_LICENSED, and processResponse launches LicenseActivity
@@ -121,7 +124,7 @@ object LicenseCheckBypassFingerprint : Fingerprint(
 /**
  * PairIP/Guardsquare license verdict handler.
  *
- * Verified against BeReal 3.96.0: Lcom/pairip/licensecheck/LicenseClient;->processResponse
+ * Verified against BeReal 3.97.1: Lcom/pairip/licensecheck/LicenseClient;->processResponse
  * is the single choke point where a licensing verdict becomes action —
  * response code 1 (NOT_LICENSED) launches the "Get this app from Play" screen
  * via startPaywallActivity. Only reachable through the AIDL callback
@@ -139,7 +142,7 @@ object LicenseVerdictKillFingerprint : Fingerprint(
 /**
  * PairIP/Guardsquare blocking activity ("Get this app from Play" screen).
  *
- * Verified against BeReal 3.96.0: Lcom/pairip/licensecheck/LicenseActivity;->onStart
+ * Verified against BeReal 3.97.1: Lcom/pairip/licensecheck/LicenseActivity;->onStart
  * reads the "activitytype" extra and shows either the paywall or the error
  * dialog. Runs in the main process, exported=false, referenced only from the
  * license flow. The string pins the match (verified: appears only here).
@@ -155,7 +158,7 @@ object LicenseActivityKillFingerprint : Fingerprint(
 /**
  * PairIP/Guardsquare delayed app shutdown.
  *
- * Verified against BeReal 3.96.0: Lcom/pairip/licensecheck/LicenseClient;->scheduleAppShutdown
+ * Verified against BeReal 3.97.1: Lcom/pairip/licensecheck/LicenseClient;->scheduleAppShutdown
  * posts the exitAction runnable (System.exit(0)) on a delay after an
  * unlicensed verdict — the source of the "app has a bug" crash dialog.
  * Only called from the paywall/error paths. Method name verified unique
@@ -169,25 +172,30 @@ object LicenseShutdownKillFingerprint : Fingerprint(
 )
 
 /**
- * PairIP/Guardsquare native library load.
+ * PairIP/Guardsquare (now "Phoenix") native library load.
  *
  * Derived from the 2026-09-24 logcat, not from dex inspection: the device's
- * nativeloader log shows `libpairipcore.so` being loaded out of classes6.dex
- * ~0.4s after launch, and ~0.12s later the process dies with a SIGSEGV whose
- * single-frame backtrace is inside that same .so (deterministic across
- * launches — a deliberate native tamper-response kill, not a Java
- * exception). The Java-layer license patches (v1.3.0/v1.3.1) can never fire
- * because the process dies in native code during library init.
+ * nativeloader log shows the protection .so being loaded ~0.4s after launch,
+ * and ~0.12s later the process dies with a SIGSEGV whose single-frame
+ * backtrace is inside that same .so (deterministic across launches — a
+ * deliberate native tamper-response kill, not a Java exception). The
+ * Java-layer license patches can never fire because the process dies in
+ * native code during library init.
  *
- * The string "pairipcore" must appear at the load call site — either as the
+ * Verified against BeReal 3.97.1: the native library was renamed from
+ * `libpairipcore.so` (3.96.0) to `libPhoenixAndroid.so` (Guardsquare's
+ * "Phoenix" rebrand — confirmed present in the arm64 split's lib/ folder).
+ * The const-string "PhoenixAndroid" appears in classes3.dex.
+ *
+ * The string must appear at the load call site — either as the
  * System.loadLibrary argument or as a substring of a full path passed to
- * System.load(".../libpairipcore.so"). The custom check pins the match to
- * the method that actually invokes System.loadLibrary/System.load, so a
+ * System.load(".../libPhoenixAndroid.so"). The custom check pins the match
+ * to the method that actually invokes System.loadLibrary/System.load, so a
  * stray log string can't false-positive. The patch no-ops only that invoke,
  * leaving the rest of the method (e.g. the rest of <clinit>) intact.
  */
 object PairipNativeLoadFingerprint : Fingerprint(
-    strings = listOf("pairipcore"),
+    strings = listOf("PhoenixAndroid"),
     custom = { method, _ ->
         method.implementation?.instructions?.any { instruction ->
             val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
@@ -195,4 +203,27 @@ object PairipNativeLoadFingerprint : Fingerprint(
                 (reference.name == "loadLibrary" || reference.name == "load")
         } == true
     },
+)
+
+/**
+ * Voodoo ADN SDK master initialization — the single chokepoint for ALL ads.
+ *
+ * Verified against BeReal 3.97.1 with androguard on classes3.dex: this is
+ * the only `initialize` method on
+ * Lio/adn/sdk/internal/domain/management/SdkManager;, with the exact
+ * signature
+ *   initialize(Landroid/content/Context; Lio/adn/sdk/publisher/AdnInitializationCallback;)V
+ * No-oping it means the SDK never initializes: isInitialized() stays false,
+ * no bids are ever requested from bidder.voodoo-adn.com, no fullscreen or
+ * native ad can load, and every mediated network behind ADN (AppLovin MAX,
+ * AdMob, Pangle, InMobi, Moloco, Vungle) stays dead.
+ */
+object AdnSdkManagerInitFingerprint : Fingerprint(
+    definingClass = "Lio/adn/sdk/internal/domain/management/SdkManager;",
+    name = "initialize",
+    returnType = "V",
+    parameters = listOf(
+        "Landroid/content/Context;",
+        "Lio/adn/sdk/publisher/AdnInitializationCallback;",
+    ),
 )

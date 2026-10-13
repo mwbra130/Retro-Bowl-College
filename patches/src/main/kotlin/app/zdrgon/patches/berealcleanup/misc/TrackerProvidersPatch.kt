@@ -7,7 +7,7 @@ import org.w3c.dom.Element
 
 /**
  * Content providers that auto-initialize ad/tracker SDKs at app startup,
- * confirmed present in BeReal 3.96.0's AndroidManifest.xml.
+ * confirmed present in BeReal 3.97.1's AndroidManifest.xml.
  */
 private val TRACKER_PROVIDERS = setOf(
     // Google Mobile Ads
