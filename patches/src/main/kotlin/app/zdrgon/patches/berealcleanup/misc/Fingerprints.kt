@@ -53,23 +53,24 @@ object AppLovinInitFingerprint : Fingerprint(
 )
 
 /**
- * BeReal's Adjust SDK initialization entry point.
+ * Adjust SDK initialization entry point.
  *
- * Verified against BeReal 3.97.1: Lm6a;->a(Ljv4;) constructs AdjustConfig,
- * calls Adjust.initSdk, then registers BeReal's own Adjust lifecycle
- * callbacks (Lsx). The custom check pins the match to the method that
- * actually references AdjustConfig, since the name "a" alone is too generic.
+ * Hooks the SDK's own `Adjust.initSdk(AdjustConfig)` instead of BeReal's
+ * obfuscated wrapper (which was `Lm6a;->a(Ljv4;)` on 3.96.0 — the `Ljv4`
+ * class was renamed on 3.97.1, breaking the old fingerprint). The SDK method
+ * is stable across BeReal versions: BeReal builds the AdjustConfig and calls
+ * this, which delegates to AdjustInstance.initSdk. No-oping it means no
+ * Adjust attribution/tracking session is ever started.
+ *
+ * Verified against BeReal 3.97.1 with androguard: exactly one method
+ * `Lcom/adjust/sdk/Adjust;->initSdk(Lcom/adjust/sdk/AdjustConfig;)V`
+ * exists app-wide.
  */
 object AdjustInitFingerprint : Fingerprint(
-    name = "a",
-    returnType = "Ljava/lang/Object;",
-    parameters = listOf("Ljv4;"),
-    custom = { method, _ ->
-        method.implementation?.instructions?.any { instruction ->
-            (instruction as? ReferenceInstruction)?.reference.toString() ==
-                "Lcom/adjust/sdk/AdjustConfig;"
-        } == true
-    },
+    definingClass = "Lcom/adjust/sdk/Adjust;",
+    name = "initSdk",
+    returnType = "V",
+    parameters = listOf("Lcom/adjust/sdk/AdjustConfig;"),
 )
 
 /**
