@@ -1,3 +1,9 @@
+## [1.9.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.6...v1.9.0) (2026-10-13)
+
+### ✨ New Features
+
+* BeReal 3.97.1 support and Voodoo ADN ad kill-switch ([05b267d](https://github.com/mwbra130/Retro-Bowl-College/commit/05b267da8c35e1d3f277b36579b3547922c43886))
+
 ## [1.8.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.8.5...v1.8.6) (2026-09-25)
 
 ### 🐛 Bug Fixes

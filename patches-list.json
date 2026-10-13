@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.8.6",
+  "version": "1.9.0",
   "patches": [
     {
       "name": "Bypass license check",
@@ -17,7 +17,7 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -69,7 +69,7 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -95,7 +95,33 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Disable Voodoo ADN ads",
+      "description": "No-ops the Voodoo ad SDK init so no ads can load — interstitials, sponsored feed cards, and every mediated network behind it.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.bereal.ft",
+          "name": "BeReal",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#111111",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -121,7 +147,7 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -147,7 +173,7 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -173,7 +199,7 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -199,7 +225,7 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -225,7 +251,7 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -251,7 +277,7 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -277,7 +303,7 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -303,7 +329,7 @@
           "signatures": null,
           "targets": [
             {
-              "version": "3.96.0",
+              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
