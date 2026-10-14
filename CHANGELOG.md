@@ -1,3 +1,9 @@
+## [1.11.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.11.1...v1.11.2) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* isolate Subway Surfers ad hooks so one bad SDK can't crash the patch ([8f29415](https://github.com/mwbra130/Retro-Bowl-College/commit/8f29415851c35ac1433d0b05026367497514d01b))
+
 ## [1.11.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.11.0...v1.11.1) (2026-10-14)
 
 ### 🐛 Bug Fixes
