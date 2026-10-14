@@ -40,56 +40,92 @@ val adSkipPatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_SUBWAYSURF_ADS, COMPATIBILITY_SUBWAYSURF_ADS_ALT)
 
     execute {
+        fun tryHook(label: String, block: () -> Unit) {
+            try {
+                block()
+            } catch (e: Exception) {
+                // Skip SDKs whose show() has no patchable code (abstract, etc.).
+                // println("AdSkip: skipping $label: ${e.message}")
+            }
+        }
+
         // ===== Unity Ads (legacy API) =====
-        // show(Activity, String) — no listener: just return.
-        UnityAdsShowFingerprint.method?.addInstructions(0, "return-void")
-
-        // show(Activity, String, UnityAdsShowOptions) — no listener: just return.
-        UnityAdsShowOptionsFingerprint.method?.addInstructions(0, "return-void")
-
-        // show(Activity, String, IUnityAdsShowListener) — fire COMPLETED.
-        UnityAdsShowListenerFingerprint.method?.addInstructions(
-            0,
-            """
-                sget-object v0, $COMPLETION_STATE->COMPLETED:$COMPLETION_STATE
-                invoke-interface {p2, p1, v0}, $SHOW_LISTENER->onUnityAdsShowComplete(Ljava/lang/String;$COMPLETION_STATE)V
-                return-void
-            """.trimIndent(),
-        )
-
-        // show(Activity, String, UnityAdsShowOptions, IUnityAdsShowListener) — fire COMPLETED.
-        UnityAdsShowOptionsListenerFingerprint.method?.addInstructions(
-            0,
-            """
-                sget-object v0, $COMPLETION_STATE->COMPLETED:$COMPLETION_STATE
-                invoke-interface {p3, p1, v0}, $SHOW_LISTENER->onUnityAdsShowComplete(Ljava/lang/String;$COMPLETION_STATE)V
-                return-void
-            """.trimIndent(),
-        )
+        tryHook("UnityAds.show/2") {
+            UnityAdsShowFingerprint.method?.addInstructions(0, "return-void")
+        }
+        tryHook("UnityAds.show/3-options") {
+            UnityAdsShowOptionsFingerprint.method?.addInstructions(0, "return-void")
+        }
+        tryHook("UnityAds.show/3-listener") {
+            UnityAdsShowListenerFingerprint.method?.addInstructions(
+                0,
+                """
+                    sget-object v0, $COMPLETION_STATE->COMPLETED:$COMPLETION_STATE
+                    invoke-interface {p2, p1, v0}, $SHOW_LISTENER->onUnityAdsShowComplete(Ljava/lang/String;$COMPLETION_STATE)V
+                    return-void
+                """.trimIndent(),
+            )
+        }
+        tryHook("UnityAds.show/4") {
+            UnityAdsShowOptionsListenerFingerprint.method?.addInstructions(
+                0,
+                """
+                    sget-object v0, $COMPLETION_STATE->COMPLETED:$COMPLETION_STATE
+                    invoke-interface {p3, p1, v0}, $SHOW_LISTENER->onUnityAdsShowComplete(Ljava/lang/String;$COMPLETION_STATE)V
+                    return-void
+                """.trimIndent(),
+            )
+        }
 
         // ===== AdMob =====
-        AdMobInterstitialFingerprint.method?.addInstructions(0, "return-void")
-        AdMobRewardedFingerprint.method?.addInstructions(0, "return-void")
-        AdMobRewardedInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        tryHook("AdMob.Interstitial") {
+            AdMobInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        }
+        tryHook("AdMob.Rewarded") {
+            AdMobRewardedFingerprint.method?.addInstructions(0, "return-void")
+        }
+        tryHook("AdMob.RewardedInterstitial") {
+            AdMobRewardedInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        }
 
         // ===== Unity Ads (new API) =====
-        UnityNewInterstitialFingerprint.method?.addInstructions(0, "return-void")
-        UnityNewRewardedFingerprint.method?.addInstructions(0, "return-void")
+        tryHook("UnityNew.Interstitial") {
+            UnityNewInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        }
+        tryHook("UnityNew.Rewarded") {
+            UnityNewRewardedFingerprint.method?.addInstructions(0, "return-void")
+        }
 
         // ===== Facebook Ads (show() returns boolean) =====
-        FacebookInterstitialFingerprint.method?.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
-        FacebookRewardedInterstitialFingerprint.method?.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
+        tryHook("Facebook.Interstitial") {
+            FacebookInterstitialFingerprint.method?.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
+        }
+        tryHook("Facebook.RewardedInterstitial") {
+            FacebookRewardedInterstitialFingerprint.method?.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
+        }
 
         // ===== Pangle =====
-        PangleInterstitialFingerprint.method?.addInstructions(0, "return-void")
-        PangleRewardedFingerprint.method?.addInstructions(0, "return-void")
+        tryHook("Pangle.Interstitial") {
+            PangleInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        }
+        tryHook("Pangle.Rewarded") {
+            PangleRewardedFingerprint.method?.addInstructions(0, "return-void")
+        }
 
         // ===== ironSource =====
-        IronSourceInterstitialFingerprint.method?.addInstructions(0, "return-void")
-        IronSourceRewardedVideoFingerprint.method?.addInstructions(0, "return-void")
+        tryHook("IronSource.Interstitial") {
+            IronSourceInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        }
+        tryHook("IronSource.RewardedVideo") {
+            IronSourceRewardedVideoFingerprint.method?.addInstructions(0, "return-void")
+        }
 
         // ===== Unity ironSource wrapper =====
-        UnityIronSourceInterstitialFingerprint.method?.addInstructions(0, "return-void")
-        UnityIronSourceRewardedFingerprint.method?.addInstructions(0, "return-void")
+        tryHook("UnityIronSource.Interstitial") {
+            UnityIronSourceInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        }
+        tryHook("UnityIronSource.Rewarded") {
+            UnityIronSourceRewardedFingerprint.method?.addInstructions(0, "return-void")
+        }
     }
 }
