@@ -27,6 +27,9 @@ private const val SHOW_LISTENER = "Lcom/unity3d/ads/IUnityAdsShowListener;"
  *
  * Verified against Subway Surfers 3.70.0 (com.kiloo.subwaysurf /
  * com.kiloo.subwaysurfers).
+ *
+ * Note: fingerprints use safe calls (?.) so if an SDK isn't present in
+ * a variant, that hook is skipped instead of crashing the patch.
  */
 @Suppress("unused")
 val adSkipPatch = bytecodePatch(
@@ -39,13 +42,13 @@ val adSkipPatch = bytecodePatch(
     execute {
         // ===== Unity Ads (legacy API) =====
         // show(Activity, String) — no listener: just return.
-        UnityAdsShowFingerprint.method.addInstructions(0, "return-void")
+        UnityAdsShowFingerprint.method?.addInstructions(0, "return-void")
 
         // show(Activity, String, UnityAdsShowOptions) — no listener: just return.
-        UnityAdsShowOptionsFingerprint.method.addInstructions(0, "return-void")
+        UnityAdsShowOptionsFingerprint.method?.addInstructions(0, "return-void")
 
         // show(Activity, String, IUnityAdsShowListener) — fire COMPLETED.
-        UnityAdsShowListenerFingerprint.method.addInstructions(
+        UnityAdsShowListenerFingerprint.method?.addInstructions(
             0,
             """
                 sget-object v0, $COMPLETION_STATE->COMPLETED:$COMPLETION_STATE
@@ -55,7 +58,7 @@ val adSkipPatch = bytecodePatch(
         )
 
         // show(Activity, String, UnityAdsShowOptions, IUnityAdsShowListener) — fire COMPLETED.
-        UnityAdsShowOptionsListenerFingerprint.method.addInstructions(
+        UnityAdsShowOptionsListenerFingerprint.method?.addInstructions(
             0,
             """
                 sget-object v0, $COMPLETION_STATE->COMPLETED:$COMPLETION_STATE
@@ -65,28 +68,28 @@ val adSkipPatch = bytecodePatch(
         )
 
         // ===== AdMob =====
-        AdMobInterstitialFingerprint.method.addInstructions(0, "return-void")
-        AdMobRewardedFingerprint.method.addInstructions(0, "return-void")
-        AdMobRewardedInterstitialFingerprint.method.addInstructions(0, "return-void")
+        AdMobInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        AdMobRewardedFingerprint.method?.addInstructions(0, "return-void")
+        AdMobRewardedInterstitialFingerprint.method?.addInstructions(0, "return-void")
 
         // ===== Unity Ads (new API) =====
-        UnityNewInterstitialFingerprint.method.addInstructions(0, "return-void")
-        UnityNewRewardedFingerprint.method.addInstructions(0, "return-void")
+        UnityNewInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        UnityNewRewardedFingerprint.method?.addInstructions(0, "return-void")
 
         // ===== Facebook Ads (show() returns boolean) =====
-        FacebookInterstitialFingerprint.method.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
-        FacebookRewardedInterstitialFingerprint.method.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
+        FacebookInterstitialFingerprint.method?.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
+        FacebookRewardedInterstitialFingerprint.method?.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
 
         // ===== Pangle =====
-        PangleInterstitialFingerprint.method.addInstructions(0, "return-void")
-        PangleRewardedFingerprint.method.addInstructions(0, "return-void")
+        PangleInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        PangleRewardedFingerprint.method?.addInstructions(0, "return-void")
 
         // ===== ironSource =====
-        IronSourceInterstitialFingerprint.method.addInstructions(0, "return-void")
-        IronSourceRewardedVideoFingerprint.method.addInstructions(0, "return-void")
+        IronSourceInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        IronSourceRewardedVideoFingerprint.method?.addInstructions(0, "return-void")
 
         // ===== Unity ironSource wrapper =====
-        UnityIronSourceInterstitialFingerprint.method.addInstructions(0, "return-void")
-        UnityIronSourceRewardedFingerprint.method.addInstructions(0, "return-void")
+        UnityIronSourceInterstitialFingerprint.method?.addInstructions(0, "return-void")
+        UnityIronSourceRewardedFingerprint.method?.addInstructions(0, "return-void")
     }
 }
