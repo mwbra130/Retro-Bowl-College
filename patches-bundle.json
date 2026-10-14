@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-14T01:50:22",
-  "description": "## [1.10.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.10.0...v1.10.1) (2026-10-14)\n\n### 🐛 Bug Fixes\n\n* support com.kiloo.subwaysurf package variant for Subway Surfers ad skip ([71f53d5](https://github.com/mwbra130/Retro-Bowl-College/commit/71f53d514a81db5115292f778d2ec9338d5e4091))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.10.1/patches-1.10.1.mpp",
+  "created_at": "2026-10-14T02:16:26",
+  "description": "## [1.11.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.10.1...v1.11.0) (2026-10-14)\n\n### ✨ New Features\n\n* block all ad SDKs in Subway Surfers ([5dd9c1c](https://github.com/mwbra130/Retro-Bowl-College/commit/5dd9c1cd658aed76a781eaaabccca55ab27dc8de))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.11.0/patches-1.11.0.mpp",
   "signature_download_url": "",
-  "version": "1.10.1"
+  "version": "1.11.0"
 }

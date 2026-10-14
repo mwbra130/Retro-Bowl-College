@@ -1,3 +1,9 @@
+## [1.11.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.10.1...v1.11.0) (2026-10-14)
+
+### ✨ New Features
+
+* block all ad SDKs in Subway Surfers ([5dd9c1c](https://github.com/mwbra130/Retro-Bowl-College/commit/5dd9c1cd658aed76a781eaaabccca55ab27dc8de))
+
 ## [1.10.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.10.0...v1.10.1) (2026-10-14)
 
 ### 🐛 Bug Fixes

@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.10.1",
+  "version": "1.11.0",
   "patches": [
     {
       "name": "Bypass license check",
@@ -342,7 +342,7 @@
     },
     {
       "name": "Skip Unity Ads",
-      "description": "Ads pass straight through — rewarded ads grant their reward instantly, no ad ever plays.",
+      "description": "Blocks all ad SDKs — no ad ever displays. Legacy Unity rewarded ads still grant their reward.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [
