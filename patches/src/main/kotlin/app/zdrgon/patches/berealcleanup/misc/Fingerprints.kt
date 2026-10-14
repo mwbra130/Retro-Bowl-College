@@ -243,3 +243,36 @@ object AdnSdkManagerInitFingerprint : Fingerprint(
         "Lio/adn/sdk/publisher/AdnInitializationCallback;",
     ),
 )
+
+/**
+ * Voodoo ADN fullscreen (interstitial) ad factory.
+ *
+ * Returns null when the SDK never initialized, so BeReal's periodic ad
+ * refresh takes its normal "no ad available" path instead of crashing.
+ */
+object AdnFullscreenAdFingerprint : Fingerprint(
+    definingClass = "Lio/adn/sdk/internal/domain/management/SdkManager;",
+    name = "getFullscreenAdInstance",
+    returnType = "Lio/adn/sdk/publisher/AdnFullscreenAd;",
+    parameters = listOf(
+        "Lio/adn/sdk/publisher/AdnAdPlacement;",
+        "Landroid/app/Activity;",
+        "Lio/adn/sdk/publisher/AdnFullscreenAdListener;",
+    ),
+)
+
+/**
+ * Voodoo ADN native (sponsored feed card) ad factory.
+ *
+ * Same rationale as [AdnFullscreenAdFingerprint].
+ */
+object AdnNativeAdFingerprint : Fingerprint(
+    definingClass = "Lio/adn/sdk/internal/domain/management/SdkManager;",
+    name = "getNativeAdInstance",
+    returnType = "Lio/adn/sdk/publisher/AdnNativeAd;",
+    parameters = listOf(
+        "Landroid/app/Activity;",
+        "Lio/adn/sdk/publisher/AdnNativeAdListener;",
+        "Lio/adn/sdk/publisher/inappbrowser/AdnInAppBrowserLauncher;",
+    ),
+)

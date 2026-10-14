@@ -10,27 +10,25 @@ import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CL
  * Voodoo's ADN (`io.adn.sdk`) is BeReal's primary ad stack: interstitials via
  * AdnFullscreenAd/FullscreenAdActivity, sponsored feed cards via
  * AdnNativeAdRenderer, and all mediated networks behind it (AppLovin MAX,
- * AdMob, Pangle, InMobi, Moloco, Vungle). Everything only loads after
- * SdkManager.initialize() runs — returning void at index 0 means the SDK
- * never initializes: isInitialized() stays false, no bids are ever requested,
- * no ad surface can load.
+ * AdMob, Pangle, InMobi, Moloco, Vungle).
+ *
+ * The init hook does NOT just return-void: BeReal's ad code runs on a
+ * periodic refresh timer, and a never-firing AdnInitializationCallback
+ * leaves it in a broken state that crashes (observed: ~5s crash loop on
+ * 3.97.1, gone in airplane mode). Instead, initialize() immediately fires
+ * the callback with AdnInitializationStatus.Failure — BeReal then takes its
+ * normal "ads unavailable" path, which is proven crash-safe because it is
+ * the same path taken with no network.
+ *
+ * Defense in depth: the ad factory getters (getFullscreenAdInstance,
+ * getNativeAdInstance) are also forced to return null, so any direct call
+ * bypassing init gets a clean null instead of an IllegalStateException
+ * from the uninitialized SDK.
  *
  * Complements (does not replace) the other ad patches: AdSdkInitKillPatch
  * stops BeReal's direct AppLovin init, TrackerProvidersPatch strips the
  * auto-init content providers, and SponsoredPostsFilterPatch removes
  * first-party sponsored rows from the feed cache.
- *
- * Runtime verification checklist:
- *  1. Patch, build, install the APK.
- *  2. `adb logcat | grep AdnSdk` — expect NO init/config lines from
- *     io.adn.sdk.internal.common.logger.Logger.
- *  3. Exercise every known ad surface: cold start, post a BeReal, scroll
- *     the feed — confirm zero ads and zero crashes.
- *  4. Known risk: BeReal code waiting on AdnInitializationCallback never
- *     fires. If anything hangs or crashes, the narrower fallback is to
- *     keep initialize() but hook the getters instead:
- *     getFullscreenAdInstance() -> return null (interstitials only),
- *     getNativeAdInstance() -> return null (sponsored feed cards only).
  */
 @Suppress("unused")
 val disableAdnSdkPatch = bytecodePatch(
@@ -42,8 +40,36 @@ val disableAdnSdkPatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)
 
     execute {
-        // initialize(Context, AdnInitializationCallback)V — return-void at
-        // index 0 touches no registers; both parameters are simply ignored.
-        AdnSdkManagerInitFingerprint.method.addInstructions(0, "return-void")
+        // initialize(Context, AdnInitializationCallback)V — fire the callback
+        // with Failure instead of nopping. BeReal handles init failure
+        // gracefully (same as airplane mode); a never-firing callback does
+        // not. p0=this, p1=Context, p2=callback; v0 is free to clobber
+        // since we return immediately after.
+        AdnSdkManagerInitFingerprint.method.addInstructions(
+            0,
+            """
+                sget-object v0, Lio/adn/sdk/publisher/AdnInitializationStatus;->Failure:Lio/adn/sdk/publisher/AdnInitializationStatus;
+                invoke-interface {p2, v0}, Lio/adn/sdk/publisher/AdnInitializationCallback;->onCompletion(Lio/adn/sdk/publisher/AdnInitializationStatus;)V
+                return-void
+            """.trimIndent(),
+        )
+
+        // getFullscreenAdInstance(...)AdnFullscreenAd; — return null.
+        AdnFullscreenAdFingerprint.method.addInstructions(
+            0,
+            """
+                const/4 v0, 0x0
+                return-object v0
+            """.trimIndent(),
+        )
+
+        // getNativeAdInstance(...)AdnNativeAd; — return null.
+        AdnNativeAdFingerprint.method.addInstructions(
+            0,
+            """
+                const/4 v0, 0x0
+                return-object v0
+            """.trimIndent(),
+        )
     }
 }
