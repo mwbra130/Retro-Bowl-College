@@ -1,3 +1,9 @@
+## [1.9.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.9.1...v1.9.2) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* make video autoplay fingerprint behavioral instead of obfuscated-name based ([ece83ff](https://github.com/mwbra130/Retro-Bowl-College/commit/ece83fff632e5187c1e3bae0a12c81ee543a194d))
+
 ## [1.9.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.9.0...v1.9.1) (2026-10-13)
 
 ### 🐛 Bug Fixes
