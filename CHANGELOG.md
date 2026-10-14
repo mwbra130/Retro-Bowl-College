@@ -1,3 +1,9 @@
+## [1.9.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.9.2...v1.9.3) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* report ADN init failure instead of nopping, null the ad getters ([e57d70d](https://github.com/mwbra130/Retro-Bowl-College/commit/e57d70d531311590aa4ca7c7b725370808d615cf))
+
 ## [1.9.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.9.1...v1.9.2) (2026-10-14)
 
 ### 🐛 Bug Fixes
