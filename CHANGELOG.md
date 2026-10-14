@@ -1,3 +1,9 @@
+## [1.12.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.12.0...v1.12.1) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* only block interstitials, leave rewarded ads working ([f8f42bc](https://github.com/mwbra130/Retro-Bowl-College/commit/f8f42bc9c6754b73b45e2e508a83b65d280e3274))
+
 ## [1.12.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.11.2...v1.12.0) (2026-10-14)
 
 ### ✨ New Features
