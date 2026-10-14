@@ -3,6 +3,7 @@ package app.zdrgon.patches.subwaysurfads.misc
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.patch.bytecodePatch
 import app.zdrgon.patches.subwaysurfads.shared.Constants.COMPATIBILITY_SUBWAYSURF_ADS
+import app.zdrgon.patches.subwaysurfads.shared.Constants.COMPATIBILITY_SUBWAYSURF_ADS_ALT
 
 // Escaped $ for the inner enum class name.
 private const val COMPLETION_STATE =
@@ -35,7 +36,7 @@ val adSkipPatch = bytecodePatch(
     description = "Ads pass straight through — rewarded ads grant their reward instantly, no ad ever plays.",
     default = true,
 ) {
-    compatibleWith(COMPATIBILITY_SUBWAYSURF_ADS)
+    compatibleWith(COMPATIBILITY_SUBWAYSURF_ADS, COMPATIBILITY_SUBWAYSURF_ADS_ALT)
 
     execute {
         // show(Activity, String) — no listener: just return.
