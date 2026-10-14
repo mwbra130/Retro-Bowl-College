@@ -1,3 +1,9 @@
+## [1.11.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.11.0...v1.11.1) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* make Subway Surfers ad skip resilient to missing SDKs ([46fa175](https://github.com/mwbra130/Retro-Bowl-College/commit/46fa1753b893db3f77fa1589c3f3511d6aa305fb))
+
 ## [1.11.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.10.1...v1.11.0) (2026-10-14)
 
 ### ✨ New Features
