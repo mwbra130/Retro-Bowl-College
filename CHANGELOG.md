@@ -1,3 +1,9 @@
+## [1.12.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.11.2...v1.12.0) (2026-10-14)
+
+### ✨ New Features
+
+* grant rewards for AdMob and Unity new-API rewarded ads ([1e00fd9](https://github.com/mwbra130/Retro-Bowl-College/commit/1e00fd9c3b6e81553dc6598b24de79f4219f808e))
+
 ## [1.11.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.11.1...v1.11.2) (2026-10-14)
 
 ### 🐛 Bug Fixes
