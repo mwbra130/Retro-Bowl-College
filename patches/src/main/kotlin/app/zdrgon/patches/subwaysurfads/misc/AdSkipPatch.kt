@@ -46,7 +46,25 @@ val adSkipPatch = bytecodePatch(
             }
         }
 
-        // ===== kpadplayer FullScreenAdManager (central chokepoint) =====
+        // ===== KPAdPlayerActivity — THE chokepoint =====
+        // Every ad in Subway Surfers displays through this Activity.
+        // Hook onCreate(): set RESULT_OK (game treats it as "ad completed",
+        // granting rewarded-ad benefits) then finish() immediately.
+        // No ad UI ever appears.
+        // onCreate(Bundle): p0=this, p1=savedInstanceState.
+        tryHook("KPAdPlayerActivity.onCreate") {
+            KPAdPlayerActivityOnCreateFingerprint.method?.addInstructions(
+                0,
+                """
+                    const/4 v0, -0x1
+                    invoke-virtual {p0, v0}, Lcom/kpadplayer/sdk/ads/fullscreen/KPAdPlayerActivity;->setResult(I)V
+                    invoke-virtual {p0}, Lcom/kpadplayer/sdk/ads/fullscreen/KPAdPlayerActivity;->finish()V
+                    return-void
+                """.trimIndent(),
+            )
+        }
+
+        // ===== kpadplayer FullScreenAdManager (backup) =====
         // Capture the rewarded listener when it's set (let original code run too).
         tryHook("Kpad.SetRewardListener") {
             FullScreenAdManagerSetRewardListenerFingerprint.method?.addInstructions(
