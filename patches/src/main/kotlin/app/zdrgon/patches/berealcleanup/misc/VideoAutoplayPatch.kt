@@ -13,18 +13,20 @@ private const val SET_PLAY_WHEN_READY =
 /**
  * Disables video autoplay in BeReal's feeds.
  *
- * The in-feed video composable (Le5o;->a) builds a media3 ExoPlayer and runs a
- * LaunchedEffect lambda (Lcvd;->invokeSuspend) on the autoplay flag; for a
- * non-ended player that effect rewinds to 0 and calls
- * Player.setPlayWhenReady(autoplay) — the autoplay trigger. This patch nops
- * that single invoke, so videos load paused on their thumbnail.
+ * The in-feed video composable builds a media3 ExoPlayer and runs a
+ * LaunchedEffect lambda on the autoplay flag; for a non-ended player that
+ * effect rewinds to 0 and calls Player.setPlayWhenReady(autoplay) — the
+ * autoplay trigger. This patch nops those invokes, so videos load paused on
+ * their thumbnail. The fingerprint finds the effect behaviorally (it is the
+ * only invokeSuspend calling getPlaybackState/seekTo/setPlayWhenReady), so
+ * it survives BeReal's per-release obfuscation renames.
  *
- * Deliberately surgical: the autoplay boolean register is NOT forced to
- * false, because the same register also feeds the video overlay UI effect
- * (Lzu1). Nopping only the invoke leaves all other logic untouched.
+ * Deliberately surgical: the autoplay boolean is NOT forced to false,
+ * because it may feed other UI logic. Nopping only the invokes leaves all
+ * other logic untouched.
  *
- * Tap-to-play keeps working — it goes through separate call sites
- * (Luf;->onClick), not this effect.
+ * Tap-to-play keeps working — it goes through a separate onClick call site,
+ * not this effect.
  *
  * Scope: this disables autoplay everywhere the video composable is used —
  * the Discovery feed, the friends feed, and profiles — not just Discovery.
@@ -48,7 +50,7 @@ val videoAutoplayPatch = bytecodePatch(
         }
 
         if (triggerIndices.isEmpty()) {
-            throw PatchException("setPlayWhenReady trigger not found in Lcvd;->invokeSuspend")
+            throw PatchException("setPlayWhenReady trigger not found in the autoplay invokeSuspend")
         }
 
         // The trigger is a void invoke: replacing with nop has no

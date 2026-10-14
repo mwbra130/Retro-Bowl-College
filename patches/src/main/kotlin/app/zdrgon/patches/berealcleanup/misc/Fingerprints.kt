@@ -87,19 +87,34 @@ object SuggestedPeopleCardFingerprint : Fingerprint(
 )
 
 /**
- * The LaunchedEffect lambda inside the in-feed video composable (Le5o;->a)
- * that triggers autoplay.
+ * The LaunchedEffect lambda inside the in-feed video composable that
+ * triggers autoplay.
  *
- * Verified against BeReal 3.97.1: Lcvd;->invokeSuspend reads the autoplay
- * boolean (iget-boolean ..., Lcvd;->t Z) and, for a non-ended player, calls
- * Player;->setPlayWhenReady(Z)V — that invoke is the autoplay trigger.
- * Tap-to-play (Luf;->onClick) uses separate call sites and is untouched.
+ * Behavioral fingerprint — no obfuscated class names are hardcoded because
+ * they are reassigned every BeReal release (on 3.96.0 this was
+ * `Lcvd;->invokeSuspend`; on 3.97.1 `Lcvd` is an unrelated class and the
+ * same logic lives in `Llqd;->invokeSuspend`). It matches the single
+ * app-wide `invokeSuspend` coroutine lambda that reads the player playback
+ * state, rewinds via seekTo, and calls setPlayWhenReady.
+ *
+ * Uniqueness verified against BeReal 3.97.1 with androguard: the only other
+ * methods calling this triple (getPlaybackState/seekTo/setPlayWhenReady)
+ * are tap-to-play (`Lwe;->onClick`) and two non-coroutine helpers — none is
+ * an `invokeSuspend`, so this matches exactly one method. Tap-to-play is
+ * untouched.
  */
 object VideoAutoplayFingerprint : Fingerprint(
-    definingClass = "Lcvd;",
     name = "invokeSuspend",
     returnType = "Ljava/lang/Object;",
     parameters = listOf("Ljava/lang/Object;"),
+    custom = { method, _ ->
+        val refs = method.implementation?.instructions?.mapNotNull { instruction ->
+            (instruction as? ReferenceInstruction)?.reference?.toString()
+        }.orEmpty()
+        refs.contains("Landroidx/media3/common/Player;->getPlaybackState()I") &&
+            refs.contains("Landroidx/media3/common/Player;->seekTo(J)V") &&
+            refs.contains("Landroidx/media3/common/Player;->setPlayWhenReady(Z)V")
+    },
 )
 
 /**
