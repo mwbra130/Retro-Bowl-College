@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-14T03:09:46",
-  "description": "## [1.12.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.12.0...v1.12.1) (2026-10-14)\n\n### 🐛 Bug Fixes\n\n* only block interstitials, leave rewarded ads working ([f8f42bc](https://github.com/mwbra130/Retro-Bowl-College/commit/f8f42bc9c6754b73b45e2e508a83b65d280e3274))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.12.1/patches-1.12.1.mpp",
+  "created_at": "2026-10-14T03:12:29",
+  "description": "## [1.13.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.12.1...v1.13.0) (2026-10-14)\n\n### ✨ New Features\n\n* hook kpadplayer FullScreenAdManager for rewards without ads ([7bfca28](https://github.com/mwbra130/Retro-Bowl-College/commit/7bfca28c3bbdd32a9252999c4a24cc641797a837))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.13.0/patches-1.13.0.mpp",
   "signature_download_url": "",
-  "version": "1.12.1"
+  "version": "1.13.0"
 }
