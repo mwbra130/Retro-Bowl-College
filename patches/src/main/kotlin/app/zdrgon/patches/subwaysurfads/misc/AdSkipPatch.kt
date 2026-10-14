@@ -11,19 +11,17 @@ private const val COMPLETION_STATE =
 private const val SHOW_LISTENER = "Lcom/unity3d/ads/IUnityAdsShowListener;"
 
 /**
- * Blocks all ad SDKs in Subway Surfers.
+ * Blocks interstitial ads in Subway Surfers, leaves rewarded ads working.
  *
- * Hooks the show() methods across every ad SDK bundled in 3.70.0:
- * - Unity Ads (legacy UnityAds.show API): rewarded ads fire
- *   onUnityAdsShowComplete(COMPLETED) so the game grants the reward;
- *   plain interstitials just return.
- * - Unity Ads (new InterstitialAd/RewardedAd API), AdMob, Facebook,
- *   Pangle, ironSource, Unity ironSource wrapper: show() returns
- *   immediately without displaying anything.
+ * Hooks the show() methods for interstitial (fullscreen) ads across every
+ * ad SDK bundled in 3.70.0: Unity Ads (legacy + new API), AdMob, Facebook,
+ * Pangle, ironSource, Unity ironSource wrapper. Interstitial show() calls
+ * return immediately without displaying anything.
  *
- * Result: no ad ever displays. Rewarded-ad buttons that use the legacy
- * Unity Ads API still grant their reward; other rewarded placements
- * will simply do nothing (no ad, no reward).
+ * Rewarded ads are intentionally NOT hooked — faking reward callbacks
+ * across 7 SDKs proved unreliable (the game expects specific callback
+ * sequences). Rewarded ads play normally and grant their reward; only
+ * the forced interstitials between runs are killed.
  *
  * Verified against Subway Surfers 3.70.0 (com.kiloo.subwaysurf /
  * com.kiloo.subwaysurfers).
@@ -34,7 +32,7 @@ private const val SHOW_LISTENER = "Lcom/unity3d/ads/IUnityAdsShowListener;"
 @Suppress("unused")
 val adSkipPatch = bytecodePatch(
     name = "Skip Unity Ads",
-    description = "Blocks all ad SDKs — no ad ever displays. Legacy Unity rewarded ads still grant their reward.",
+    description = "Blocks forced interstitial ads — no fullscreen ad between runs. Rewarded ads still work normally and grant their reward.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_SUBWAYSURF_ADS, COMPATIBILITY_SUBWAYSURF_ADS_ALT)
@@ -45,105 +43,55 @@ val adSkipPatch = bytecodePatch(
                 block()
             } catch (e: Exception) {
                 // Skip SDKs whose show() has no patchable code (abstract, etc.).
-                // println("AdSkip: skipping $label: ${e.message}")
             }
         }
 
-        // ===== Unity Ads (legacy API) =====
+        // ===== Unity Ads (legacy API) — interstitials only =====
+        // show(Activity, String) — no listener, used for interstitials.
         tryHook("UnityAds.show/2") {
             UnityAdsShowFingerprint.method?.addInstructions(0, "return-void")
         }
+        // show(Activity, String, UnityAdsShowOptions) — no listener, interstitials.
         tryHook("UnityAds.show/3-options") {
             UnityAdsShowOptionsFingerprint.method?.addInstructions(0, "return-void")
         }
-        tryHook("UnityAds.show/3-listener") {
-            UnityAdsShowListenerFingerprint.method?.addInstructions(
-                0,
-                """
-                    sget-object v0, $COMPLETION_STATE->COMPLETED:$COMPLETION_STATE
-                    invoke-interface {p2, p1, v0}, $SHOW_LISTENER->onUnityAdsShowComplete(Ljava/lang/String;$COMPLETION_STATE)V
-                    return-void
-                """.trimIndent(),
-            )
-        }
-        tryHook("UnityAds.show/4") {
-            UnityAdsShowOptionsListenerFingerprint.method?.addInstructions(
-                0,
-                """
-                    sget-object v0, $COMPLETION_STATE->COMPLETED:$COMPLETION_STATE
-                    invoke-interface {p3, p1, v0}, $SHOW_LISTENER->onUnityAdsShowComplete(Ljava/lang/String;$COMPLETION_STATE)V
-                    return-void
-                """.trimIndent(),
-            )
-        }
+        // NOTE: show() overloads WITH IUnityAdsShowListener are rewarded ads —
+        // intentionally not hooked so rewards work normally.
 
-        // ===== AdMob =====
+        // ===== AdMob — interstitials only =====
         tryHook("AdMob.Interstitial") {
             AdMobInterstitialFingerprint.method?.addInstructions(0, "return-void")
         }
-        // RewardedAd.show is instance: p0=this, p1=Activity, p2=listener.
-        // Fire onUserEarnedReward(null) — the game uses the callback as a
-        // completion signal; the reward amount is game-determined.
-        tryHook("AdMob.Rewarded") {
-            AdMobRewardedFingerprint.method?.addInstructions(
-                0,
-                """
-                    const/4 v0, 0x0
-                    invoke-interface {p2, v0}, Lcom/google/android/gms/ads/OnUserEarnedRewardListener;->onUserEarnedReward(Lcom/google/android/gms/ads/rewarded/RewardItem;)V
-                    return-void
-                """.trimIndent(),
-            )
-        }
-        tryHook("AdMob.RewardedInterstitial") {
-            AdMobRewardedInterstitialFingerprint.method?.addInstructions(0, "return-void")
-        }
+        // NOTE: AdMob Rewarded/RewardedInterstitial not hooked — rewards work.
 
-        // ===== Unity Ads (new API) =====
+        // ===== Unity Ads (new API) — interstitials only =====
         tryHook("UnityNew.Interstitial") {
             UnityNewInterstitialFingerprint.method?.addInstructions(0, "return-void")
         }
-        // RewardedAd.show is instance: p0=this(RewardedAd), p1=Activity,
-        // p2=ShowConfiguration, p3=listener. Fire onRewarded(this).
-        tryHook("UnityNew.Rewarded") {
-            UnityNewRewardedFingerprint.method?.addInstructions(
-                0,
-                """
-                    invoke-interface {p3, p0}, Lcom/unity3d/ads/RewardedShowListener;->onRewarded(Lcom/unity3d/ads/RewardedAd;)V
-                    return-void
-                """.trimIndent(),
-            )
-        }
+        // NOTE: Unity new RewardedAd not hooked — rewards work.
 
-        // ===== Facebook Ads (show() returns boolean) =====
+        // ===== Facebook Ads (show() returns boolean) — interstitials =====
         tryHook("Facebook.Interstitial") {
             FacebookInterstitialFingerprint.method?.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
         }
-        tryHook("Facebook.RewardedInterstitial") {
-            FacebookRewardedInterstitialFingerprint.method?.addInstructions(0, "const/4 v0, 0x0\nreturn v0")
-        }
+        // NOTE: Facebook RewardedInterstitial not hooked.
 
-        // ===== Pangle =====
+        // ===== Pangle — interstitials only =====
         tryHook("Pangle.Interstitial") {
             PangleInterstitialFingerprint.method?.addInstructions(0, "return-void")
         }
-        tryHook("Pangle.Rewarded") {
-            PangleRewardedFingerprint.method?.addInstructions(0, "return-void")
-        }
+        // NOTE: Pangle Rewarded not hooked.
 
-        // ===== ironSource =====
+        // ===== ironSource — interstitials only =====
         tryHook("IronSource.Interstitial") {
             IronSourceInterstitialFingerprint.method?.addInstructions(0, "return-void")
         }
-        tryHook("IronSource.RewardedVideo") {
-            IronSourceRewardedVideoFingerprint.method?.addInstructions(0, "return-void")
-        }
+        // NOTE: ironSource RewardedVideo not hooked.
 
-        // ===== Unity ironSource wrapper =====
+        // ===== Unity ironSource wrapper — interstitials only =====
         tryHook("UnityIronSource.Interstitial") {
             UnityIronSourceInterstitialFingerprint.method?.addInstructions(0, "return-void")
         }
-        tryHook("UnityIronSource.Rewarded") {
-            UnityIronSourceRewardedFingerprint.method?.addInstructions(0, "return-void")
-        }
+        // NOTE: Unity ironSource Rewarded not hooked.
     }
 }
