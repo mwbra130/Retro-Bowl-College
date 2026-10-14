@@ -1,3 +1,9 @@
+## [1.10.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.10.0...v1.10.1) (2026-10-14)
+
+### 🐛 Bug Fixes
+
+* support com.kiloo.subwaysurf package variant for Subway Surfers ad skip ([71f53d5](https://github.com/mwbra130/Retro-Bowl-College/commit/71f53d514a81db5115292f778d2ec9338d5e4091))
+
 ## [1.10.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.9.3...v1.10.0) (2026-10-14)
 
 ### ✨ New Features
