@@ -1,3 +1,9 @@
+## [1.10.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.9.3...v1.10.0) (2026-10-14)
+
+### ✨ New Features
+
+* add Subway Surfers Unity Ads skip patch ([bf55aa3](https://github.com/mwbra130/Retro-Bowl-College/commit/bf55aa3c237a7b1eeaebd98bb7e8f7024763dfec))
+
 ## [1.9.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.9.2...v1.9.3) (2026-10-14)
 
 ### 🐛 Bug Fixes

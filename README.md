@@ -30,7 +30,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.9.3](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.9.3)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;15 patches total
+> **[v1.10.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.10.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
 <details open>
 <summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;12 patches</summary>
 <br>
@@ -69,6 +69,21 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 | Patch | Description | Options |
 |----------|----------------|-----------|
 | [Complete all levels](#complete-all-levels) | Marks every official level 100% complete with all secret coins. |  |
+
+</details>
+
+<details open>
+<summary>Subway Surfers&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Supported versions:**
+
+| 3.70.0 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Skip Unity Ads](#skip-unity-ads) | Ads pass straight through — rewarded ads grant their reward instantly, no ad ever plays. |  |
 
 </details>
 
