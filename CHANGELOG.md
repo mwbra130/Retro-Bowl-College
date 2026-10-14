@@ -1,3 +1,9 @@
+## [1.14.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.13.0...v1.14.0) (2026-10-14)
+
+### ✨ New Features
+
+* block ads at KPAdPlayerActivity, the single ad display chokepoint ([dc6287d](https://github.com/mwbra130/Retro-Bowl-College/commit/dc6287dbd7da2d6fa35449e04f39580854fa86cb))
+
 ## [1.13.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.12.1...v1.13.0) (2026-10-14)
 
 ### ✨ New Features
