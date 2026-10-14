@@ -81,8 +81,18 @@ val adSkipPatch = bytecodePatch(
         tryHook("AdMob.Interstitial") {
             AdMobInterstitialFingerprint.method?.addInstructions(0, "return-void")
         }
+        // RewardedAd.show is instance: p0=this, p1=Activity, p2=listener.
+        // Fire onUserEarnedReward(null) — the game uses the callback as a
+        // completion signal; the reward amount is game-determined.
         tryHook("AdMob.Rewarded") {
-            AdMobRewardedFingerprint.method?.addInstructions(0, "return-void")
+            AdMobRewardedFingerprint.method?.addInstructions(
+                0,
+                """
+                    const/4 v0, 0x0
+                    invoke-interface {p2, v0}, Lcom/google/android/gms/ads/OnUserEarnedRewardListener;->onUserEarnedReward(Lcom/google/android/gms/ads/rewarded/RewardItem;)V
+                    return-void
+                """.trimIndent(),
+            )
         }
         tryHook("AdMob.RewardedInterstitial") {
             AdMobRewardedInterstitialFingerprint.method?.addInstructions(0, "return-void")
@@ -92,8 +102,16 @@ val adSkipPatch = bytecodePatch(
         tryHook("UnityNew.Interstitial") {
             UnityNewInterstitialFingerprint.method?.addInstructions(0, "return-void")
         }
+        // RewardedAd.show is instance: p0=this(RewardedAd), p1=Activity,
+        // p2=ShowConfiguration, p3=listener. Fire onRewarded(this).
         tryHook("UnityNew.Rewarded") {
-            UnityNewRewardedFingerprint.method?.addInstructions(0, "return-void")
+            UnityNewRewardedFingerprint.method?.addInstructions(
+                0,
+                """
+                    invoke-interface {p3, p0}, Lcom/unity3d/ads/RewardedShowListener;->onRewarded(Lcom/unity3d/ads/RewardedAd;)V
+                    return-void
+                """.trimIndent(),
+            )
         }
 
         // ===== Facebook Ads (show() returns boolean) =====
