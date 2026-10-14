@@ -46,6 +46,32 @@ val adSkipPatch = bytecodePatch(
             }
         }
 
+        // ===== kpadplayer FullScreenAdManager (central chokepoint) =====
+        // Capture the rewarded listener when it's set (let original code run too).
+        tryHook("Kpad.SetRewardListener") {
+            FullScreenAdManagerSetRewardListenerFingerprint.method?.addInstructions(
+                0,
+                """
+                    sput-object p1, Lapp/zdrgon/patches/subwaysurfads/misc/RewardListenerStorage;->listener:Ljava/lang/Object;
+                """.trimIndent(),
+            )
+        }
+        // Hook show(): fire onRewardReceived() if listener exists, then return
+        // without showing the ad. This blocks the ad UI and grants the reward.
+        tryHook("Kpad.Show") {
+            FullScreenAdManagerShowFingerprint.method?.addInstructions(
+                0,
+                """
+                    sget-object v0, Lapp/zdrgon/patches/subwaysurfads/misc/RewardListenerStorage;->listener:Ljava/lang/Object;
+                    if-eqz v0, :no_reward
+                    check-cast v0, Lcom/kpadplayer/sdk/ads/fullscreen/FullScreenAdManager${'$'}IOnInterstitialRewardedEventListener;
+                    invoke-interface {v0}, Lcom/kpadplayer/sdk/ads/fullscreen/FullScreenAdManager${'$'}IOnInterstitialRewardedEventListener;->onRewardReceived()V
+                    :no_reward
+                    return-void
+                """.trimIndent(),
+            )
+        }
+
         // ===== Unity Ads (legacy API) — interstitials only =====
         // show(Activity, String) — no listener, used for interstitials.
         tryHook("UnityAds.show/2") {
