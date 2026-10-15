@@ -1,3 +1,18 @@
+## [1.20.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.19.0...v1.20.0) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* add billing client compileOnly dep for extension ([27f1932](https://github.com/mwbra130/Retro-Bowl-College/commit/27f1932b7c8bf79318c138abc263a3e3d052ebc2))
+* make BillingFaker fully reflective, drop billing compile dep ([eb0cfd7](https://github.com/mwbra130/Retro-Bowl-College/commit/eb0cfd766a1fec18f3c898f8667339eb1f2a0a44))
+* remove duplicate extendWith from FreePurchasePatch ([4b7fa71](https://github.com/mwbra130/Retro-Bowl-College/commit/4b7fa719f682ce9433de43f5936f92d266b97306))
+* retrigger release after tag cleanup ([1761658](https://github.com/mwbra130/Retro-Bowl-College/commit/1761658abd6c5c665a572279ac8c6f0a122876db))
+* temporarily remove FreePurchasePatch to restore working build ([f325558](https://github.com/mwbra130/Retro-Bowl-College/commit/f3255580abc37088e5a5eb5e485eccf2c7d230b5))
+* use methodOrNull pattern for billing fingerprints ([27a3641](https://github.com/mwbra130/Retro-Bowl-College/commit/27a36415c26254879c5a189c9b3e0b45fa557026))
+
+### ✨ New Features
+
+* add free IAP bypass for Smashy Road 2 ([5c5b76d](https://github.com/mwbra130/Retro-Bowl-College/commit/5c5b76dee0cd0e3556652034e31744936546e68c))
+
 ## [1.19.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.18.0...v1.19.0) (2026-10-15)
 
 ### 🐛 Bug Fixes

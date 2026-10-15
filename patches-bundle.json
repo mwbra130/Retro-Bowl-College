@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T14:54:52",
-  "description": "## [1.19.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.18.0...v1.19.0) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* Smashy Road 2 patcher runs once, preserves progress on relaunch ([14e40e6](https://github.com/mwbra130/Retro-Bowl-College/commit/14e40e68d5aa38cda6c28546099b332c3ea94489))\n\n### ✨ New Features\n\n* add Smashy Road 2 v1.45 support ([aa72037](https://github.com/mwbra130/Retro-Bowl-College/commit/aa72037e22441758d809e9e646cfa0d8daa83cdb))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.19.0/patches-1.19.0.mpp",
+  "created_at": "2026-10-15T15:35:46",
+  "description": "## [1.20.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.19.0...v1.20.0) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* add billing client compileOnly dep for extension ([27f1932](https://github.com/mwbra130/Retro-Bowl-College/commit/27f1932b7c8bf79318c138abc263a3e3d052ebc2))\n* make BillingFaker fully reflective, drop billing compile dep ([eb0cfd7](https://github.com/mwbra130/Retro-Bowl-College/commit/eb0cfd766a1fec18f3c898f8667339eb1f2a0a44))\n* remove duplicate extendWith from FreePurchasePatch ([4b7fa71](https://github.com/mwbra130/Retro-Bowl-College/commit/4b7fa719f682ce9433de43f5936f92d266b97306))\n* retrigger release after tag cleanup ([1761658](https://github.com/mwbra130/Retro-Bowl-College/commit/1761658abd6c5c665a572279ac8c6f0a122876db))\n* temporarily remove FreePurchasePatch to restore working build ([f325558](https://github.com/mwbra130/Retro-Bowl-College/commit/f3255580abc37088e5a5eb5e485eccf2c7d230b5))\n* use methodOrNull pattern for billing fingerprints ([27a3641](https://github.com/mwbra130/Retro-Bowl-College/commit/27a36415c26254879c5a189c9b3e0b45fa557026))\n\n### ✨ New Features\n\n* add free IAP bypass for Smashy Road 2 ([5c5b76d](https://github.com/mwbra130/Retro-Bowl-College/commit/5c5b76dee0cd0e3556652034e31744936546e68c))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.20.0/patches-1.20.0.mpp",
   "signature_download_url": "",
-  "version": "1.19.0"
+  "version": "1.20.0"
 }
