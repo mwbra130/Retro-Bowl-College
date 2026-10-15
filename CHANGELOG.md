@@ -1,3 +1,9 @@
+## [1.16.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.15.0...v1.16.0) (2026-10-15)
+
+### ✨ New Features
+
+* block BeReal ads at show() and activity layers ([c5a44d3](https://github.com/mwbra130/Retro-Bowl-College/commit/c5a44d3b2aa40dbbbf974a165732df6165ddbf0b))
+
 ## [1.15.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.3...v1.15.0) (2026-10-15)
 
 ### 🐛 Bug Fixes
