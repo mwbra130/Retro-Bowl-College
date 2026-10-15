@@ -61,15 +61,32 @@ private val CHECK_PERSON_PATTERN = byteArrayOf(
     0xA6.toByte(), 0xF0.toByte(), 0xFF.toByte(), 0x97.toByte(),
 )
 
+// buyBtn() - called when tapping a locked car's buy button
+// Patch: bl unlockAll; ret (unlock all vehicles instead of IAP)
+// buyBtn at RVA 0x16A08BC, unlockAll at 0x169EA54
+private val BUY_BTN_PATTERN = byteArrayOf(
+    0x71, 0x71, 0x5B.toByte(), 0x94.toByte(),
+    0x60, 0x62, 0x40, 0xF9.toByte(),
+    0x80.toByte(), 0x0A, 0x00, 0xB4.toByte(),
+    0xA1.toByte(), 0x02, 0x40, 0xF9.toByte(),
+)
+
+// bl #0x169ea54 (unlockAll); ret
+private val BUY_BTN_PATCHED = byteArrayOf(
+    0x66, 0xF8.toByte(), 0xFF.toByte(), 0x97.toByte(),
+    0xC0.toByte(), 0x03, 0x5F, 0xD6.toByte(),
+)
+
 private val FORCE_UNLOCKED = byteArrayOf(
     0x21, 0x00, 0x80.toByte(), 0x52,
 )
 
 @Suppress("unused")
 val redMachineUnlockPatch = rawResourcePatch(
-    name = "Unlock All Slot Machines",
-    description = "Unlocks all slot machines (1/2/3) without Google Play purchase. " +
-        "Patches the native ownership checks to always grant the machines at startup.",
+    name = "Unlock All (Machines + Vehicles)",
+    description = "Unlocks all slot machines and all vehicles. " +
+        "Machines: patches native ownership checks. " +
+        "Vehicles: buy button now calls unlockAll() instead of Google Play.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_SMASHY_ROAD_2)
@@ -115,6 +132,12 @@ val redMachineUnlockPatch = rawResourcePatch(
             for (j in NOP.indices) {
                 bytes[patchOffset + j] = NOP[j]
             }
+        }
+
+        // Patch 4: Vehicles - buyBtn() calls unlockAll() instead of IAP
+        val buyBtnOffset = findUnique(BUY_BTN_PATTERN, "buyBtn")
+        for (j in BUY_BTN_PATCHED.indices) {
+            bytes[buyBtnOffset + j] = BUY_BTN_PATCHED[j]
         }
 
         // Vehicle/character patches DISABLED - not effective
