@@ -114,6 +114,14 @@ public final class CoinPatcher {
             Pattern.CASE_INSENSITIVE);
 
     /**
+     * Lottery machine keys (best effort): match any pref with "lottery" in
+     * the name. Set to 1 (owned/unlocked).
+     */
+    private static final Pattern LOTTERY_KEY = Pattern.compile(
+            "^.*lottery.*$",
+            Pattern.CASE_INSENSITIVE);
+
+    /**
      * Mission/quest completion flags — REAL format discovered from a live save
      * (2026-09-25). The game does NOT use questDone*; it uses:
      *   mainQuestProgress<N> = 1 (1 = completed)
@@ -146,6 +154,11 @@ public final class CoinPatcher {
      * checkRareVeh10-20, checkLegendaryVeh0-8, checkMysteryVeh0-9,
      * checkCommonChar20-29, checkRareChar10-13, checkEpicChar5,
      * checkLegendaryChar0-5.
+     *
+     * RE-ENABLED 2026-10-15 per user request: unlock all characters/vehicles
+     * without spinning. Note: this may reset legitimate slot-machine win
+     * tracking (the reason it was disabled in v1.8.3), but the user explicitly
+     * wants everything unlocked.
      */
     private static final Pattern VEHICLE_UNLOCK_KEY = Pattern.compile(
             "^check(Common|Rare|Epic|Legendary|Mystery)(Veh|Char)\\d+$");
@@ -565,11 +578,32 @@ public final class CoinPatcher {
                 r.keys.add(key + "=NEW->" + DURABILITY_LEVEL);
             }
         }
-        // Vehicle/character unlocks: DISABLED in v1.8.3. Setting check* keys
-        // for all vehicles interfered with the game's legitimate win tracking
-        // (user's slot-machine wins were deleted on reopen). The user keeps
-        // 9,999,999 cash to win vehicles/characters legitimately. We still
-        // remove explicit lock* keys (above) which doesn't interfere.
+        // Vehicle/character unlocks: RE-ENABLED 2026-10-15 per user request.
+        // Unlock all vehicles and characters without spinning.
+        // Format: check<Rarity>Veh<N> and check<Rarity>Char<N>, 1 = unlocked.
+        for (String rarity : new String[]{"Common", "Rare", "Epic", "Legendary", "Mystery"}) {
+            for (int i = 0; i <= MAX_VEHICLE_INDEX; i++) {
+                String key = "check" + rarity + "Veh" + i;
+                if (!xml.contains("name=\"" + key + "\"")) {
+                    missing.append("    <int name=\"").append(key)
+                            .append("\" value=\"1\" />\n");
+                    r.changes++;
+                    r.vehicleChanges++;
+                }
+            }
+            for (int i = 0; i <= MAX_CHAR_INDEX; i++) {
+                String key = "check" + rarity + "Char" + i;
+                if (!xml.contains("name=\"" + key + "\"")) {
+                    missing.append("    <int name=\"").append(key)
+                            .append("\" value=\"1\" />\n");
+                    r.changes++;
+                    r.vehicleChanges++;
+                }
+            }
+        }
+        if (r.vehicleChanges > 0) {
+            r.keys.add("vehicles/chars=NEW->" + r.vehicleChanges + " unlocked");
+        }
         if (missing.length() == 0) return xml;
         return xml.substring(0, mapEnd) + missing + xml.substring(mapEnd);
     }
@@ -591,11 +625,16 @@ public final class CoinPatcher {
                 // Remove explicit vehicle locks (0 = unlocked).
                 newValue = 0L;
                 kind = "unlock";
+            } else if (VEHICLE_UNLOCK_KEY.matcher(name).matches()) {
+                // Unlock vehicle/character (1 = unlocked).
+                newValue = 1L;
+                kind = "vehicle";
             } else if (MAIN_QUEST_CLAIMED_KEY.matcher(name).matches()) {
                 // Quest reward claimed = quest complete.
                 newValue = 1L;
                 kind = "quest";
-            } else if (isUnlockKey(name) || RED_SLOT_KEY.matcher(name).matches()) {
+            } else if (isUnlockKey(name) || RED_SLOT_KEY.matcher(name).matches()
+                    || LOTTERY_KEY.matcher(name).matches()) {
                 newValue = 1L;
                 kind = "unlock";
             } else if (MAIN_QUEST_KEY.matcher(name).matches()) {
