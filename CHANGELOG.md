@@ -1,3 +1,13 @@
+## [1.19.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.18.0...v1.19.0) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* Smashy Road 2 patcher runs once, preserves progress on relaunch ([14e40e6](https://github.com/mwbra130/Retro-Bowl-College/commit/14e40e68d5aa38cda6c28546099b332c3ea94489))
+
+### ✨ New Features
+
+* add Smashy Road 2 v1.45 support ([aa72037](https://github.com/mwbra130/Retro-Bowl-College/commit/aa72037e22441758d809e9e646cfa0d8daa83cdb))
+
 ## [1.18.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.17.1...v1.18.0) (2026-10-15)
 
 ### ✨ New Features
