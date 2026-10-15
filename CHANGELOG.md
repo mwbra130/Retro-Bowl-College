@@ -1,3 +1,9 @@
+## [1.25.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.25.0...v1.25.1) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* revert vehicle patch (caused black UI) ([3949211](https://github.com/mwbra130/Retro-Bowl-College/commit/3949211bb4c62b37007d3329582bdab2d0e1118b))
+
 ## [1.25.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.24.2...v1.25.0) (2026-10-15)
 
 ### ✨ New Features
