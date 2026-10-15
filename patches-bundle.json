@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T16:43:22",
-  "description": "## [1.21.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.2...v1.21.3) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* remove test patches that break build ([8138ae4](https://github.com/mwbra130/Retro-Bowl-College/commit/8138ae437be27eb895c243634317333a06778fe6))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.21.3/patches-1.21.3.mpp",
+  "created_at": "2026-10-15T17:08:21",
+  "description": "## [1.21.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.3...v1.21.4) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* remove SharedPreferences test patches ([e0c4eb7](https://github.com/mwbra130/Retro-Bowl-College/commit/e0c4eb7db1269b0445b6b41e267a49093e92bf7f))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.21.4/patches-1.21.4.mpp",
   "signature_download_url": "",
-  "version": "1.21.3"
+  "version": "1.21.4"
 }

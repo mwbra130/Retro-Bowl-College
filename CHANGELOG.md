@@ -1,3 +1,9 @@
+## [1.21.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.3...v1.21.4) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* remove SharedPreferences test patches ([e0c4eb7](https://github.com/mwbra130/Retro-Bowl-College/commit/e0c4eb7db1269b0445b6b41e267a49093e92bf7f))
+
 ## [1.21.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.2...v1.21.3) (2026-10-15)
 
 ### 🐛 Bug Fixes
