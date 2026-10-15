@@ -1,3 +1,9 @@
+## [1.21.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.4...v1.21.5) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* bump patcher to 1.23.0, force vehicle re-unlock ([faf5367](https://github.com/mwbra130/Retro-Bowl-College/commit/faf536797dd08566b3bb11c93dab32f0a8117ff3))
+
 ## [1.21.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.3...v1.21.4) (2026-10-15)
 
 ### 🐛 Bug Fixes
