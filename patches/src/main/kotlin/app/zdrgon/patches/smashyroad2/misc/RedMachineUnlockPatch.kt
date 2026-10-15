@@ -85,10 +85,9 @@ private val FORCE_UNLOCKED = byteArrayOf(
 
 @Suppress("unused")
 val redMachineUnlockPatch = rawResourcePatch(
-    name = "Unlock All (Machines + Vehicles)",
-    description = "Unlocks all slot machines and all vehicles. " +
-        "Machines: patches native ownership checks. " +
-        "Vehicles: buy button now calls unlockAll() instead of Google Play.",
+    name = "Unlock All Slot Machines",
+    description = "Unlocks all slot machines (1/2/3) without Google Play purchase. " +
+        "Patches the native ownership checks to always grant the machines.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_SMASHY_ROAD_2)
@@ -136,11 +135,16 @@ val redMachineUnlockPatch = rawResourcePatch(
             }
         }
 
-        // Patch 4: Vehicles - buyBtn() calls unlockAll() instead of IAP
+        // Patch 4: Vehicles - DISABLED
+        // The buyBtn->unlockAll patch was not effective.
+        // buyBtn and unlockAll are in characterSelectGui, not the vehicle UI.
+        // Vehicle unlock requires further research.
+        /*
         val buyBtnOffset = findUnique(BUY_BTN_PATTERN, "buyBtn")
         for (j in BUY_BTN_PATCHED.indices) {
             bytes[buyBtnOffset + j] = BUY_BTN_PATCHED[j]
         }
+        */
 
         // Vehicle/character patches DISABLED - not effective
         // Research ongoing for proper unlock method
