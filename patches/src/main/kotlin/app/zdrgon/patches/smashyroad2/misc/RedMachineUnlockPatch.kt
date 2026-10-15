@@ -6,23 +6,15 @@ import app.zdrgon.patches.smashyroad2.shared.Constants.COMPATIBILITY_SMASHY_ROAD
 /**
  * Unlocks all slot machines (machine1/2/3) without Google Play.
  *
- * Patches the ownership check in slotManager to always grant the machines.
- * At startup, the game sets hasMachine1/2/3=0, queries Google Play, and
- * only sets them to 1 if the purchase is found. This patch NOPs the
- * conditional branch so the "owned" path always executes.
+ * The game has three separate ownership checks, one per machine.
+ * Each sets hasMachineN=0, queries Google Play, and only sets it to 1
+ * if the purchase is found. This patch NOPs all three conditional
+ * branches so the "owned" path always executes.
  *
- * Target: b.ne at RVA 0x162D450 (v1.54)
- * Uses a 24-byte unique pattern (verified: 1 occurrence in 52MB binary).
- *
- * Pattern (24 bytes at file offset 0x16292E8):
- *   0F 03 5D 94 1F 04 00 71 61 00 00 54 28 00 80 52
- *   68 42 0E 39 80 02 40 F9
- *                                  ^^^^^^^^^^^
- *                                  b.ne -> nop here (offset 8)
- *
- * Patched: byte at offset 8..11 changes from 61 00 00 54 to 1F 20 03 D5
+ * All patterns verified unique (1 occurrence each in 52MB binary).
+ * Aborts safely if any pattern count isn't exactly 1.
  */
-private val MACHINE_CHECK_PATTERN = byteArrayOf(
+private val MACHINE1_PATTERN = byteArrayOf(
     0x0F, 0x03, 0x5D.toByte(), 0x94.toByte(),
     0x1F, 0x04, 0x00, 0x71,
     0x61, 0x00, 0x00, 0x54,
@@ -31,14 +23,32 @@ private val MACHINE_CHECK_PATTERN = byteArrayOf(
     0x80.toByte(), 0x02, 0x40, 0xF9.toByte(),
 )
 
-// NOP instruction (ARM64)
+private val MACHINE2_PATTERN = byteArrayOf(
+    0x06, 0x03, 0x5D.toByte(), 0x94.toByte(),
+    0x1F, 0x04, 0x00, 0x71,
+    0x61, 0x00, 0x00, 0x54,
+    0x28, 0x00, 0x80.toByte(), 0x52,
+    0x68, 0x46, 0x0E, 0x39,
+    0x80.toByte(), 0x02, 0x40, 0xF9.toByte(),
+)
+
+private val MACHINE3_PATTERN = byteArrayOf(
+    0xFF.toByte(), 0x02, 0x5D.toByte(), 0x94.toByte(),
+    0x1F, 0x04, 0x00, 0x71,
+    0x61, 0x00, 0x00, 0x54,
+    0x28, 0x00, 0x80.toByte(), 0x52,
+    0x68, 0x4A, 0x0E, 0x39,
+    0xF7.toByte(), 0xD7.toByte(), 0x00, 0xD0.toByte(),
+)
+
+// NOP instruction (ARM64) - replaces b.ne at offset 8 in each pattern
 private val NOP = byteArrayOf(0x1F, 0x20, 0x03, 0xD5.toByte())
 
 @Suppress("unused")
 val redMachineUnlockPatch = rawResourcePatch(
     name = "Slot Machine Unlock",
     description = "Unlocks all slot machines (1/2/3) without Google Play purchase. " +
-        "Patches the native ownership check to always grant the machines at startup.",
+        "Patches the native ownership checks to always grant the machines at startup.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_SMASHY_ROAD_2)
@@ -47,34 +57,45 @@ val redMachineUnlockPatch = rawResourcePatch(
         val soFile = get("lib/arm64-v8a/libil2cpp.so", true)
         val bytes = soFile.readBytes()
 
-        // Find the unique 24-byte pattern
-        var foundOffset = -1
-        var matchCount = 0
-        for (i in 0..bytes.size - MACHINE_CHECK_PATTERN.size) {
-            var match = true
-            for (j in MACHINE_CHECK_PATTERN.indices) {
-                if (bytes[i + j] != MACHINE_CHECK_PATTERN[j]) {
-                    match = false
-                    break
+        fun findUnique(pattern: ByteArray, name: String): Int {
+            var foundOffset = -1
+            var count = 0
+            for (i in 0..bytes.size - pattern.size) {
+                var match = true
+                for (j in pattern.indices) {
+                    if (bytes[i + j] != pattern[j]) {
+                        match = false
+                        break
+                    }
+                }
+                if (match) {
+                    count++
+                    if (foundOffset == -1) foundOffset = i
                 }
             }
-            if (match) {
-                matchCount++
-                if (foundOffset == -1) foundOffset = i
+            if (count != 1) {
+                throw Exception(
+                    "SlotMachineUnlock: Expected 1 match for $name, found $count. " +
+                        "APK version may not be supported. Aborting safely."
+                )
             }
+            return foundOffset
         }
 
-        if (matchCount != 1) {
-            throw Exception(
-                "SlotMachineUnlock: Expected 1 pattern match, found $matchCount. " +
-                    "APK version may not be supported (expected v1.54). Aborting safely."
-            )
-        }
+        // Patch all three machine checks
+        val patterns = listOf(
+            MACHINE1_PATTERN to "machine1",
+            MACHINE2_PATTERN to "machine2",
+            MACHINE3_PATTERN to "machine3",
+        )
 
-        // Replace the b.ne (at offset 8 in pattern) with NOP
-        val patchOffset = foundOffset + 8
-        for (j in NOP.indices) {
-            bytes[patchOffset + j] = NOP[j]
+        for ((pattern, name) in patterns) {
+            val offset = findUnique(pattern, name)
+            // Replace b.ne (at offset 8) with NOP
+            val patchOffset = offset + 8
+            for (j in NOP.indices) {
+                bytes[patchOffset + j] = NOP[j]
+            }
         }
 
         soFile.writeBytes(bytes)
