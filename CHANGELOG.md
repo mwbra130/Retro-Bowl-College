@@ -1,3 +1,9 @@
+## [1.22.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.5...v1.22.0) (2026-10-15)
+
+### ✨ New Features
+
+* add Red Slot Machine Unlock native patch ([8a8870a](https://github.com/mwbra130/Retro-Bowl-College/commit/8a8870af6748a8ad5f55268d56a3253b0ba36d13))
+
 ## [1.21.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.4...v1.21.5) (2026-10-15)
 
 ### 🐛 Bug Fixes

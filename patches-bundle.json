@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T17:43:13",
-  "description": "## [1.21.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.4...v1.21.5) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* bump patcher to 1.23.0, force vehicle re-unlock ([faf5367](https://github.com/mwbra130/Retro-Bowl-College/commit/faf536797dd08566b3bb11c93dab32f0a8117ff3))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.21.5/patches-1.21.5.mpp",
+  "created_at": "2026-10-15T19:27:14",
+  "description": "## [1.22.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.5...v1.22.0) (2026-10-15)\n\n### ✨ New Features\n\n* add Red Slot Machine Unlock native patch ([8a8870a](https://github.com/mwbra130/Retro-Bowl-College/commit/8a8870af6748a8ad5f55268d56a3253b0ba36d13))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.22.0/patches-1.22.0.mpp",
   "signature_download_url": "",
-  "version": "1.21.5"
+  "version": "1.22.0"
 }

@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.21.5",
+  "version": "1.22.0",
   "patches": [
     {
       "name": "Block ads",
@@ -70,6 +70,39 @@
           "targets": [
             {
               "version": "3.97.1",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Red Slot Machine Unlock",
+      "description": "Unlocks the red slot machine (machine3) without Google Play purchase. Patches the native purchase method to grant the machine instantly.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.rkgames.basisgame",
+          "name": "Smashy Road 2",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#FF8C00",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "1.54",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            },
+            {
+              "version": "1.45",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
