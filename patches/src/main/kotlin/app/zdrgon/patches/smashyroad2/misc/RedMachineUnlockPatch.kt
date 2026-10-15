@@ -70,13 +70,13 @@ private val BUY_BTN_PATTERN = byteArrayOf(
     0xA1.toByte(), 0x02, 0x40, 0xF9.toByte(),
 )
 
-// unlockAll() - unlocks all vehicles
-// Pattern: 16 bytes unique (for calculating bl target)
-private val UNLOCK_ALL_PATTERN = byteArrayOf(
-    0x56, 0xD4.toByte(), 0x00, 0xD0.toByte(),
-    0xD6.toByte(), 0x26, 0x47, 0xF9.toByte(),
-    0xC1.toByte(), 0x02, 0x40, 0xF9.toByte(),
-    0xA1.toByte(), 0xAC.toByte(), 0x05, 0x94.toByte(),
+// bl unlockAll (0x169EA54 from 0x16A08BC); ret; nop; nop (16 bytes)
+// Verified: bl #0x169ea54 = 66 F8 FF 97
+private val BUY_BTN_PATCHED = byteArrayOf(
+    0x66, 0xF8.toByte(), 0xFF.toByte(), 0x97.toByte(),
+    0xC0.toByte(), 0x03, 0x5F, 0xD6.toByte(),
+    0x1F, 0x20, 0x03, 0xD5.toByte(),
+    0x1F, 0x20, 0x03, 0xD5.toByte(),
 )
 
 private val FORCE_UNLOCKED = byteArrayOf(
@@ -137,36 +137,9 @@ val redMachineUnlockPatch = rawResourcePatch(
         }
 
         // Patch 4: Vehicles - buyBtn() calls unlockAll() instead of IAP
-        // Find both patterns, calculate dynamic bl offset
         val buyBtnOffset = findUnique(BUY_BTN_PATTERN, "buyBtn")
-        val unlockAllOffset = findUnique(UNLOCK_ALL_PATTERN, "unlockAll")
-        
-        // Calculate bl offset: (target - pc) / 4
-        // bl is at buyBtnOffset, target is unlockAllOffset
-        // Note: file offsets, but bl uses relative addressing which is same
-        val blOffset = (unlockAllOffset - buyBtnOffset) / 4
-        if (blOffset < -0x2000000 || blOffset > 0x1FFFFFF) {
-            throw Exception("UnlockAll: bl offset out of range: $blOffset")
-        }
-        // bl encoding: 0x94000000 | (offset & 0x3FFFFFF)
-        val blInstr = 0x94000000 or (blOffset and 0x3FFFFFF)
-        val blBytes = byteArrayOf(
-            (blInstr and 0xFF).toByte(),
-            ((blInstr shr 8) and 0xFF).toByte(),
-            ((blInstr shr 16) and 0xFF).toByte(),
-            ((blInstr shr 24) and 0xFF).toByte(),
-        )
-        // ret; nop; nop (12 bytes to fill 16 total)
-        val retNops = byteArrayOf(
-            0xC0.toByte(), 0x03, 0x5F, 0xD6.toByte(),
-            0x1F, 0x20, 0x03, 0xD5.toByte(),
-            0x1F, 0x20, 0x03, 0xD5.toByte(),
-        )
-        for (j in blBytes.indices) {
-            bytes[buyBtnOffset + j] = blBytes[j]
-        }
-        for (j in retNops.indices) {
-            bytes[buyBtnOffset + 4 + j] = retNops[j]
+        for (j in BUY_BTN_PATCHED.indices) {
+            bytes[buyBtnOffset + j] = BUY_BTN_PATCHED[j]
         }
 
         // Vehicle/character patches DISABLED - not effective
