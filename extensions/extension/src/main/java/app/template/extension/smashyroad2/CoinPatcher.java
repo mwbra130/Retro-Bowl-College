@@ -206,6 +206,12 @@ public final class CoinPatcher {
     private static final String PATCHED_MARKER = "SR2_PATCHED.txt";
     private static final String DEBUG_DIR = "sr2_debug";
     private static final String LOG_FILE = "sr2_patch_log.txt";
+    /**
+     * Patcher version. Bump this whenever the patch logic changes (new keys,
+     * new unlocks, bug fixes). If the version in SR2_PATCHED.txt doesn't match,
+     * the patch re-runs automatically — no manual marker deletion needed.
+     */
+    private static final String PATCHER_VERSION = "1.22.0";
 
     /** Skip huge downloads/caches when backing up files/. */
     private static final long BACKUP_FILE_SIZE_CAP = 10L * 1024 * 1024;
@@ -249,12 +255,17 @@ public final class CoinPatcher {
             return;
         }
 
-        // 1b. Patch-once: if we've already patched, leave the save alone so
-        // the user's progress is preserved across relaunches. Delete
-        // SR2_PATCHED.txt to force a re-patch.
+        // 1b. Patch-once: if we've already patched with THIS version, leave the
+        // save alone so the user's progress is preserved across relaunches.
+        // If the patcher version changed, re-run automatically. Delete
+        // SR2_PATCHED.txt to force a re-patch manually.
         File patchedMarker = new File(extDir, PATCHED_MARKER);
         if (patchedMarker.exists()) {
-            return;
+            String markedVersion = readMarkerVersion(patchedMarker);
+            if (PATCHER_VERSION.equals(markedVersion)) {
+                return;
+            }
+            // Version changed — re-patch with new logic.
         }
 
         File prefsDir = new File(dataDir, "shared_prefs");
@@ -329,7 +340,7 @@ public final class CoinPatcher {
             // Delete SR2_PATCHED.txt to force a re-patch.
             try {
                 writeAll(new File(extDir, PATCHED_MARKER),
-                        ("patched " + System.currentTimeMillis()).getBytes(StandardCharsets.UTF_8));
+                        (PATCHER_VERSION + " " + System.currentTimeMillis()).getBytes(StandardCharsets.UTF_8));
             } catch (Throwable ignored) {
             }
         }
@@ -773,6 +784,26 @@ public final class CoinPatcher {
         } finally {
             in.close();
         }
+    }
+
+    /**
+     * Reads the patcher version from SR2_PATCHED.txt.
+     * Returns null if the file is missing, unreadable, or has no version
+     * (old format "patched <timestamp>").
+     */
+    private static String readMarkerVersion(File marker) {
+        try {
+            String content = readText(marker).trim();
+            // New format: "<version> <timestamp>"
+            // Old format: "patched <timestamp>"
+            int space = content.indexOf(' ');
+            if (space > 0) {
+                String ver = content.substring(0, space);
+                if (!"patched".equals(ver)) return ver;
+            }
+        } catch (Throwable ignored) {
+        }
+        return null;
     }
 
     private static void writeAll(File f, byte[] bytes) throws Exception {
