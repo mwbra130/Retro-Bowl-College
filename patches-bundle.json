@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T20:43:38",
-  "description": "## [1.22.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.3...v1.22.4) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* unlock all three slot machines (was only machine1) ([4334640](https://github.com/mwbra130/Retro-Bowl-College/commit/4334640f3e4ab56ff30f24116349e5b41c3ffaf0))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.22.4/patches-1.22.4.mpp",
+  "created_at": "2026-10-15T20:47:27",
+  "description": "## [1.23.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.4...v1.23.0) (2026-10-15)\n\n### ✨ New Features\n\n* unlock all vehicles and characters via native patch ([cfb49f2](https://github.com/mwbra130/Retro-Bowl-College/commit/cfb49f248524787e4b093706092d669ed8acbfed))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.23.0/patches-1.23.0.mpp",
   "signature_download_url": "",
-  "version": "1.22.4"
+  "version": "1.23.0"
 }

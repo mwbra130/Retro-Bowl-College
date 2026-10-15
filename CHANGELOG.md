@@ -1,3 +1,9 @@
+## [1.23.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.4...v1.23.0) (2026-10-15)
+
+### ✨ New Features
+
+* unlock all vehicles and characters via native patch ([cfb49f2](https://github.com/mwbra130/Retro-Bowl-College/commit/cfb49f248524787e4b093706092d669ed8acbfed))
+
 ## [1.22.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.3...v1.22.4) (2026-10-15)
 
 ### 🐛 Bug Fixes

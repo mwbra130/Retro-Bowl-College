@@ -30,7 +30,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.22.4](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.22.4)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;9 patches total
+> **[v1.23.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.23.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;9 patches total
 <details open>
 <summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
@@ -104,8 +104,8 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
-| [Slot Machine Unlock](#slot-machine-unlock) | Unlocks all slot machines (1/2/3) without Google Play purchase. Patches the native ownership checks to always grant the machines at startup. |  |
 | [Unlimited coins & unlocks](#unlimited-coins-unlocks) | Sets cash to 9,999,999, every upgrade card to 10,000, unlocks ALL vehicles and characters (no spinning needed), unlocks the Pro Pass, slot/lottery machines, completes all main + side missions, and maxes vehicle durability. Backs up your save before touching it. To revert: place an empty file named SR2_RESTORE.txt in Android/data/com.rkgames.basisgame/files/ and open the game. |  |
+| [Unlock All (Machines + Vehicles + Characters)](#unlock-all-machines-vehicles-characters) | Unlocks all slot machines, all vehicles, and all characters. Patches native ownership checks to always grant unlocks. |  |
 
 </details>
 

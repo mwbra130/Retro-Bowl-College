@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.22.4",
+  "version": "1.23.0",
   "patches": [
     {
       "name": "Block ads",
@@ -150,8 +150,8 @@
       "options": []
     },
     {
-      "name": "Slot Machine Unlock",
-      "description": "Unlocks all slot machines (1/2/3) without Google Play purchase. Patches the native ownership checks to always grant the machines at startup.",
+      "name": "Unlimited coins & unlocks",
+      "description": "Sets cash to 9,999,999, every upgrade card to 10,000, unlocks ALL vehicles and characters (no spinning needed), unlocks the Pro Pass, slot/lottery machines, completes all main + side missions, and maxes vehicle durability. Backs up your save before touching it. To revert: place an empty file named SR2_RESTORE.txt in Android/data/com.rkgames.basisgame/files/ and open the game.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [
@@ -183,8 +183,8 @@
       "options": []
     },
     {
-      "name": "Unlimited coins & unlocks",
-      "description": "Sets cash to 9,999,999, every upgrade card to 10,000, unlocks ALL vehicles and characters (no spinning needed), unlocks the Pro Pass, slot/lottery machines, completes all main + side missions, and maxes vehicle durability. Backs up your save before touching it. To revert: place an empty file named SR2_RESTORE.txt in Android/data/com.rkgames.basisgame/files/ and open the game.",
+      "name": "Unlock All (Machines + Vehicles + Characters)",
+      "description": "Unlocks all slot machines, all vehicles, and all characters. Patches native ownership checks to always grant unlocks.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [
