@@ -39,23 +39,19 @@ val freePurchasePatch = bytecodePatch(
     execute {
         // Hook 1: Capture the listener when the game sets it.
         // Builder.setListener(PurchasesUpdatedListener): p0=this(Builder), p1=listener.
-        // Call BillingFaker.setListener(p1) via Object param.
-        try {
-            BillingSetListenerFingerprint.method.addInstructions(
+        BillingSetListenerFingerprint.methodOrNull?.let {
+            it.addInstructions(
                 0,
                 """
                     invoke-static {p1}, $BILLING_FAKER->setListener(Ljava/lang/Object;)V
                 """.trimIndent(),
             )
-        } catch (e: Exception) {
-            // If the fingerprint doesn't match, skip (don't break the build).
         }
 
         // Hook 2: Intercept launchBillingFlow and fake success.
         // BillingClient.launchBillingFlow(Activity, BillingFlowParams): p0=this, p1=activity, p2=params.
-        // Call BillingFaker.fakeLaunch(p0, p1, p2) which returns Object (BillingResult); return it.
-        try {
-            BillingLaunchFlowFingerprint.method.addInstructions(
+        BillingLaunchFlowFingerprint.methodOrNull?.let {
+            it.addInstructions(
                 0,
                 """
                     invoke-static {p0, p1, p2}, $BILLING_FAKER->fakeLaunch(Ljava/lang/Object;Landroid/app/Activity;Ljava/lang/Object;)Ljava/lang/Object;
@@ -63,8 +59,6 @@ val freePurchasePatch = bytecodePatch(
                     return-object v0
                 """.trimIndent(),
             )
-        } catch (e: Exception) {
-            // If the fingerprint doesn't match, skip.
         }
     }
 }
