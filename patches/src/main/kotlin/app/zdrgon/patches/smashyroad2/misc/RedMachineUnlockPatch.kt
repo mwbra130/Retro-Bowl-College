@@ -106,10 +106,9 @@ private val FORCE_UNLOCKED = byteArrayOf(
 
 @Suppress("unused")
 val redMachineUnlockPatch = rawResourcePatch(
-    name = "Unlock All (Machines + Vehicles)",
-    description = "Unlocks all slot machines and all vehicles. " +
-        "Machines: NOPs the Google Play ownership checks. " +
-        "Vehicles: patches setUnlocked() to unlock 100 vehicles.",
+    name = "Unlock All Slot Machines",
+    description = "Unlocks all slot machines (1/2/3) without Google Play purchase. " +
+        "Patches the native ownership checks to always grant the machines.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_SMASHY_ROAD_2)
@@ -157,12 +156,16 @@ val redMachineUnlockPatch = rawResourcePatch(
             }
         }
 
-        // Patch 4: Vehicles - setUnlocked() loops 100 times (unlocks all)
+        // Patch 4: Vehicles - DISABLED (caused black UI)
+        // The setUnlocked count patch broke the UI by looping out of bounds.
+        // Vehicle unlock requires a different approach.
+        /*
         val setUnlockedOffset = findUnique(SET_UNLOCKED_PATTERN, "setUnlocked")
         val ldrOffset = setUnlockedOffset + 36
         for (j in MOV_W8_100.indices) {
             bytes[ldrOffset + j] = MOV_W8_100[j]
         }
+        */
 
         // Patch 5: buyBtn (DISABLED - was not effective)
         /*
