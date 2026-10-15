@@ -1,3 +1,9 @@
+## [1.21.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.1...v1.21.2) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* version-aware patch marker for Smashy Road 2 ([0194082](https://github.com/mwbra130/Retro-Bowl-College/commit/01940827da12733637652ca833cdacfc333e9679))
+
 ## [1.21.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.0...v1.21.1) (2026-10-15)
 
 ### 🐛 Bug Fixes
