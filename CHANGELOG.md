@@ -1,3 +1,9 @@
+## [1.23.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.23.0...v1.23.1) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* force money re-patch and disable broken vehicle unlock ([29696fd](https://github.com/mwbra130/Retro-Bowl-College/commit/29696fdff773fd9f76d6672db9c720791a8593df))
+
 ## [1.23.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.4...v1.23.0) (2026-10-15)
 
 ### ✨ New Features
