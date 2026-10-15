@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T00:48:18",
-  "description": "## [1.14.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.1...v1.14.2) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* disable BeReal ADN SdkManager hook entirely ([77d3738](https://github.com/mwbra130/Retro-Bowl-College/commit/77d3738e97cf166d862abe2121d0461fb9f7b586))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.14.2/patches-1.14.2.mpp",
+  "created_at": "2026-10-15T00:54:27",
+  "description": "## [1.14.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.2...v1.14.3) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* disable AppLovin init kill for BeReal crash diagnosis ([114bb67](https://github.com/mwbra130/Retro-Bowl-College/commit/114bb67456c7eee20a3b7b1556a8eb629d3a3584))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.14.3/patches-1.14.3.mpp",
   "signature_download_url": "",
-  "version": "1.14.2"
+  "version": "1.14.3"
 }

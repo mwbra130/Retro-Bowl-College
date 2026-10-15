@@ -1,3 +1,9 @@
+## [1.14.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.2...v1.14.3) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* disable AppLovin init kill for BeReal crash diagnosis ([114bb67](https://github.com/mwbra130/Retro-Bowl-College/commit/114bb67456c7eee20a3b7b1556a8eb629d3a3584))
+
 ## [1.14.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.1...v1.14.2) (2026-10-15)
 
 ### 🐛 Bug Fixes
