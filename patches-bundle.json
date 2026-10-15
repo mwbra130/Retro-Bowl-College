@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-14T03:28:11",
-  "description": "## [1.14.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.13.0...v1.14.0) (2026-10-14)\n\n### ✨ New Features\n\n* block ads at KPAdPlayerActivity, the single ad display chokepoint ([dc6287d](https://github.com/mwbra130/Retro-Bowl-College/commit/dc6287dbd7da2d6fa35449e04f39580854fa86cb))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.14.0/patches-1.14.0.mpp",
+  "created_at": "2026-10-15T00:42:24",
+  "description": "## [1.14.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.0...v1.14.1) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* remove null ad-instance getters from BeReal ADN patch ([5841ef3](https://github.com/mwbra130/Retro-Bowl-College/commit/5841ef35dedd81fa5b62a72aa8009a5b67b69235))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.14.1/patches-1.14.1.mpp",
   "signature_download_url": "",
-  "version": "1.14.0"
+  "version": "1.14.1"
 }

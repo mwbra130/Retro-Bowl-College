@@ -1,3 +1,9 @@
+## [1.14.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.0...v1.14.1) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* remove null ad-instance getters from BeReal ADN patch ([5841ef3](https://github.com/mwbra130/Retro-Bowl-College/commit/5841ef35dedd81fa5b62a72aa8009a5b67b69235))
+
 ## [1.14.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.13.0...v1.14.0) (2026-10-14)
 
 ### ✨ New Features
