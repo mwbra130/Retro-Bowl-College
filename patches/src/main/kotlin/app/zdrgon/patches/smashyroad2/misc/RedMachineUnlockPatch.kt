@@ -4,25 +4,27 @@ import app.morphe.patcher.patch.rawResourcePatch
 import app.zdrgon.patches.smashyroad2.shared.Constants.COMPATIBILITY_SMASHY_ROAD_2
 
 /**
- * Unlocks the red slot machine (machine3) without Google Play.
+ * Unlocks all slot machines (machine1/2/3) without Google Play.
  *
- * Patches slotManager.purchaseMachine3() in libil2cpp.so to set
- * hasMachine3 = true and return immediately, skipping the
- * Google Play Billing purchase flow.
+ * Patches the ownership check in slotManager to always grant the machines.
+ * At startup, the game sets hasMachine1/2/3=0, queries Google Play, and
+ * only sets them to 1 if the purchase is found. This patch NOPs the
+ * conditional branch so the "owned" path always executes.
  *
- * Target: purchaseMachine3() at RVA 0x162E400 (v1.54)
- * Field: hasMachine3 at object offset 0x392
+ * Target: b.ne at RVA 0x162D450 (v1.54)
+ *   Original: 61 00 00 54 (b.ne #0x162d45c)
+ *   Patched:  1F 20 03 D5 (nop)
  *
- * Original (12 bytes):
- *   str x30, [sp, #-0x20]!
- *   stp x20, x19, [sp, #0x10]
- *   adrp x20, #0x335f000
- *
- * Patched (12 bytes):
- *   mov w8, #1
- *   strb w8, [x0, #0x392]  ; hasMachine3 = true
- *   ret                    ; skip IAP, return
+ * Also patches purchaseMachine3() to instantly grant on buy tap.
  */
+private val MACHINE_CHECK_ORIGINAL = byteArrayOf(
+    0x61, 0x00, 0x00, 0x54,
+)
+
+private val MACHINE_CHECK_PATCHED = byteArrayOf(
+    0x1F, 0x20, 0x03, 0xD5.toByte(),
+)
+
 private val PURCHASE_MACHINE3_ORIGINAL = byteArrayOf(
     0xFE.toByte(), 0x0F, 0x1E.toByte(), 0xF8.toByte(),
     0xF4.toByte(), 0x4F, 0x01, 0xA9.toByte(),
@@ -38,8 +40,8 @@ private val PURCHASE_MACHINE3_PATCHED = byteArrayOf(
 @Suppress("unused")
 val redMachineUnlockPatch = rawResourcePatch(
     name = "Red Slot Machine Unlock",
-    description = "Unlocks the red slot machine (machine3) without Google Play purchase. " +
-        "Patches the native purchase method to grant the machine instantly.",
+    description = "Unlocks all slot machines (1/2/3) without Google Play purchase. " +
+        "Patches the native ownership check to always grant the machines.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_SMASHY_ROAD_2)
@@ -48,32 +50,38 @@ val redMachineUnlockPatch = rawResourcePatch(
         val soFile = get("lib/arm64-v8a/libil2cpp.so", true)
         val bytes = soFile.readBytes()
 
-        // Find the original byte pattern
-        var foundOffset = -1
-        for (i in 0..bytes.size - PURCHASE_MACHINE3_ORIGINAL.size) {
-            var match = true
-            for (j in PURCHASE_MACHINE3_ORIGINAL.indices) {
-                if (bytes[i + j] != PURCHASE_MACHINE3_ORIGINAL[j]) {
-                    match = false
-                    break
+        fun findPattern(pattern: ByteArray): Int {
+            for (i in 0..bytes.size - pattern.size) {
+                var match = true
+                for (j in pattern.indices) {
+                    if (bytes[i + j] != pattern[j]) {
+                        match = false
+                        break
+                    }
                 }
+                if (match) return i
             }
-            if (match) {
-                foundOffset = i
-                break
-            }
+            return -1
         }
 
-        if (foundOffset == -1) {
+        // Patch 1: NOP the b.ne so machines are always marked owned at startup
+        val checkOffset = findPattern(MACHINE_CHECK_ORIGINAL)
+        if (checkOffset == -1) {
             throw Exception(
-                "RedMachineUnlock: Could not find purchaseMachine3 pattern in libil2cpp.so. " +
-                    "The APK version may not be supported (expected v1.54)."
+                "RedMachineUnlock: Could not find machine check pattern. " +
+                    "APK version may not be supported (expected v1.54)."
             )
         }
+        for (j in MACHINE_CHECK_PATCHED.indices) {
+            bytes[checkOffset + j] = MACHINE_CHECK_PATCHED[j]
+        }
 
-        // Apply the patch
-        for (j in PURCHASE_MACHINE3_PATCHED.indices) {
-            bytes[foundOffset + j] = PURCHASE_MACHINE3_PATCHED[j]
+        // Patch 2: purchaseMachine3() instantly grants on buy tap
+        val purchaseOffset = findPattern(PURCHASE_MACHINE3_ORIGINAL)
+        if (purchaseOffset != -1) {
+            for (j in PURCHASE_MACHINE3_PATCHED.indices) {
+                bytes[purchaseOffset + j] = PURCHASE_MACHINE3_PATCHED[j]
+            }
         }
 
         soFile.writeBytes(bytes)
