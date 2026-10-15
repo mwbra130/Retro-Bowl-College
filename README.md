@@ -30,7 +30,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.14.3](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.14.3)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;17 patches total
+> **[v1.15.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.15.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;17 patches total
 <details open>
 <summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;12 patches</summary>
 <br>
@@ -45,7 +45,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 | [Bypass license check](#bypass-license-check) | Lets the patched app open without the 'Get this app from Play' block. Required for the app to launch. |  |
 | [Disable Adjust tracking](#disable-adjust-tracking) | Stops Adjust analytics tracking. |  |
 | [Disable AppLovin ads](#disable-applovin-ads) | Blocks AppLovin ads from loading. |  |
-| [Disable Voodoo ADN ads](#disable-voodoo-adn-ads) | No-ops the Voodoo ad SDK init so no ads can load — interstitials, sponsored feed cards, and every mediated network behind it. |  |
+| [Disable Voodoo ADN ads](#disable-voodoo-adn-ads) | Blocks fullscreen ad display — no interstitial ad UI appears. |  |
 | [Disable video autoplay](#disable-video-autoplay) | Videos stay paused until you tap them. Works in all feeds and profiles. |  |
 | [Kill PairIP native library](#kill-pairip-native-library) | Stops the PairIP tamper-check native library from loading, so the app can't be killed by its native code. Required for the app to launch. |  |
 | [Kill license blocking activity](#kill-license-blocking-activity) | Backup: instantly closes the 'Get this app from Play' screen if it ever appears. |  |

@@ -1,3 +1,13 @@
+## [1.15.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.3...v1.15.0) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* disable Adjust tracking kill for BeReal crash diagnosis ([4008cef](https://github.com/mwbra130/Retro-Bowl-College/commit/4008cef8977649583d69abc6e06fb48619302be5))
+
+### ✨ New Features
+
+* block BeReal interstitials at FullscreenAdActivity ([b11e18d](https://github.com/mwbra130/Retro-Bowl-College/commit/b11e18d0c5e7108005b2521b1a1fdc693f556aaa))
+
 ## [1.14.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.2...v1.14.3) (2026-10-15)
 
 ### 🐛 Bug Fixes

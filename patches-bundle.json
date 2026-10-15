@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T00:54:27",
-  "description": "## [1.14.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.2...v1.14.3) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* disable AppLovin init kill for BeReal crash diagnosis ([114bb67](https://github.com/mwbra130/Retro-Bowl-College/commit/114bb67456c7eee20a3b7b1556a8eb629d3a3584))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.14.3/patches-1.14.3.mpp",
+  "created_at": "2026-10-15T01:08:48",
+  "description": "## [1.15.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.3...v1.15.0) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* disable Adjust tracking kill for BeReal crash diagnosis ([4008cef](https://github.com/mwbra130/Retro-Bowl-College/commit/4008cef8977649583d69abc6e06fb48619302be5))\n\n### ✨ New Features\n\n* block BeReal interstitials at FullscreenAdActivity ([b11e18d](https://github.com/mwbra130/Retro-Bowl-College/commit/b11e18d0c5e7108005b2521b1a1fdc693f556aaa))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.15.0/patches-1.15.0.mpp",
   "signature_download_url": "",
-  "version": "1.14.3"
+  "version": "1.15.0"
 }

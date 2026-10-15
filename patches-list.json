@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.14.3",
+  "version": "1.15.0",
   "patches": [
     {
       "name": "Bypass license check",
@@ -108,7 +108,7 @@
     },
     {
       "name": "Disable Voodoo ADN ads",
-      "description": "No-ops the Voodoo ad SDK init so no ads can load — interstitials, sponsored feed cards, and every mediated network behind it.",
+      "description": "Blocks fullscreen ad display — no interstitial ad UI appears.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [
