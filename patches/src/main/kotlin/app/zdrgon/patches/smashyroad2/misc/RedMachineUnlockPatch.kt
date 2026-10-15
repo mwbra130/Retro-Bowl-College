@@ -61,6 +61,27 @@ private val CHECK_PERSON_PATTERN = byteArrayOf(
     0xA6.toByte(), 0xF0.toByte(), 0xFF.toByte(), 0x97.toByte(),
 )
 
+// carSelector.setUnlocked() - 40-byte pattern
+// At offset 36: ldr w8, [x20, #0x18] (loads owned count)
+// Patch: mov w8, #100 (unlock 100 vehicles)
+private val SET_UNLOCKED_PATTERN = byteArrayOf(
+    0x88.toByte(), 0xCE.toByte(), 0x35, 0x8B.toByte(),
+    0x00, 0x11, 0x40, 0xF9.toByte(),
+    0x40, 0x09, 0x00, 0xB4.toByte(),
+    0xE1.toByte(), 0x03, 0x1F, 0xAA.toByte(),
+    0x67, 0x65, 0x5B, 0x94.toByte(),
+    0xE0.toByte(), 0x08, 0x00, 0xB4.toByte(),
+    0x61, 0x1E, 0x40, 0xF9.toByte(),
+    0xE2.toByte(), 0x03, 0x1F, 0xAA.toByte(),
+    0x28, 0x68, 0x5B, 0x94.toByte(),
+    0x88.toByte(), 0x1A, 0x40, 0xB9.toByte(),
+)
+
+// mov w8, #100 (0x64)
+private val MOV_W8_100 = byteArrayOf(
+    0x88.toByte(), 0x0C, 0x80.toByte(), 0x52,
+)
+
 // buyBtn() - called when tapping a locked car's buy button
 // Pattern: 16 bytes unique
 private val BUY_BTN_PATTERN = byteArrayOf(
@@ -85,9 +106,10 @@ private val FORCE_UNLOCKED = byteArrayOf(
 
 @Suppress("unused")
 val redMachineUnlockPatch = rawResourcePatch(
-    name = "Unlock All Slot Machines",
-    description = "Unlocks all slot machines (1/2/3) without Google Play purchase. " +
-        "Patches the native ownership checks to always grant the machines.",
+    name = "Unlock All (Machines + Vehicles)",
+    description = "Unlocks all slot machines and all vehicles. " +
+        "Machines: NOPs the Google Play ownership checks. " +
+        "Vehicles: patches setUnlocked() to unlock 100 vehicles.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_SMASHY_ROAD_2)
@@ -135,10 +157,14 @@ val redMachineUnlockPatch = rawResourcePatch(
             }
         }
 
-        // Patch 4: Vehicles - DISABLED
-        // The buyBtn->unlockAll patch was not effective.
-        // buyBtn and unlockAll are in characterSelectGui, not the vehicle UI.
-        // Vehicle unlock requires further research.
+        // Patch 4: Vehicles - setUnlocked() loops 100 times (unlocks all)
+        val setUnlockedOffset = findUnique(SET_UNLOCKED_PATTERN, "setUnlocked")
+        val ldrOffset = setUnlockedOffset + 36
+        for (j in MOV_W8_100.indices) {
+            bytes[ldrOffset + j] = MOV_W8_100[j]
+        }
+
+        // Patch 5: buyBtn (DISABLED - was not effective)
         /*
         val buyBtnOffset = findUnique(BUY_BTN_PATTERN, "buyBtn")
         for (j in BUY_BTN_PATCHED.indices) {
