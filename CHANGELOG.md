@@ -1,3 +1,9 @@
+## [1.17.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.17.0...v1.17.1) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* trigger release for 3-patch BeReal bundle ([5062d7a](https://github.com/mwbra130/Retro-Bowl-College/commit/5062d7a4247b2d0876729f0b4fae1edfeeb0580b))
+
 ## [1.16.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.15.0...v1.16.0) (2026-10-15)
 
 ### ✨ New Features

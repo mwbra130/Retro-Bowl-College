@@ -30,9 +30,9 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.16.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.16.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;17 patches total
+> **[v1.17.1](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.17.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;8 patches total
 <details open>
-<summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;12 patches</summary>
+<summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
 
 **Supported versions:**
@@ -42,17 +42,8 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
-| [Bypass license check](#bypass-license-check) | Lets the patched app open without the 'Get this app from Play' block. Required for the app to launch. |  |
-| [Disable Adjust tracking](#disable-adjust-tracking) | Stops Adjust analytics tracking. |  |
-| [Disable AppLovin ads](#disable-applovin-ads) | Blocks AppLovin ads from loading. |  |
-| [Disable Voodoo ADN ads](#disable-voodoo-adn-ads) | Blocks fullscreen ad display — no interstitial ad UI appears. |  |
+| [Block ads](#block-ads) | Blocks fullscreen interstitial ads and removes sponsored posts from feeds. |  |
 | [Disable video autoplay](#disable-video-autoplay) | Videos stay paused until you tap them. Works in all feeds and profiles. |  |
-| [Kill PairIP native library](#kill-pairip-native-library) | Stops the PairIP tamper-check native library from loading, so the app can't be killed by its native code. Required for the app to launch. |  |
-| [Kill license blocking activity](#kill-license-blocking-activity) | Backup: instantly closes the 'Get this app from Play' screen if it ever appears. |  |
-| [Kill license delayed shutdown](#kill-license-delayed-shutdown) | Backup: stops the app from force-closing itself after the license check. |  |
-| [Kill license verdict handler](#kill-license-verdict-handler) | Backup: prevents the license check from triggering the block screen. |  |
-| [Remove ad/tracker auto-init providers](#remove-ad-tracker-auto-init-providers) | Stops ad and tracker SDKs from starting with the app (Mobile Ads, InMobi, AppLovin, Datadog, Vungle, Adjust). Notifications keep working. |  |
-| [Remove sponsored posts](#remove-sponsored-posts) | Removes sponsored posts from the Friends and Discovery feeds. |  |
 | [Remove suggested-people card](#remove-suggested-people-card) | Removes the suggested-people card from the feed. |  |
 
 </details>

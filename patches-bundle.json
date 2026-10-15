@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T01:15:24",
-  "description": "## [1.16.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.15.0...v1.16.0) (2026-10-15)\n\n### ✨ New Features\n\n* block BeReal ads at show() and activity layers ([c5a44d3](https://github.com/mwbra130/Retro-Bowl-College/commit/c5a44d3b2aa40dbbbf974a165732df6165ddbf0b))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.16.0/patches-1.16.0.mpp",
+  "created_at": "2026-10-15T01:39:30",
+  "description": "## [1.17.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.17.0...v1.17.1) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* trigger release for 3-patch BeReal bundle ([5062d7a](https://github.com/mwbra130/Retro-Bowl-College/commit/5062d7a4247b2d0876729f0b4fae1edfeeb0580b))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.17.1/patches-1.17.1.mpp",
   "signature_download_url": "",
-  "version": "1.16.0"
+  "version": "1.17.1"
 }
