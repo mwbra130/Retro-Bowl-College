@@ -203,6 +203,7 @@ public final class CoinPatcher {
     private static final String BACKUP_DIR = "morphe_backup";
     private static final String BACKUP_MARKER = "BACKUP_DONE";
     private static final String RESTORE_TRIGGER = "SR2_RESTORE.txt";
+    private static final String PATCHED_MARKER = "SR2_PATCHED.txt";
     private static final String DEBUG_DIR = "sr2_debug";
     private static final String LOG_FILE = "sr2_patch_log.txt";
 
@@ -238,8 +239,21 @@ public final class CoinPatcher {
                 trigger.delete();
             } catch (Throwable ignored) {
             }
+            // Clear the patched marker so the patch re-runs after restore.
+            try {
+                new File(extDir, PATCHED_MARKER).delete();
+            } catch (Throwable ignored) {
+            }
             toast(context, ok ? "SR2 patch: save restored from backup"
                     : "SR2 patch: restore failed \u2014 no backup found");
+            return;
+        }
+
+        // 1b. Patch-once: if we've already patched, leave the save alone so
+        // the user's progress is preserved across relaunches. Delete
+        // SR2_PATCHED.txt to force a re-patch.
+        File patchedMarker = new File(extDir, PATCHED_MARKER);
+        if (patchedMarker.exists()) {
             return;
         }
 
@@ -311,6 +325,13 @@ public final class CoinPatcher {
                     + " cards + " + unlockTotal + " unlocks + "
                     + questTotal + " missions + durability maxed + "
                     + vehicleTotal + " vehicles/chars");
+            // Mark as patched so we don't overwrite progress on next launch.
+            // Delete SR2_PATCHED.txt to force a re-patch.
+            try {
+                writeAll(new File(extDir, PATCHED_MARKER),
+                        ("patched " + System.currentTimeMillis()).getBytes(StandardCharsets.UTF_8));
+            } catch (Throwable ignored) {
+            }
         }
     }
 
