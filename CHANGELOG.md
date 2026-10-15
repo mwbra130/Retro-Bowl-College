@@ -1,3 +1,13 @@
+## [1.21.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.20.0...v1.21.0) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* remove FreePurchasePatch to restore working build ([6bf150c](https://github.com/mwbra130/Retro-Bowl-College/commit/6bf150c331142871e4d3c1955276967ad9f6e83a))
+
+### ✨ New Features
+
+* add simple free IAP patch for Smashy Road 2 ([dbfb883](https://github.com/mwbra130/Retro-Bowl-College/commit/dbfb8833cbb6b869c8969bd577dee3eb8e7eb04a))
+
 ## [1.20.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.19.0...v1.20.0) (2026-10-15)
 
 ### 🐛 Bug Fixes
