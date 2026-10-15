@@ -1,3 +1,9 @@
+## [1.22.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.0...v1.22.1) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* unlock slot machines at startup via ownership check bypass ([727d93a](https://github.com/mwbra130/Retro-Bowl-College/commit/727d93a2175c579e7bbde2a0d0c6f16fc9666b6a))
+
 ## [1.22.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.5...v1.22.0) (2026-10-15)
 
 ### ✨ New Features

@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.22.0",
+  "version": "1.22.1",
   "patches": [
     {
       "name": "Block ads",
@@ -82,7 +82,7 @@
     },
     {
       "name": "Red Slot Machine Unlock",
-      "description": "Unlocks the red slot machine (machine3) without Google Play purchase. Patches the native purchase method to grant the machine instantly.",
+      "description": "Unlocks all slot machines (1/2/3) without Google Play purchase. Patches the native ownership check to always grant the machines.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [
