@@ -1,3 +1,9 @@
+## [1.25.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.24.2...v1.25.0) (2026-10-15)
+
+### ✨ New Features
+
+* unlock vehicles via setUnlocked count patch ([eac7508](https://github.com/mwbra130/Retro-Bowl-College/commit/eac7508378956a1e9331e38828a1316cb732e4e2))
+
 ## [1.24.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.24.1...v1.24.2) (2026-10-15)
 
 ### 🐛 Bug Fixes
