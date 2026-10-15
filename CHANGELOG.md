@@ -1,3 +1,9 @@
+## [1.21.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.0...v1.21.1) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* remove diagnostic billing patch ([dee25e5](https://github.com/mwbra130/Retro-Bowl-College/commit/dee25e53d307b223894df878f6fd5893e3cffe77))
+
 ## [1.21.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.20.0...v1.21.0) (2026-10-15)
 
 ### 🐛 Bug Fixes
