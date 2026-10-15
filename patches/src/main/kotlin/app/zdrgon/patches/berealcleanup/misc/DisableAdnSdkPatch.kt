@@ -5,34 +5,39 @@ import app.morphe.patcher.patch.bytecodePatch
 import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CLEANUP
 
 /**
- * Kills every ad served through Voodoo's ADN SDK.
+ * Blocks BeReal's interstitial ads at the display layer.
  *
- * Voodoo's ADN (`io.adn.sdk`) is BeReal's primary ad stack: interstitials via
- * AdnFullscreenAd/FullscreenAdActivity, sponsored feed cards via
- * AdnNativeAdRenderer, and all mediated networks behind it (AppLovin MAX,
- * AdMob, Pangle, InMobi, Moloco, Vungle).
+ * Voodoo's ADN (`io.adn.sdk`) renders fullscreen ads through
+ * FullscreenAdActivity. Hooking onCreate() to finish() immediately prevents
+ * any ad UI from appearing, without touching SDK initialization.
  *
- * NOTE: As of v1.14.2, the SdkManager.initialize() hook is DISABLED.
- * Both nopping it (v1.9.2) and firing onCompletion(Failure) (v1.9.3+) caused
- * a ~5s crash loop. The other ad patches (AppLovin kill, provider strip,
- * sponsored post filter) are sufficient to block ads without touching the
- * ADN init.
+ * Why not hook SdkManager.initialize()? Both nopping it (v1.9.2) and firing
+ * onCompletion(Failure) (v1.9.3-v1.14.1) caused a ~5s crash loop. The SDK
+ * init is left alone; we just block the display.
  *
- * This patch is kept as a placeholder for future ADN-specific hooks.
- * Currently it does nothing.
+ * Sponsored feed cards (first-party) are handled by SponsoredPostsFilterPatch.
  */
 @Suppress("unused")
 val disableAdnSdkPatch = bytecodePatch(
     name = "Disable Voodoo ADN ads",
-    description = "No-ops the Voodoo ad SDK init so no ads can load — " +
-        "interstitials, sponsored feed cards, and every mediated network behind it.",
+    description = "Blocks fullscreen ad display — no interstitial ad UI appears.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)
 
     execute {
-        // SdkManager.initialize() hook DISABLED as of v1.14.2.
-        // Both nopping (v1.9.2) and firing Failure (v1.9.3-v1.14.1) caused
-        // a ~5s crash loop. The other ad patches handle blocking without it.
+        // FullscreenAdActivity.onCreate(Bundle): p0=this, p1=savedInstanceState.
+        // Finish immediately so no ad UI appears. The SDK init is untouched.
+        try {
+            FullscreenAdActivityOnCreateFingerprint.method?.addInstructions(
+                0,
+                """
+                    invoke-virtual {p0}, Lio/adn/sdk/internal/ui/fullscreen/FullscreenAdActivity;->finish()V
+                    return-void
+                """.trimIndent(),
+            )
+        } catch (e: Exception) {
+            // If the activity isn't found, skip.
+        }
     }
 }
