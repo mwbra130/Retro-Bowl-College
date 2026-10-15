@@ -44,9 +44,9 @@ private val MACHINE3_PATTERN = byteArrayOf(
 // NOP instruction (ARM64) - replaces b.ne at offset 8 in each pattern
 private val NOP = byteArrayOf(0x1F, 0x20, 0x03, 0xD5.toByte())
 
-// checkIfUnlocked(bool unlocked, bool canBePurchased) - void method
-// Patch: mov w1, #1 (force unlocked=true), then continue original code
-// w1 is the 'unlocked' parameter (x0=this, w1=unlocked, w2=canBePurchased)
+// Vehicle/character unlock via checkIfUnlocked - DISABLED
+// The mov w1,#1 patch was not effective. Research ongoing.
+// Keeping patterns for reference but not applying.
 private val CHECK_VEHICLE_PATTERN = byteArrayOf(
     0x94.toByte(), 0x94.toByte(), 0x05, 0x94.toByte(),
     0xA0.toByte(), 0x0A, 0x00, 0xB4.toByte(),
@@ -54,7 +54,6 @@ private val CHECK_VEHICLE_PATTERN = byteArrayOf(
     0x1F, 0x01, 0x13, 0x6B,
 )
 
-// checkIfUnlockedPerson(bool unlocked, bool canBePurchased)
 private val CHECK_PERSON_PATTERN = byteArrayOf(
     0x83.toByte(), 0xFE.toByte(), 0xFF.toByte(), 0x97.toByte(),
     0x34, 0x00, 0x00, 0x14,
@@ -62,16 +61,15 @@ private val CHECK_PERSON_PATTERN = byteArrayOf(
     0xA6.toByte(), 0xF0.toByte(), 0xFF.toByte(), 0x97.toByte(),
 )
 
-// mov w1, #1 (force unlocked parameter to true)
 private val FORCE_UNLOCKED = byteArrayOf(
     0x21, 0x00, 0x80.toByte(), 0x52,
 )
 
 @Suppress("unused")
 val redMachineUnlockPatch = rawResourcePatch(
-    name = "Unlock All (Machines + Vehicles + Characters)",
-    description = "Unlocks all slot machines, all vehicles, and all characters. " +
-        "Patches native ownership checks to always grant unlocks.",
+    name = "Unlock All Slot Machines",
+    description = "Unlocks all slot machines (1/2/3) without Google Play purchase. " +
+        "Patches the native ownership checks to always grant the machines at startup.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_SMASHY_ROAD_2)
@@ -119,17 +117,19 @@ val redMachineUnlockPatch = rawResourcePatch(
             }
         }
 
-        // Patch 4: Vehicles - force unlocked=true in checkIfUnlocked()
+        // Vehicle/character patches DISABLED - not effective
+        // Research ongoing for proper unlock method
+        /*
         val vehicleOffset = findUnique(CHECK_VEHICLE_PATTERN, "checkIfUnlocked")
         for (j in FORCE_UNLOCKED.indices) {
             bytes[vehicleOffset + j] = FORCE_UNLOCKED[j]
         }
 
-        // Patch 5: Characters - force unlocked=true in checkIfUnlockedPerson()
         val personOffset = findUnique(CHECK_PERSON_PATTERN, "checkIfUnlockedPerson")
         for (j in FORCE_UNLOCKED.indices) {
             bytes[personOffset + j] = FORCE_UNLOCKED[j]
         }
+        */
 
         soFile.writeBytes(bytes)
     }

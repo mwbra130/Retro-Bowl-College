@@ -211,7 +211,7 @@ public final class CoinPatcher {
      * new unlocks, bug fixes). If the version in SR2_PATCHED.txt doesn't match,
      * the patch re-runs automatically — no manual marker deletion needed.
      */
-    private static final String PATCHER_VERSION = "1.23.0";
+    private static final String PATCHER_VERSION = "1.24.0";
 
     /** Skip huge downloads/caches when backing up files/. */
     private static final long BACKUP_FILE_SIZE_CAP = 10L * 1024 * 1024;
