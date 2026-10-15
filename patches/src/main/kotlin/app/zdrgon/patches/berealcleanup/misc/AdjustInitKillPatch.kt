@@ -23,8 +23,7 @@ val adjustInitKillPatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)
 
     execute {
-        // initSdk returns void: return-void at index 0 skips the entire
-        // method body. No registers are touched.
-        AdjustInitFingerprint.method.addInstructions(0, "return-void")
+        // DISABLED as of v1.14.4 for crash diagnosis.
+        // AdjustInitFingerprint.method.addInstructions(0, "return-void")
     }
 }
