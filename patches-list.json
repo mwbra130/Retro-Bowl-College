@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.24.1",
+  "version": "1.24.2",
   "patches": [
     {
       "name": "Block ads",
@@ -183,8 +183,8 @@
       "options": []
     },
     {
-      "name": "Unlock All (Machines + Vehicles)",
-      "description": "Unlocks all slot machines and all vehicles. Machines: patches native ownership checks. Vehicles: buy button now calls unlockAll() instead of Google Play.",
+      "name": "Unlock All Slot Machines",
+      "description": "Unlocks all slot machines (1/2/3) without Google Play purchase. Patches the native ownership checks to always grant the machines.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [

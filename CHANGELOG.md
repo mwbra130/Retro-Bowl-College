@@ -1,3 +1,9 @@
+## [1.24.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.24.1...v1.24.2) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* disable broken vehicle patch, keep only working machines ([c861a73](https://github.com/mwbra130/Retro-Bowl-College/commit/c861a73bc3122a756ee51af2ab1c1b887d52af7e))
+
 ## [1.24.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.24.0...v1.24.1) (2026-10-15)
 
 ### 🐛 Bug Fixes
