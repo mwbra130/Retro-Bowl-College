@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T16:21:35",
-  "description": "## [1.21.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.1...v1.21.2) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* version-aware patch marker for Smashy Road 2 ([0194082](https://github.com/mwbra130/Retro-Bowl-College/commit/01940827da12733637652ca833cdacfc333e9679))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.21.2/patches-1.21.2.mpp",
+  "created_at": "2026-10-15T16:43:22",
+  "description": "## [1.21.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.2...v1.21.3) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* remove test patches that break build ([8138ae4](https://github.com/mwbra130/Retro-Bowl-College/commit/8138ae437be27eb895c243634317333a06778fe6))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.21.3/patches-1.21.3.mpp",
   "signature_download_url": "",
-  "version": "1.21.2"
+  "version": "1.21.3"
 }

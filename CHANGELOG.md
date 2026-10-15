@@ -1,3 +1,9 @@
+## [1.21.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.2...v1.21.3) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* remove test patches that break build ([8138ae4](https://github.com/mwbra130/Retro-Bowl-College/commit/8138ae437be27eb895c243634317333a06778fe6))
+
 ## [1.21.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.21.1...v1.21.2) (2026-10-15)
 
 ### 🐛 Bug Fixes
