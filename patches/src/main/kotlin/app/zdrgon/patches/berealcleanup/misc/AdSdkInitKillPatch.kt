@@ -16,6 +16,9 @@ import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CL
  *
  * Note: this stops SDK-served ads, but BeReal's sponsored feed posts are
  * first-party items — those are handled by SponsoredPostsFilterPatch.
+ *
+ * DISABLED as of v1.14.3: the obfuscated Lcq fingerprint may match the wrong
+ * method, potentially causing the ~5s crash. Testing without it.
  */
 @Suppress("unused")
 val adSdkInitKillPatch = bytecodePatch(
@@ -26,15 +29,7 @@ val adSdkInitKillPatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)
 
     execute {
-        // invokeSuspend returns Object; Kotlin Unit is the Lndn; singleton.
-        // Returning immediately means no later instruction runs, so
-        // overwriting v0 here is safe.
-        AppLovinInitFingerprint.method.addInstructions(
-            0,
-            """
-                sget-object v0, Lndn;->a:Lndn;
-                return-object v0
-            """.trimIndent(),
-        )
+        // DISABLED as of v1.14.3 for crash diagnosis.
+        // The obfuscated Lcq fingerprint may match the wrong method.
     }
 }
