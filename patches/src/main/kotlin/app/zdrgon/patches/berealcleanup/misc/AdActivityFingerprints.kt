@@ -14,3 +14,15 @@ object FullscreenAdActivityOnCreateFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Landroid/os/Bundle;"),
 )
+
+/**
+ * ADN fullscreen ad show method.
+ * No-op'ing this prevents the ad from ever displaying, without touching
+ * SDK init.
+ */
+object AdnFullscreenAdShowFingerprint : Fingerprint(
+    definingClass = "Lio/adn/sdk/publisher/AdnFullscreenAd;",
+    name = "show",
+    returnType = "V",
+    parameters = listOf(),
+)

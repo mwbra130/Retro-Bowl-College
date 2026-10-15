@@ -26,8 +26,17 @@ val disableAdnSdkPatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)
 
     execute {
-        // FullscreenAdActivity.onCreate(Bundle): p0=this, p1=savedInstanceState.
-        // Finish immediately so no ad UI appears. The SDK init is untouched.
+        // Layer 1: Block AdnFullscreenAd.show() — prevent the ad from ever
+        // being triggered. No-op the method.
+        try {
+            AdnFullscreenAdShowFingerprint.method?.addInstructions(0, "return-void")
+        } catch (e: Exception) {
+            // Skip if not found.
+        }
+
+        // Layer 2: Block FullscreenAdActivity.onCreate() — if show() somehow
+        // gets through, finish the activity immediately before any UI appears.
+        // onCreate(Bundle): p0=this, p1=savedInstanceState.
         try {
             FullscreenAdActivityOnCreateFingerprint.method?.addInstructions(
                 0,
