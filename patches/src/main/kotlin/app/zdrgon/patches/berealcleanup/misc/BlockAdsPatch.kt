@@ -1,5 +1,6 @@
 package app.zdrgon.patches.berealcleanup.misc
 
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
@@ -34,7 +35,6 @@ private fun smaliEscape(value: String): String {
  * const-string loaded. Returns the number of queries rewritten.
  */
 private fun filterFeedQueries(method: MutableMethod): Int {
-    // Snapshot first: replaceInstruction mutates the implementation.
     val instructions = method.instructions.toList()
     var patched = 0
 
@@ -58,33 +58,50 @@ private fun filterFeedQueries(method: MutableMethod): Int {
 }
 
 /**
- * Filters sponsored posts out of BeReal's feeds at the data layer.
+ * Blocks all ads in BeReal.
  *
- * BeReal caches feed items in the Room table FeedItemEntity, which has a real
- * `isSponsored` column. The feed-read DAO (Lig7;->invoke) runs two queries of
- * the form `... WHERE feedId = ? ORDER BY orderIndex LIMIT ?`; this patch
- * rewrites both const-string SQL literals in place to
- * `... WHERE feedId = ? AND isSponsored = 0 ...`, so sponsored rows never
- * reach the UI — in every feed that renders from the cache (Friends and
- * Discovery).
+ * Combines two approaches:
+ * 1. Fullscreen interstitials: No-op AdnFullscreenAd.show() (Layer 1) and
+ *    finish FullscreenAdActivity.onCreate() immediately (Layer 2). The SDK
+ *    init is left alone to avoid the ~5s crash loop.
+ * 2. Sponsored feed posts: Rewrites the Room feed queries to filter
+ *    `isSponsored = 0`, so sponsored rows never reach the UI.
  */
 @Suppress("unused")
-val sponsoredPostsFilterPatch = bytecodePatch(
-    name = "Remove sponsored posts",
-    description = "Removes sponsored posts from the Friends and Discovery feeds.",
+val blockAdsPatch = bytecodePatch(
+    name = "Block ads",
+    description = "Blocks fullscreen interstitial ads and removes sponsored posts from feeds.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_BEREAL_CLEANUP)
 
     execute {
-        // Primary: the feed-item queries (two const-strings in one method).
+        // Part 1: Block interstitial ad display.
+        // Layer 1: No-op AdnFullscreenAd.show().
+        try {
+            AdnFullscreenAdShowFingerprint.method?.addInstructions(0, "return-void")
+        } catch (e: Exception) {
+            // Skip if not found.
+        }
+
+        // Layer 2: Finish FullscreenAdActivity immediately.
+        try {
+            FullscreenAdActivityOnCreateFingerprint.method?.addInstructions(
+                0,
+                """
+                    invoke-virtual {p0}, Lio/adn/sdk/internal/ui/fullscreen/FullscreenAdActivity;->finish()V
+                    return-void
+                """.trimIndent(),
+            )
+        } catch (e: Exception) {
+            // Skip if not found.
+        }
+
+        // Part 2: Filter sponsored posts from feed queries.
         val primaryPatched = filterFeedQueries(FeedItemsQueryFingerprint.method)
         if (primaryPatched == 0) {
             throw PatchException("No feed query const-string found to filter")
         }
-
-        // Companion: the post-id list query (Lib2), patched for consistency.
-        // Not fatal if the companion lookup changes shape in a future build.
         FeedPostIdsQueryFingerprint.methodOrNull?.let { filterFeedQueries(it) }
     }
 }
