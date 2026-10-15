@@ -17,13 +17,11 @@ import app.zdrgon.patches.berealcleanup.shared.Constants.COMPATIBILITY_BEREAL_CL
  * leaves it in a broken state that crashes (observed: ~5s crash loop on
  * 3.97.1, gone in airplane mode). Instead, initialize() immediately fires
  * the callback with AdnInitializationStatus.Failure — BeReal then takes its
- * normal "ads unavailable" path, which is proven crash-safe because it is
- * the same path taken with no network.
+ * normal "ads unavailable" path.
  *
- * Defense in depth: the ad factory getters (getFullscreenAdInstance,
- * getNativeAdInstance) are also forced to return null, so any direct call
- * bypassing init gets a clean null instead of an IllegalStateException
- * from the uninitialized SDK.
+ * Note: the ad factory getters are intentionally NOT hooked. Forcing them
+ * to return null caused crashes when BeReal didn't null-check; letting the
+ * uninitialized SDK handle it is safer.
  *
  * Complements (does not replace) the other ad patches: AdSdkInitKillPatch
  * stops BeReal's direct AppLovin init, TrackerProvidersPatch strips the
@@ -51,24 +49,6 @@ val disableAdnSdkPatch = bytecodePatch(
                 sget-object v0, Lio/adn/sdk/publisher/AdnInitializationStatus;->Failure:Lio/adn/sdk/publisher/AdnInitializationStatus;
                 invoke-interface {p2, v0}, Lio/adn/sdk/publisher/AdnInitializationCallback;->onCompletion(Lio/adn/sdk/publisher/AdnInitializationStatus;)V
                 return-void
-            """.trimIndent(),
-        )
-
-        // getFullscreenAdInstance(...)AdnFullscreenAd; — return null.
-        AdnFullscreenAdFingerprint.method.addInstructions(
-            0,
-            """
-                const/4 v0, 0x0
-                return-object v0
-            """.trimIndent(),
-        )
-
-        // getNativeAdInstance(...)AdnNativeAd; — return null.
-        AdnNativeAdFingerprint.method.addInstructions(
-            0,
-            """
-                const/4 v0, 0x0
-                return-object v0
             """.trimIndent(),
         )
     }
