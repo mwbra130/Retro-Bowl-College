@@ -30,7 +30,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.22.2](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.22.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;9 patches total
+> **[v1.22.3](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.22.3)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;9 patches total
 <details open>
 <summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
@@ -64,6 +64,36 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 </details>
 
 <details open>
+<summary>Subway Surfers&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Supported versions:**
+
+| 3.70.0 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Skip Unity Ads](#skip-unity-ads) | Blocks forced interstitial ads — no fullscreen ad between runs. Rewarded ads still work normally and grant their reward. |  |
+
+</details>
+
+<details open>
+<summary>Subway Surfers&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Supported versions:**
+
+| 3.70.0 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Skip Unity Ads](#skip-unity-ads) | Blocks forced interstitial ads — no fullscreen ad between runs. Rewarded ads still work normally and grant their reward. |  |
+
+</details>
+
+<details open>
 <summary>Smashy Road 2&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
 
@@ -74,38 +104,8 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
-| [Red Slot Machine Unlock (DISABLED)](#red-slot-machine-unlock-disabled) | DISABLED: Caused crashes. Do not use. |  |
+| [Slot Machine Unlock](#slot-machine-unlock) | Unlocks all slot machines (1/2/3) without Google Play purchase. Patches the native ownership check to always grant the machines at startup. |  |
 | [Unlimited coins & unlocks](#unlimited-coins-unlocks) | Sets cash to 9,999,999, every upgrade card to 10,000, unlocks ALL vehicles and characters (no spinning needed), unlocks the Pro Pass, slot/lottery machines, completes all main + side missions, and maxes vehicle durability. Backs up your save before touching it. To revert: place an empty file named SR2_RESTORE.txt in Android/data/com.rkgames.basisgame/files/ and open the game. |  |
-
-</details>
-
-<details open>
-<summary>Subway Surfers&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
-<br>
-
-**Supported versions:**
-
-| 3.70.0 |
-| :---: |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| [Skip Unity Ads](#skip-unity-ads) | Blocks forced interstitial ads — no fullscreen ad between runs. Rewarded ads still work normally and grant their reward. |  |
-
-</details>
-
-<details open>
-<summary>Subway Surfers&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
-<br>
-
-**Supported versions:**
-
-| 3.70.0 |
-| :---: |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| [Skip Unity Ads](#skip-unity-ads) | Blocks forced interstitial ads — no fullscreen ad between runs. Rewarded ads still work normally and grant their reward. |  |
 
 </details>
 

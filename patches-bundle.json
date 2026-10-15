@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T19:45:19",
-  "description": "## [1.22.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.1...v1.22.2) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* disable broken RedMachineUnlock patch (caused crashes) ([a51dbc8](https://github.com/mwbra130/Retro-Bowl-College/commit/a51dbc84962f874aef9e08e2c8663226caf9aca2))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.22.2/patches-1.22.2.mpp",
+  "created_at": "2026-10-15T19:50:46",
+  "description": "## [1.22.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.2...v1.22.3) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* slot machine unlock with unique 24-byte pattern ([ff6246d](https://github.com/mwbra130/Retro-Bowl-College/commit/ff6246dbcad578d2964986e618094f8dbe974599))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.22.3/patches-1.22.3.mpp",
   "signature_download_url": "",
-  "version": "1.22.2"
+  "version": "1.22.3"
 }

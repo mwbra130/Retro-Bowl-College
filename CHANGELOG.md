@@ -1,3 +1,9 @@
+## [1.22.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.2...v1.22.3) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* slot machine unlock with unique 24-byte pattern ([ff6246d](https://github.com/mwbra130/Retro-Bowl-College/commit/ff6246dbcad578d2964986e618094f8dbe974599))
+
 ## [1.22.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.1...v1.22.2) (2026-10-15)
 
 ### 🐛 Bug Fixes

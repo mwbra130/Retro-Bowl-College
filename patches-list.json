@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.22.2",
+  "version": "1.22.3",
   "patches": [
     {
       "name": "Block ads",
@@ -81,39 +81,6 @@
       "options": []
     },
     {
-      "name": "Red Slot Machine Unlock (DISABLED)",
-      "description": "DISABLED: Caused crashes. Do not use.",
-      "default": false,
-      "dependencies": [],
-      "compatiblePackages": [
-        {
-          "packageName": "com.rkgames.basisgame",
-          "name": "Smashy Road 2",
-          "description": null,
-          "apkFileType": "XAPK",
-          "appIconColor": "#FF8C00",
-          "signatures": null,
-          "targets": [
-            {
-              "version": "1.54",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            },
-            {
-              "version": "1.45",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "Remove suggested-people card",
       "description": "Removes the suggested-people card from the feed.",
       "default": true,
@@ -172,6 +139,39 @@
           "targets": [
             {
               "version": "3.70.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Slot Machine Unlock",
+      "description": "Unlocks all slot machines (1/2/3) without Google Play purchase. Patches the native ownership check to always grant the machines at startup.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.rkgames.basisgame",
+          "name": "Smashy Road 2",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#FF8C00",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "1.54",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            },
+            {
+              "version": "1.45",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
