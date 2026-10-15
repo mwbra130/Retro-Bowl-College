@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T19:37:21",
-  "description": "## [1.22.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.0...v1.22.1) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* unlock slot machines at startup via ownership check bypass ([727d93a](https://github.com/mwbra130/Retro-Bowl-College/commit/727d93a2175c579e7bbde2a0d0c6f16fc9666b6a))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.22.1/patches-1.22.1.mpp",
+  "created_at": "2026-10-15T19:45:19",
+  "description": "## [1.22.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.1...v1.22.2) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* disable broken RedMachineUnlock patch (caused crashes) ([a51dbc8](https://github.com/mwbra130/Retro-Bowl-College/commit/a51dbc84962f874aef9e08e2c8663226caf9aca2))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.22.2/patches-1.22.2.mpp",
   "signature_download_url": "",
-  "version": "1.22.1"
+  "version": "1.22.2"
 }

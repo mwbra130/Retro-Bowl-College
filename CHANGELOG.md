@@ -1,3 +1,9 @@
+## [1.22.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.1...v1.22.2) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* disable broken RedMachineUnlock patch (caused crashes) ([a51dbc8](https://github.com/mwbra130/Retro-Bowl-College/commit/a51dbc84962f874aef9e08e2c8663226caf9aca2))
+
 ## [1.22.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.0...v1.22.1) (2026-10-15)
 
 ### 🐛 Bug Fixes
