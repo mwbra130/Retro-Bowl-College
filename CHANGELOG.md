@@ -1,3 +1,10 @@
+## [1.24.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.24.0...v1.24.1) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* dynamic bl offset for vehicle unlock (was hardcoded) ([05ada57](https://github.com/mwbra130/Retro-Bowl-College/commit/05ada576badc06f99acc7331b53563f8dca1863a))
+* revert to hardcoded bl (dynamic version failed build) ([9093a00](https://github.com/mwbra130/Retro-Bowl-College/commit/9093a0085ecb75dd5cc8165c2732b05cd17fe3ee))
+
 ## [1.24.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.23.1...v1.24.0) (2026-10-15)
 
 ### ✨ New Features

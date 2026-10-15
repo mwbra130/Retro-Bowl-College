@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-15T21:35:51",
-  "description": "## [1.24.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.23.1...v1.24.0) (2026-10-15)\n\n### ✨ New Features\n\n* unlock vehicles via buyBtn -> unlockAll patch ([df0498e](https://github.com/mwbra130/Retro-Bowl-College/commit/df0498eff3b5130212779fdad31ec56dc9efb940))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.24.0/patches-1.24.0.mpp",
+  "created_at": "2026-10-15T22:06:57",
+  "description": "## [1.24.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.24.0...v1.24.1) (2026-10-15)\n\n### 🐛 Bug Fixes\n\n* dynamic bl offset for vehicle unlock (was hardcoded) ([05ada57](https://github.com/mwbra130/Retro-Bowl-College/commit/05ada576badc06f99acc7331b53563f8dca1863a))\n* revert to hardcoded bl (dynamic version failed build) ([9093a00](https://github.com/mwbra130/Retro-Bowl-College/commit/9093a0085ecb75dd5cc8165c2732b05cd17fe3ee))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.24.1/patches-1.24.1.mpp",
   "signature_download_url": "",
-  "version": "1.24.0"
+  "version": "1.24.1"
 }
