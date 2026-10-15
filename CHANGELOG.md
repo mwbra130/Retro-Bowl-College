@@ -1,3 +1,9 @@
+## [1.22.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.3...v1.22.4) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* unlock all three slot machines (was only machine1) ([4334640](https://github.com/mwbra130/Retro-Bowl-College/commit/4334640f3e4ab56ff30f24116349e5b41c3ffaf0))
+
 ## [1.22.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.22.2...v1.22.3) (2026-10-15)
 
 ### 🐛 Bug Fixes
