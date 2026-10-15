@@ -1,3 +1,9 @@
+## [1.24.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.23.1...v1.24.0) (2026-10-15)
+
+### ✨ New Features
+
+* unlock vehicles via buyBtn -> unlockAll patch ([df0498e](https://github.com/mwbra130/Retro-Bowl-College/commit/df0498eff3b5130212779fdad31ec56dc9efb940))
+
 ## [1.23.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.23.0...v1.23.1) (2026-10-15)
 
 ### 🐛 Bug Fixes
