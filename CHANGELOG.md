@@ -1,3 +1,9 @@
+## [1.14.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.1...v1.14.2) (2026-10-15)
+
+### 🐛 Bug Fixes
+
+* disable BeReal ADN SdkManager hook entirely ([77d3738](https://github.com/mwbra130/Retro-Bowl-College/commit/77d3738e97cf166d862abe2121d0461fb9f7b586))
+
 ## [1.14.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.14.0...v1.14.1) (2026-10-15)
 
 ### 🐛 Bug Fixes
