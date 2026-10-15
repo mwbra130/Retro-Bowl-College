@@ -32,8 +32,9 @@ val freePurchasePatch = bytecodePatch(
 ) {
     compatibleWith(COMPATIBILITY_SMASHY_ROAD_2)
 
-    // Merge the extension DEX (BillingFaker + CoinPatcher).
-    extendWith("extensions/extension.mpe")
+    // Note: extendWith is NOT called here — UnlimitedCoinsPatch already merges
+    // extensions/extension.mpe (which contains BillingFaker). Calling extendWith
+    // twice for the same extension breaks the build.
 
     execute {
         // Hook 1: Capture the listener when the game sets it.
