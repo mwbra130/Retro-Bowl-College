@@ -4,77 +4,78 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.BillingResult;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchasesUpdatedListener;
-
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Fakes Google Play Billing purchases for Smashy Road 2.
+ * Fakes Google Play Billing purchases for Smashy Road 2 using pure reflection.
+ *
+ * No compile-time dependency on billingclient — all classes are loaded
+ * reflectively at runtime from the game's APK.
  *
  * When the game calls BillingClient.launchBillingFlow(), this intercepts
  * and immediately reports a successful purchase to the game's
  * PurchasesUpdatedListener, without ever showing Google Play UI.
- *
- * The listener is captured by hooking BillingClient.Builder.setListener().
- * The fake Purchase uses a dummy signature — games that don't verify
- * signatures locally (most Unity games) will accept it.
  *
  * This is purchase piracy: it grants paid items without payment.
  * The code itself does no network I/O, no data exfiltration.
  */
 public final class BillingFaker {
 
-    private static volatile PurchasesUpdatedListener sListener;
+    private static volatile Object sListener; // PurchasesUpdatedListener
 
     private BillingFaker() {
     }
 
     /**
-     * Called from the launchBillingFlow hook. Captures the listener if not
-     * already set, then fakes a successful purchase.
+     * Called from the launchBillingFlow hook.
+     * Params are Object to avoid compile-time billing dependencies.
+     * Returns a BillingResult (as Object).
      */
-    public static BillingResult fakeLaunch(
-            BillingClient client, Activity activity, BillingFlowParams params) {
+    public static Object fakeLaunch(Object client, Activity activity, Object params) {
         try {
-            // Try to get listener from the client via reflection as fallback
-            PurchasesUpdatedListener listener = sListener;
+            Object listener = sListener;
             if (listener == null) {
                 listener = extractListener(client);
             }
+
+            Object okResult = newOkResult();
             if (listener == null) {
-                // No listener captured; return OK anyway (flow "launched")
-                return newOkResult();
+                return okResult;
             }
 
-            // Get product ID from params
             String productId = extractProductId(params);
             if (productId == null) productId = "fake_product";
 
-            // Build fake purchase JSON
             String json = "{\"productId\":\"" + productId + "\","
                     + "\"purchaseToken\":\"fake_token_" + System.currentTimeMillis() + "\","
                     + "\"purchaseState\":1,"
                     + "\"purchaseTime\":" + System.currentTimeMillis() + ","
                     + "\"orderId\":\"fake_order_" + System.currentTimeMillis() + "\"}";
 
-            final Purchase fakePurchase = new Purchase(json, "fake_signature");
-            final List<Purchase> purchases = new ArrayList<>();
-            purchases.add(fakePurchase);
-            final BillingResult okResult = newOkResult();
-            final PurchasesUpdatedListener finalListener = listener;
+            // new Purchase(json, "fake_signature")
+            Class<?> purchaseClass = Class.forName("com.android.billingclient.api.Purchase");
+            Constructor<?> purchaseCtor = purchaseClass.getConstructor(String.class, String.class);
+            Object fakePurchase = purchaseCtor.newInstance(json, "fake_signature");
 
-            // Call listener on main thread (BillingClient requires it)
+            List<Object> purchases = new ArrayList<>();
+            purchases.add(fakePurchase);
+
+            final Object finalListener = listener;
+            final Object finalResult = okResult;
+            final List<Object> finalPurchases = purchases;
+
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        finalListener.onPurchasesUpdated(okResult, purchases);
+                        Method m = finalListener.getClass().getMethod("onPurchasesUpdated",
+                                Class.forName("com.android.billingclient.api.BillingResult"),
+                                List.class);
+                        m.invoke(finalListener, finalResult, finalPurchases);
                     } catch (Throwable ignored) {
                     }
                 }
@@ -82,35 +83,43 @@ public final class BillingFaker {
 
             return okResult;
         } catch (Throwable t) {
-            // On any failure, return OK to avoid crashing the game
-            return newOkResult();
+            try {
+                return newOkResult();
+            } catch (Throwable ignored) {
+                return null;
+            }
         }
     }
 
     /**
-     * Called from the Builder.setListener hook to capture the game's listener.
+     * Called from the Builder.setListener hook.
      */
-    public static void setListener(PurchasesUpdatedListener listener) {
+    public static void setListener(Object listener) {
         sListener = listener;
     }
 
-    private static BillingResult newOkResult() {
-        return BillingResult.newBuilder()
-                .setResponseCode(BillingClient.BillingResponseCode.OK)
-                .build();
+    private static Object newOkResult() throws Exception {
+        Class<?> resultClass = Class.forName("com.android.billingclient.api.BillingResult");
+        Class<?> builderClass = Class.forName("com.android.billingclient.api.BillingResult$Builder");
+        Method newBuilder = resultClass.getMethod("newBuilder");
+        Object builder = newBuilder.invoke(null);
+        // BillingResponseCode.OK = 0
+        Method setCode = builderClass.getMethod("setResponseCode", int.class);
+        setCode.invoke(builder, 0);
+        Method build = builderClass.getMethod("build");
+        return build.invoke(builder);
     }
 
-    private static PurchasesUpdatedListener extractListener(BillingClient client) {
+    private static Object extractListener(Object client) {
         try {
-            // BillingClientImpl stores listener in a field; try common names
             for (String fieldName : new String[]{"zzb", "listener", "mListener"}) {
                 try {
                     Field f = client.getClass().getDeclaredField(fieldName);
                     f.setAccessible(true);
                     Object val = f.get(client);
-                    if (val instanceof PurchasesUpdatedListener) {
-                        sListener = (PurchasesUpdatedListener) val;
-                        return sListener;
+                    if (val != null && val.getClass().getName().contains("PurchasesUpdatedListener")) {
+                        sListener = val;
+                        return val;
                     }
                 } catch (Throwable ignored) {
                 }
@@ -120,27 +129,33 @@ public final class BillingFaker {
         return null;
     }
 
-    private static String extractProductId(BillingFlowParams params) {
+    private static String extractProductId(Object params) {
         try {
-            // BillingFlowParams has getProductDetailsParamsList() in v5+
-            // or getSku() in older versions. Try both via reflection.
+            // Try getProductDetailsParamsList() (Billing v5+)
             try {
-                java.lang.reflect.Method m = params.getClass().getMethod("getProductDetailsParamsList");
+                Method m = params.getClass().getMethod("getProductDetailsParamsList");
                 List<?> list = (List<?>) m.invoke(params);
                 if (list != null && !list.isEmpty()) {
-                    Object p = list.get(0);
-                    java.lang.reflect.Method gm = p.getClass().getMethod("zza"); // obfuscated getter
-                    Object pd = gm.invoke(p);
-                    if (pd != null) {
-                        java.lang.reflect.Method gpm = pd.getClass().getMethod("getProductId");
-                        return (String) gpm.invoke(pd);
+                    // ProductDetailsParams -> getProductDetails() -> getProductId()
+                    Object pdp = list.get(0);
+                    for (Method gm : pdp.getClass().getMethods()) {
+                        if (gm.getName().equals("zza") && gm.getParameterCount() == 0) {
+                            try {
+                                Object pd = gm.invoke(pdp);
+                                if (pd != null) {
+                                    Method gpid = pd.getClass().getMethod("getProductId");
+                                    return (String) gpid.invoke(pd);
+                                }
+                            } catch (Throwable ignored) {
+                            }
+                        }
                     }
                 }
             } catch (Throwable ignored) {
             }
-            // Fallback: try getSku() (deprecated but still present in some versions)
+            // Fallback: getSku() (older API)
             try {
-                java.lang.reflect.Method m = params.getClass().getMethod("getSku");
+                Method m = params.getClass().getMethod("getSku");
                 return (String) m.invoke(params);
             } catch (Throwable ignored) {
             }

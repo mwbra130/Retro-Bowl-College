@@ -38,12 +38,12 @@ val freePurchasePatch = bytecodePatch(
     execute {
         // Hook 1: Capture the listener when the game sets it.
         // Builder.setListener(PurchasesUpdatedListener): p0=this(Builder), p1=listener.
-        // Call BillingFaker.setListener(p1), then return p0 (the Builder) for chaining.
+        // Call BillingFaker.setListener(p1) via Object param.
         try {
             BillingSetListenerFingerprint.method.addInstructions(
                 0,
                 """
-                    invoke-static {p1}, $BILLING_FAKER->setListener(Lcom/android/billingclient/api/PurchasesUpdatedListener;)V
+                    invoke-static {p1}, $BILLING_FAKER->setListener(Ljava/lang/Object;)V
                 """.trimIndent(),
             )
         } catch (e: Exception) {
@@ -52,12 +52,12 @@ val freePurchasePatch = bytecodePatch(
 
         // Hook 2: Intercept launchBillingFlow and fake success.
         // BillingClient.launchBillingFlow(Activity, BillingFlowParams): p0=this, p1=activity, p2=params.
-        // Call BillingFaker.fakeLaunch(p0, p1, p2) which returns a BillingResult; return it.
+        // Call BillingFaker.fakeLaunch(p0, p1, p2) which returns Object (BillingResult); return it.
         try {
             BillingLaunchFlowFingerprint.method.addInstructions(
                 0,
                 """
-                    invoke-static {p0, p1, p2}, $BILLING_FAKER->fakeLaunch(Lcom/android/billingclient/api/BillingClient;Landroid/app/Activity;Lcom/android/billingclient/api/BillingFlowParams;)Lcom/android/billingclient/api/BillingResult;
+                    invoke-static {p0, p1, p2}, $BILLING_FAKER->fakeLaunch(Ljava/lang/Object;Landroid/app/Activity;Ljava/lang/Object;)Ljava/lang/Object;
                     move-result-object v0
                     return-object v0
                 """.trimIndent(),
