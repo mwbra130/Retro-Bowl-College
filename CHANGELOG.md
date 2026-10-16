@@ -1,3 +1,9 @@
+## [1.26.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.25.1...v1.26.0) (2026-10-16)
+
+### ✨ New Features
+
+* add BlockAdsPatch for Subway Surfers 3.70.0 (UnityAds.show no-op) ([2efaaba](https://github.com/mwbra130/Retro-Bowl-College/commit/2efaabad2168e982c504ad5747f3954de9c0ef68))
+
 ## [1.25.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.25.0...v1.25.1) (2026-10-15)
 
 ### 🐛 Bug Fixes

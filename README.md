@@ -30,7 +30,39 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.25.1](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.25.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;9 patches total
+> **[v1.26.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.26.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;11 patches total
+<details open>
+<summary>Subway Surfers&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**Supported versions:**
+
+| 3.70.0 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Block Ads](#block-ads) | Blocks all Unity Ads (interstitial and rewarded) by no-opping the show() methods. No ads will display. |  |
+| [Skip Unity Ads](#skip-unity-ads) | Blocks forced interstitial ads — no fullscreen ad between runs. Rewarded ads still work normally and grant their reward. |  |
+
+</details>
+
+<details open>
+<summary>Subway Surfers&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**Supported versions:**
+
+| 3.70.0 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Block Ads](#block-ads) | Blocks all Unity Ads (interstitial and rewarded) by no-opping the show() methods. No ads will display. |  |
+| [Skip Unity Ads](#skip-unity-ads) | Blocks forced interstitial ads — no fullscreen ad between runs. Rewarded ads still work normally and grant their reward. |  |
+
+</details>
+
 <details open>
 <summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
@@ -60,36 +92,6 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 | Patch | Description | Options |
 |----------|----------------|-----------|
 | [Complete all levels](#complete-all-levels) | Marks every official level 100% complete with all secret coins. |  |
-
-</details>
-
-<details open>
-<summary>Subway Surfers&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
-<br>
-
-**Supported versions:**
-
-| 3.70.0 |
-| :---: |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| [Skip Unity Ads](#skip-unity-ads) | Blocks forced interstitial ads — no fullscreen ad between runs. Rewarded ads still work normally and grant their reward. |  |
-
-</details>
-
-<details open>
-<summary>Subway Surfers&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
-<br>
-
-**Supported versions:**
-
-| 3.70.0 |
-| :---: |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| [Skip Unity Ads](#skip-unity-ads) | Blocks forced interstitial ads — no fullscreen ad between runs. Rewarded ads still work normally and grant their reward. |  |
 
 </details>
 
