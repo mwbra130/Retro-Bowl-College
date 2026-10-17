@@ -1,3 +1,9 @@
+## [1.27.0-dev.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.27.0-dev.1...v1.27.0-dev.2) (2026-10-17)
+
+### ✨ New Features
+
+* replace old BeReal patch BlockAdsPatch ([3468ed8](https://github.com/mwbra130/Retro-Bowl-College/commit/3468ed858a94d750029927b513697564b036a67a))
+
 ## [1.27.0-dev.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.26.0...v1.27.0-dev.1) (2026-10-17)
 
 ### ✨ New Features

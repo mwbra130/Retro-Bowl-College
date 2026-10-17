@@ -30,7 +30,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.27.0-dev.1](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.27.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;16 patches total
+> **[v1.27.0-dev.2](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.27.0-dev.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;13 patches total
 <details open>
 <summary>Subway Surfers&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
 <br>
@@ -64,7 +64,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 </details>
 
 <details open>
-<summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;8 patches</summary>
+<summary>BeReal&nbsp;&nbsp;•&nbsp;&nbsp;5 patches</summary>
 <br>
 
 **Supported versions:**
@@ -74,12 +74,9 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
-| [Block ads](#block-ads) | Blocks fullscreen interstitial ads and removes sponsored posts from feeds. |  |
 | [Change location](#change-location) | Reads /sdcard/bereal_location.txt and substitutes its coordinates for BeReal's GPS location. Only active when the file exists. |  |
-| [Disable video autoplay](#disable-video-autoplay) | Videos stay paused until you tap them. Works in all feeds and profiles. |  |
 | [Hide screenshot notification](#hide-screenshot-notification) | Blocks BeReal's screenshot reports from reaching the server. Screenshots work normally locally, but the poster is not notified. |  |
 | [Remove late flag](#remove-late-flag) | Reads /sdcard/bereal_late.txt and substitutes its value for BeReal's late flag. Only active when the file exists. |  |
-| [Remove suggested-people card](#remove-suggested-people-card) | Removes the suggested-people card from the feed. |  |
 | [Set retake count](#set-retake-count) | Reads /sdcard/bereal_retakes.txt and substitutes its integer value for BeReal's retake counter. Only active when the file exists. |  |
 | [Use gallery photo](#use-gallery-photo) | Replaces camera-captured images with gallery files from /sdcard/bereal_gallery_primary.jpg and /sdcard/bereal_gallery_secondary.jpg. Only active when the files exist. |  |
 

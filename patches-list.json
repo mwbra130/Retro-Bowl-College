@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.27.0-dev.1",
+  "version": "1.27.0-dev.2",
   "patches": [
     {
       "name": "Block Ads",
@@ -35,32 +35,6 @@
           "targets": [
             {
               "version": "3.70.0",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Block ads",
-      "description": "Blocks fullscreen interstitial ads and removes sponsored posts from feeds.",
-      "default": true,
-      "dependencies": [],
-      "compatiblePackages": [
-        {
-          "packageName": "com.bereal.ft",
-          "name": "BeReal",
-          "description": null,
-          "apkFileType": "XAPK",
-          "appIconColor": "#111111",
-          "signatures": null,
-          "targets": [
-            {
-              "version": "3.97.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -124,32 +98,6 @@
       "options": []
     },
     {
-      "name": "Disable video autoplay",
-      "description": "Videos stay paused until you tap them. Works in all feeds and profiles.",
-      "default": true,
-      "dependencies": [],
-      "compatiblePackages": [
-        {
-          "packageName": "com.bereal.ft",
-          "name": "BeReal",
-          "description": null,
-          "apkFileType": "XAPK",
-          "appIconColor": "#111111",
-          "signatures": null,
-          "targets": [
-            {
-              "version": "3.97.1",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
       "name": "Hide screenshot notification",
       "description": "Blocks BeReal's screenshot reports from reaching the server. Screenshots work normally locally, but the poster is not notified.",
       "default": true,
@@ -187,32 +135,6 @@
           "description": null,
           "apkFileType": "XAPK",
           "appIconColor": null,
-          "signatures": null,
-          "targets": [
-            {
-              "version": "3.97.1",
-              "versionCodes": null,
-              "isExperimental": false,
-              "minSdk": null,
-              "description": null
-            }
-          ]
-        }
-      ],
-      "options": []
-    },
-    {
-      "name": "Remove suggested-people card",
-      "description": "Removes the suggested-people card from the feed.",
-      "default": true,
-      "dependencies": [],
-      "compatiblePackages": [
-        {
-          "packageName": "com.bereal.ft",
-          "name": "BeReal",
-          "description": null,
-          "apkFileType": "XAPK",
-          "appIconColor": "#111111",
           "signatures": null,
           "targets": [
             {
