@@ -1,3 +1,13 @@
+## [1.27.0-dev.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.26.0...v1.27.0-dev.1) (2026-10-17)
+
+### ✨ New Features
+
+* add beta BeReal patch gallery substitution ([2c1820a](https://github.com/mwbra130/Retro-Bowl-College/commit/2c1820a75af95d21333133285076dd895c1bacf7))
+* add beta BeReal patch late flag override ([821c4d6](https://github.com/mwbra130/Retro-Bowl-College/commit/821c4d690f311062c80284672edd3a66df962306))
+* add beta BeReal patch location override ([cb4b396](https://github.com/mwbra130/Retro-Bowl-College/commit/cb4b396d23eb0f09ff76a157b77d50ebf6b09d34))
+* add beta BeReal patch retake override ([9e3fc87](https://github.com/mwbra130/Retro-Bowl-College/commit/9e3fc87bc270d830cb41f6808ca5a33037e6d19c))
+* add beta BeReal patch screenshot notification suppression ([32c3161](https://github.com/mwbra130/Retro-Bowl-College/commit/32c3161a753254815c86b85731ef89259df9de08))
+
 ## [1.26.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.25.1...v1.26.0) (2026-10-16)
 
 ### ✨ New Features

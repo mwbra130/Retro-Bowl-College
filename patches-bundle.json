@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-16T01:52:16",
-  "description": "## [1.26.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.25.1...v1.26.0) (2026-10-16)\n\n### ✨ New Features\n\n* add BlockAdsPatch for Subway Surfers 3.70.0 (UnityAds.show no-op) ([2efaaba](https://github.com/mwbra130/Retro-Bowl-College/commit/2efaabad2168e982c504ad5747f3954de9c0ef68))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.26.0/patches-1.26.0.mpp",
+  "created_at": "2026-10-17T04:44:44",
+  "description": "## [1.27.0-dev.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.26.0...v1.27.0-dev.1) (2026-10-17)\n\n### ✨ New Features\n\n* add beta BeReal patch gallery substitution ([2c1820a](https://github.com/mwbra130/Retro-Bowl-College/commit/2c1820a75af95d21333133285076dd895c1bacf7))\n* add beta BeReal patch late flag override ([821c4d6](https://github.com/mwbra130/Retro-Bowl-College/commit/821c4d690f311062c80284672edd3a66df962306))\n* add beta BeReal patch location override ([cb4b396](https://github.com/mwbra130/Retro-Bowl-College/commit/cb4b396d23eb0f09ff76a157b77d50ebf6b09d34))\n* add beta BeReal patch retake override ([9e3fc87](https://github.com/mwbra130/Retro-Bowl-College/commit/9e3fc87bc270d830cb41f6808ca5a33037e6d19c))\n* add beta BeReal patch screenshot notification suppression ([32c3161](https://github.com/mwbra130/Retro-Bowl-College/commit/32c3161a753254815c86b85731ef89259df9de08))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.27.0-dev.1/patches-1.27.0-dev.1.mpp",
   "signature_download_url": "",
-  "version": "1.26.0"
+  "version": "1.27.0-dev.1"
 }
