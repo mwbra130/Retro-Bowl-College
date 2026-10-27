@@ -1,3 +1,9 @@
+## [1.27.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.26.0...v1.27.0) (2026-10-27)
+
+### ✨ New Features
+
+* **crossyroad:** add Crossy Road patches for 7.14.0 (Free store, Unlimited gold) ([240eada](https://github.com/mwbra130/Retro-Bowl-College/commit/240eada293948e72eb7bd6ab823509677e09ff5c))
+
 ## [1.26.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.25.1...v1.26.0) (2026-10-16)
 
 ### ✨ New Features

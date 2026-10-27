@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.26.0",
+  "version": "1.27.0",
   "patches": [
     {
       "name": "Block Ads",
@@ -124,6 +124,34 @@
       "options": []
     },
     {
+      "name": "Free store",
+      "description": "The in-game store is free. Just tap \"Buy\" and the item is yours — no payment needed. For an ad-free game, just buy the ad-block item from the store.",
+      "default": true,
+      "dependencies": [
+        "RawResourcePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "com.yodo1.crossyroad",
+          "name": "Crossy Road",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#7CB342",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "7.14.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Remove suggested-people card",
       "description": "Removes the suggested-people card from the feed.",
       "default": true,
@@ -215,6 +243,32 @@
             },
             {
               "version": "1.45",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlimited gold",
+      "description": "Your coin balance always shows 65,535 and spending coins always works without deducting any — pull the prize machine and buy coin characters as much as you want.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.yodo1.crossyroad",
+          "name": "Crossy Road",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#7CB342",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "7.14.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
