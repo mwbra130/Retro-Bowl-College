@@ -1,3 +1,9 @@
+## [1.28.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.27.0...v1.28.0) (2026-10-27)
+
+### ✨ New Features
+
+* **crossyroad:** add Unlock all characters patch for Crossy Road 7.14.0 ([4b72953](https://github.com/mwbra130/Retro-Bowl-College/commit/4b72953d969f97cf6f5f3e43930d6c8af199c133))
+
 ## [1.27.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.26.0...v1.27.0) (2026-10-27)
 
 ### ✨ New Features

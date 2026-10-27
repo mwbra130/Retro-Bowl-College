@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.27.0",
+  "version": "1.28.0",
   "patches": [
     {
       "name": "Block Ads",
@@ -302,6 +302,32 @@
             },
             {
               "version": "1.45",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Unlock all characters",
+      "description": "Every character is unlocked and playable — paid, coin, prize machine, progress and secret characters included. Your real collection progress is not changed; characters are unlocked while the patch is applied.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.yodo1.crossyroad",
+          "name": "Crossy Road",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#7CB342",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "7.14.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,

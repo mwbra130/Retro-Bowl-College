@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-27T18:56:07",
-  "description": "## [1.27.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.26.0...v1.27.0) (2026-10-27)\n\n### ✨ New Features\n\n* **crossyroad:** add Crossy Road patches for 7.14.0 (Free store, Unlimited gold) ([240eada](https://github.com/mwbra130/Retro-Bowl-College/commit/240eada293948e72eb7bd6ab823509677e09ff5c))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.27.0/patches-1.27.0.mpp",
+  "created_at": "2026-10-27T19:15:18",
+  "description": "## [1.28.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.27.0...v1.28.0) (2026-10-27)\n\n### ✨ New Features\n\n* **crossyroad:** add Unlock all characters patch for Crossy Road 7.14.0 ([4b72953](https://github.com/mwbra130/Retro-Bowl-College/commit/4b72953d969f97cf6f5f3e43930d6c8af199c133))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.28.0/patches-1.28.0.mpp",
   "signature_download_url": "",
-  "version": "1.27.0"
+  "version": "1.28.0"
 }
