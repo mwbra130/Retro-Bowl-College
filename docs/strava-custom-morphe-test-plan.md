@@ -4,7 +4,7 @@ This plan applies to Strava Android 486.9 (versionCode 12400193) and must be rev
 
 ## Important current status
 
-No Strava patch has been implemented or compiled yet. Do not attempt to install a nonexistent or unverified `.mpp` bundle. The current PR contains planning and APK inventory only.
+Five patches are implemented on this branch (theme colors, hide subscription promotions, hide feed elements, custom app name and icon, local route privacy trim). Do not install a bundle until the CI build is green and the bundle has been verified to apply cleanly to the exact 486.9 XAPK. The sixth planned feature (additional local pace calculations) is deferred; see the implementation notes in `strava-custom-morphe-v0.1.md`.
 
 ## Stage 0 — Prepare a safe test setup
 
