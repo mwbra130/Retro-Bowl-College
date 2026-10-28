@@ -37,11 +37,21 @@ public class HideDistractionsPatch {
     public static boolean joinClub;
     public static boolean activityLookback;
 
+    // The modular model objects are deserialized from server JSON, so any of
+    // the intercepted getters can return null at runtime even where the Kotlin
+    // type is non-null. Every filter below passes a null result through
+    // unchanged instead of dereferencing it: the wrapper must behave exactly
+    // like the original getter when nothing is being hidden.
+
     public static List<ModularEntry> filterChildrenEntries(ModularEntry modularEntry) {
         if (hideModularEntry(modularEntry)) {
             return Collections.emptyList();
         }
-        return modularEntry.getChildrenEntries$original().stream()
+        List<ModularEntry> childrenEntries = modularEntry.getChildrenEntries$original();
+        if (childrenEntries == null) {
+            return null;
+        }
+        return childrenEntries.stream()
                 .filter(childrenEntry -> !hideModularEntry(childrenEntry))
                 .collect(Collectors.toList());
     }
@@ -50,7 +60,11 @@ public class HideDistractionsPatch {
         if (hideModularEntryContainer(modularEntryContainer)) {
             return Collections.emptyList();
         }
-        return modularEntryContainer.getEntries$original().stream()
+        List<ModularEntry> entries = modularEntryContainer.getEntries$original();
+        if (entries == null) {
+            return null;
+        }
+        return entries.stream()
                 .filter(entry -> !hideModularEntry(entry))
                 .collect(Collectors.toList());
     }
@@ -59,7 +73,11 @@ public class HideDistractionsPatch {
         if (hideModularEntryNetworkContainer(modularEntryNetworkContainer)) {
             return Collections.emptyList();
         }
-        return modularEntryNetworkContainer.getEntries$original().stream()
+        List<ModularEntry> entries = modularEntryNetworkContainer.getEntries$original();
+        if (entries == null) {
+            return null;
+        }
+        return entries.stream()
                 .filter(entry -> !hideModularEntry(entry))
                 .collect(Collectors.toList());
     }
@@ -68,7 +86,11 @@ public class HideDistractionsPatch {
         if (hideModularEntryContainer(modularEntryContainer)) {
             return Collections.emptyList();
         }
-        return modularEntryContainer.getMenuItems$original().stream()
+        List<ModularMenuItem> menuItems = modularEntryContainer.getMenuItems$original();
+        if (menuItems == null) {
+            return null;
+        }
+        return menuItems.stream()
                 .filter(menuItem -> !hideModularMenuItem(menuItem))
                 .collect(Collectors.toList());
     }
@@ -99,7 +121,11 @@ public class HideDistractionsPatch {
         if (hideListField(listField)) {
             return null;
         }
-        return listField.getFields$original().stream()
+        List<ListField> fields = listField.getFields$original();
+        if (fields == null) {
+            return null;
+        }
+        return fields.stream()
                 .filter(field -> !hideListField(field))
                 .collect(Collectors.toList());
     }
@@ -108,7 +134,11 @@ public class HideDistractionsPatch {
         if (hideModularEntry(modularEntry)) {
             return Collections.emptyList();
         }
-        return modularEntry.getModules$original().stream()
+        List<Module> modules = modularEntry.getModules$original();
+        if (modules == null) {
+            return null;
+        }
+        return modules.stream()
                 .filter(module -> !hideModule(module))
                 .collect(Collectors.toList());
     }
@@ -128,7 +158,11 @@ public class HideDistractionsPatch {
         if (hideGenericLayoutModule(genericLayoutModule)) {
             return new GenericModuleField[0];
         }
-        return Arrays.stream(genericLayoutModule.getFields$original())
+        GenericModuleField[] fields = genericLayoutModule.getFields$original();
+        if (fields == null) {
+            return null;
+        }
+        return Arrays.stream(fields)
                 .filter(field -> !hideGenericModuleField(field))
                 .toArray(GenericModuleField[]::new);
     }
@@ -137,7 +171,11 @@ public class HideDistractionsPatch {
         if (hideGenericLayoutModule(genericLayoutModule)) {
             return new GenericLayoutModule[0];
         }
-        return Arrays.stream(genericLayoutModule.getSubmodules$original())
+        GenericLayoutModule[] submodules = genericLayoutModule.getSubmodules$original();
+        if (submodules == null) {
+            return null;
+        }
+        return Arrays.stream(submodules)
                 .filter(submodule -> !hideGenericLayoutModule(submodule))
                 .toArray(GenericLayoutModule[]::new);
     }
@@ -146,13 +184,21 @@ public class HideDistractionsPatch {
         if (hideByName(modularComponent.getPage()) || hideByName(modularComponent.getElement())) {
             return Collections.emptyList();
         }
-        return modularComponent.getSubmodules$original().stream()
+        List<Module> submodules = modularComponent.getSubmodules$original();
+        if (submodules == null) {
+            return null;
+        }
+        return submodules.stream()
                 .filter(submodule -> !hideModule(submodule))
                 .collect(Collectors.toList());
     }
 
     public static Map<String, GenericModuleField> filterStateMap(MultiStateFieldDescriptor multiStateFieldDescriptor) {
-        return multiStateFieldDescriptor.getStateMap$original().entrySet().stream()
+        Map<String, GenericModuleField> stateMap = multiStateFieldDescriptor.getStateMap$original();
+        if (stateMap == null) {
+            return null;
+        }
+        return stateMap.entrySet().stream()
                 .filter(entry -> !hideGenericModuleField(entry.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
