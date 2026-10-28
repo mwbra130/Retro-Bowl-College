@@ -1,3 +1,10 @@
+## [1.29.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.29.0...v1.29.1) (2026-10-28)
+
+### 🐛 Bug Fixes
+
+* **strava:** intercept modular entry decorators outside the framework packages ([1f492c8](https://github.com/mwbra130/Retro-Bowl-College/commit/1f492c851bc8e9143a7a3d3ab817c9c62b501316))
+* **strava:** pass null modular getter results through instead of crashing ([36fcda4](https://github.com/mwbra130/Retro-Bowl-College/commit/36fcda4ed21a978e2f105e45a17ab1778aefe5d4))
+
 ## [1.29.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.28.0...v1.29.0) (2026-10-28)
 
 ### ✨ New Features
