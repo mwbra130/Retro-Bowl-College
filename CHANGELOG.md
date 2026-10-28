@@ -1,3 +1,35 @@
+## [1.29.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.28.0...v1.29.0) (2026-10-28)
+
+### ✨ New Features
+
+* **strava:** add Strava 486.9 custom patches and extension ([37b42ec](https://github.com/mwbra130/Retro-Bowl-College/commit/37b42ec78e8e62c4c88a2ac12751cd2e9e0d175f))
+* **strava:** add Strava 486.9 custom patches and extension ([db3a24b](https://github.com/mwbra130/Retro-Bowl-College/commit/db3a24ba06370210a82da981a2a7b8de07806f0a))
+* **strava:** add Strava 486.9 custom patches and extension ([e05a7b9](https://github.com/mwbra130/Retro-Bowl-College/commit/e05a7b9c867e320fbdaa307b12120392e13c340f))
+* **strava:** add Strava 486.9 custom patches and extension ([a25ac9c](https://github.com/mwbra130/Retro-Bowl-College/commit/a25ac9cbf5a7f7eab0753fb27a7d26264a293f8e))
+* **strava:** add Strava 486.9 custom patches and extension ([939fe6f](https://github.com/mwbra130/Retro-Bowl-College/commit/939fe6fa021ed3d2edd023cca88b69360975a940))
+* **strava:** add Strava 486.9 custom patches and extension ([db293dc](https://github.com/mwbra130/Retro-Bowl-College/commit/db293dcdd4b95e5b24c78c951132cd66f76409d5))
+* **strava:** add Strava 486.9 custom patches and extension ([887e5f5](https://github.com/mwbra130/Retro-Bowl-College/commit/887e5f56872018089dd18009337a2c403f55204c))
+* **strava:** add Strava 486.9 custom patches and extension ([3231f53](https://github.com/mwbra130/Retro-Bowl-College/commit/3231f535fcd95c52615aec7a9c90ddf6778a10e1))
+* **strava:** add Strava 486.9 custom patches and extension ([29e9552](https://github.com/mwbra130/Retro-Bowl-College/commit/29e95524aff24d2676330f6fdb35130e94230241))
+* **strava:** add Strava 486.9 custom patches and extension ([dd5b300](https://github.com/mwbra130/Retro-Bowl-College/commit/dd5b300b512cff5229d30b14f9ae5e2ed1795ef5))
+* **strava:** add Strava 486.9 custom patches and extension ([20b89f9](https://github.com/mwbra130/Retro-Bowl-College/commit/20b89f94309dbe00295be81e7e52152400c9374f))
+* **strava:** add Strava 486.9 custom patches and extension ([5dcfe16](https://github.com/mwbra130/Retro-Bowl-College/commit/5dcfe16b5dd43e863ea32ec165d38ca7e3768f0e))
+* **strava:** add Strava 486.9 custom patches and extension ([a42f97d](https://github.com/mwbra130/Retro-Bowl-College/commit/a42f97d51960ba2e8db9875b30a6cf38d4d1ecf2))
+* **strava:** add Strava 486.9 custom patches and extension ([31ef181](https://github.com/mwbra130/Retro-Bowl-College/commit/31ef181d9e3543ae6b4782441464f7684ba3453d))
+* **strava:** add Strava 486.9 custom patches and extension ([55811a4](https://github.com/mwbra130/Retro-Bowl-College/commit/55811a432f03f9915324bd1057e35361117a607f))
+* **strava:** add Strava 486.9 custom patches and extension ([4e4ee5c](https://github.com/mwbra130/Retro-Bowl-College/commit/4e4ee5c5865b16cba81f6a66c95ce9efbeec0efe))
+* **strava:** add Strava 486.9 custom patches and extension ([07baf9c](https://github.com/mwbra130/Retro-Bowl-College/commit/07baf9c07d7e1928fa75ceacecd4b9734153cbf3))
+* **strava:** add Strava 486.9 custom patches and extension ([d914a66](https://github.com/mwbra130/Retro-Bowl-College/commit/d914a666e5da3a1777ba90a93002023e9c2285b9))
+* **strava:** add Strava 486.9 custom patches and extension ([f9b63e2](https://github.com/mwbra130/Retro-Bowl-College/commit/f9b63e2d976913dd114ea5c005dad7011c1547cb))
+* **strava:** add Strava 486.9 custom patches and extension ([3a0038b](https://github.com/mwbra130/Retro-Bowl-College/commit/3a0038bd913c07fad5f4c5bc09863bd8181365c1))
+* **strava:** add Strava 486.9 custom patches and extension ([1b7afdb](https://github.com/mwbra130/Retro-Bowl-College/commit/1b7afdb75948308aecdbd806438b095a283eeafe))
+* **strava:** add Strava 486.9 custom patches and extension ([a8cf76f](https://github.com/mwbra130/Retro-Bowl-College/commit/a8cf76fdf4f170e2a7de68540fe5ae8703c811e2))
+* **strava:** add Strava 486.9 custom patches and extension ([d77f9b1](https://github.com/mwbra130/Retro-Bowl-College/commit/d77f9b142f12f080ce633b9a909acba6189b3214))
+* **strava:** add Strava 486.9 custom patches and extension ([e00d617](https://github.com/mwbra130/Retro-Bowl-College/commit/e00d61746f9ce1e5a70ce0fe2ef630a2e3a2f58a))
+* **strava:** add Strava 486.9 custom patches and extension ([0cb9c78](https://github.com/mwbra130/Retro-Bowl-College/commit/0cb9c781bdb4cbde4633fee16ab5569cbad0ce5c))
+* **strava:** add Strava 486.9 custom patches and extension ([e34ea81](https://github.com/mwbra130/Retro-Bowl-College/commit/e34ea815a42c12849db743bd0de9389abcf74f30))
+* **strava:** Strava Custom Morphe bundle v0.1 ([7878c21](https://github.com/mwbra130/Retro-Bowl-College/commit/7878c214e65d344ba1d1f9c450d2834f8f677d8f))
+
 ## [1.28.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.27.0...v1.28.0) (2026-10-27)
 
 ### ✨ New Features
