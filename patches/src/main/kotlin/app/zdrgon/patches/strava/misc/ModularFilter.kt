@@ -131,7 +131,19 @@ internal fun BytecodePatchContext.interceptModularFrameworkGetters() {
     }
 
     classDefForEach { classDef ->
-        if (!classDef.type.startsWith(MODULAR_FRAMEWORK_CLASS_DESCRIPTOR_PREFIX)) {
+        // Classes in the modular framework packages, plus any class elsewhere
+        // that implements one of the modular framework interfaces. The second
+        // case matters: Strava ships obfuscated decorator implementations of
+        // ModularEntry outside the framework packages (for example `ipz`, a
+        // delegating wrapper). The interception adds $original declarations
+        // to the interfaces, so every implementor must be intercepted too,
+        // otherwise a call to an $original method on a missed implementor
+        // throws AbstractMethodError at runtime.
+        if (!classDef.type.startsWith(MODULAR_FRAMEWORK_CLASS_DESCRIPTOR_PREFIX) &&
+            classDef.interfaces.none {
+                it.startsWith(MODULAR_FRAMEWORK_CLASS_DESCRIPTOR_PREFIX)
+            }
+        ) {
             return@classDefForEach
         }
 
