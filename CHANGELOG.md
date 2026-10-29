@@ -1,3 +1,9 @@
+## [1.31.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.6...v1.31.7) (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **strava:** settings entry takes its own layout space (LinearLayout stack) instead of overlaying the settings list ([055e4f0](https://github.com/mwbra130/Retro-Bowl-College/commit/055e4f0c3c2aa69123fa3f579c11bc8c3c171d48))
+
 ## [1.31.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.5...v1.31.6) (2026-10-29)
 
 ### 🐛 Bug Fixes
