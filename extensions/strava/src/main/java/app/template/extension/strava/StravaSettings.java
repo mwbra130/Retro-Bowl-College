@@ -1,7 +1,13 @@
 package app.template.extension.strava;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Runtime settings store for the Strava patches.
@@ -50,11 +56,69 @@ public final class StravaSettings {
     private StravaSettings() {
     }
 
+    // The currently resumed activity, tracked hxreborn-PatchContext-style
+    // through lifecycle callbacks registered in attach(). The settings
+    // screen is opened from this activity, which is always a valid,
+    // foreground window context.
+    private static WeakReference<Activity> resumedActivity = new WeakReference<>(null);
+
     /** Called from the patched StravaApplication.onCreate. */
     public static void attach(Context context) {
-        if (context != null) {
-            appContext = context.getApplicationContext();
+        if (context == null) {
+            return;
         }
+        appContext = context.getApplicationContext();
+        if (context instanceof Application) {
+            ((Application) context).registerActivityLifecycleCallbacks(
+                    new Application.ActivityLifecycleCallbacks() {
+                        @Override
+                        public void onActivityResumed(Activity activity) {
+                            resumedActivity = new WeakReference<>(activity);
+                        }
+
+                        @Override
+                        public void onActivityCreated(Activity activity, Bundle state) {
+                        }
+
+                        @Override
+                        public void onActivityStarted(Activity activity) {
+                        }
+
+                        @Override
+                        public void onActivityPaused(Activity activity) {
+                        }
+
+                        @Override
+                        public void onActivityStopped(Activity activity) {
+                        }
+
+                        @Override
+                        public void onActivitySaveInstanceState(Activity activity, Bundle state) {
+                        }
+
+                        @Override
+                        public void onActivityDestroyed(Activity activity) {
+                        }
+                    });
+        }
+    }
+
+    /**
+     * Opens the patch settings screen, hxreborn PatchContext.open() style:
+     * from the currently resumed activity when there is one, otherwise
+     * from the application context with FLAG_ACTIVITY_NEW_TASK.
+     */
+    public static void openSettings() {
+        Activity activity = resumedActivity.get();
+        Context context = activity != null ? activity : appContext;
+        if (context == null) {
+            return;
+        }
+        Intent intent = new Intent(context, StravaSettingsActivity.class);
+        if (activity == null) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        context.startActivity(intent);
     }
 
     private static SharedPreferences prefs() {
