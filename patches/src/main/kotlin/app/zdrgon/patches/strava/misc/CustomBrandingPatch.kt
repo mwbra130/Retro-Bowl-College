@@ -1,5 +1,6 @@
 package app.zdrgon.patches.strava.misc
 
+import app.morphe.patcher.patch.ResourcePatchContext
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.patch.stringOption
 import app.zdrgon.patches.strava.shared.Constants.COMPATIBILITY_STRAVA
@@ -45,6 +46,173 @@ private fun componentFor(customName: Boolean, iconKey: String): String = when (i
     "Original" -> if (customName) "${SPLASH_ACTIVITY}DefaultIconCustomName" else SPLASH_ACTIVITY
     "Accent" -> "${SPLASH_ACTIVITY}AccentIcon" + if (customName) "CustomName" else ""
     else -> "${SPLASH_ACTIVITY}${iconKey}Icon" + if (customName) "CustomName" else ""
+}
+
+// The custom name lives in its own string resource so the original
+// @string/app_name (and every component that references it) keeps
+// working unchanged.
+private fun ResourcePatchContext.writeCustomNameString(customName: String) {
+    fun writeTo(path: String) {
+        document(path).use { doc ->
+            val strings = doc.getElementsByTagName("string")
+            for (i in 0 until strings.length) {
+                val element = strings.item(i) as Element
+                if (element.getAttribute("name") == CUSTOM_NAME_STRING) {
+                    element.textContent = customName
+                    return@use
+                }
+            }
+            val element = doc.createElement("string")
+            element.setAttribute("name", CUSTOM_NAME_STRING)
+            element.textContent = customName
+            doc.getElementsByTagName("resources").item(0).appendChild(element)
+        }
+    }
+
+    writeTo("res/values/strings.xml")
+
+    // The XAPK's config.en split can override the default strings on
+    // English devices, so write there too when present.
+    try {
+        writeTo("res/values-en/strings.xml")
+    } catch (e: Exception) {
+        // File not present in this APK.
+    }
+}
+
+// The Accent icon: the stock launcher glyph (both pathData strings
+// copied verbatim from res/drawable/ic_launcher_foreground.xml in
+// 486.9) filled with @color/core_o3 instead of @color/global_light,
+// on a @color/global_light background (the inverse of the default
+// icon, whose background is the brand color and glyph is light).
+private fun ResourcePatchContext.writeAccentIconResources() {
+    val foreground = """
+        <?xml version="1.0" encoding="utf-8"?>
+        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="108dp"
+            android:height="108dp"
+            android:viewportWidth="108"
+            android:viewportHeight="108">
+            <path
+                android:fillColor="@color/core_o3"
+                android:pathData="M51.01,46.47L56.69,57.67H65.03L51.01,30L37,57.67H45.34L51.01,46.47Z" />
+            <path
+                android:fillColor="@color/core_o3"
+                android:pathData="M60.86,65.89L56.69,57.66H50.56L60.86,78L71.15,57.66H65.02L60.86,65.89Z" />
+        </vector>
+    """.trimIndent()
+
+    val adaptiveIcon = """
+        <?xml version="1.0" encoding="utf-8"?>
+        <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+            <background android:drawable="@color/global_light" />
+            <foreground android:drawable="@drawable/ic_launcher_foreground_accent" />
+            <monochrome android:drawable="@drawable/ic_launcher_foreground_accent" />
+        </adaptive-icon>
+    """.trimIndent()
+
+    val foregroundFile = this["res/drawable/ic_launcher_foreground_accent.xml", false]
+    foregroundFile.parentFile?.mkdirs()
+    foregroundFile.writeText(foreground)
+
+    val iconFile = this["res/mipmap-anydpi-v26/ic_launcher_accent.xml", false]
+    iconFile.parentFile?.mkdirs()
+    iconFile.writeText(adaptiveIcon)
+}
+
+private fun ResourcePatchContext.prepareLauncherManifest(chosenComponent: String) {
+    document("AndroidManifest.xml").use { doc ->
+        val application = doc.getElementsByTagName("application").item(0) as Element
+
+        // Icon reference per key: read the stock aliases' own icon
+        // attributes where possible so the custom-name copies point at
+        // exactly the same mipmaps.
+        val iconRefs = mutableMapOf(
+            "Original" to DEFAULT_ICON_MIPMAP,
+            "Accent" to ACCENT_ICON_MIPMAP,
+        )
+        iconRefs.putAll(STOCK_ICON_MIPMAPS)
+
+        var appLabel = "@string/app_name"
+        val aliases = doc.getElementsByTagName("activity-alias")
+        val stockAliases = ArrayList<Element>()
+        for (i in 0 until aliases.length) {
+            val element = aliases.item(i) as Element
+            stockAliases += element
+            if (element.hasAttribute("android:label")) {
+                appLabel = element.getAttribute("android:label")
+            }
+            val name = element.getAttribute("android:name")
+            for (key in STOCK_ICON_MIPMAPS.keys) {
+                if (name == "${SPLASH_ACTIVITY}${key}Icon" &&
+                    element.hasAttribute("android:icon")
+                ) {
+                    iconRefs[key] = element.getAttribute("android:icon")
+                }
+            }
+        }
+
+        fun createAlias(
+            name: String,
+            label: String,
+            icon: String,
+        ): Element {
+            val alias = doc.createElement("activity-alias")
+            alias.setAttribute("android:name", name)
+            alias.setAttribute("android:label", label)
+            alias.setAttribute("android:icon", icon)
+            alias.setAttribute("android:enabled", "false")
+            alias.setAttribute("android:exported", "true")
+            alias.setAttribute("android:targetActivity", SPLASH_ACTIVITY)
+            val filter = doc.createElement("intent-filter")
+            val action = doc.createElement("action")
+            action.setAttribute("android:name", "android.intent.action.MAIN")
+            val category = doc.createElement("category")
+            category.setAttribute("android:name", "android.intent.category.LAUNCHER")
+            filter.appendChild(action)
+            filter.appendChild(category)
+            alias.appendChild(filter)
+            application.appendChild(alias)
+            return alias
+        }
+
+        val allAliases = ArrayList<Element>(stockAliases)
+
+        // The Accent combination for the original name; the 15 stock
+        // aliases already cover the other original-name icons.
+        allAliases += createAlias(
+            componentFor(false, "Accent"),
+            appLabel,
+            iconRefs.getValue("Accent"),
+        )
+
+        // Every custom-name combination.
+        for (key in ICON_KEYS) {
+            allAliases += createAlias(
+                componentFor(true, key),
+                "@string/$CUSTOM_NAME_STRING",
+                iconRefs.getValue(key),
+            )
+        }
+
+        // Enable exactly the chosen combination.
+        val activities = doc.getElementsByTagName("activity")
+        for (i in 0 until activities.length) {
+            val element = activities.item(i) as Element
+            if (element.getAttribute("android:name") == SPLASH_ACTIVITY) {
+                element.setAttribute(
+                    "android:enabled",
+                    (chosenComponent == SPLASH_ACTIVITY).toString(),
+                )
+            }
+        }
+        for (alias in allAliases) {
+            alias.setAttribute(
+                "android:enabled",
+                (alias.getAttribute("android:name") == chosenComponent).toString(),
+            )
+        }
+    }
 }
 
 /**
@@ -127,173 +295,6 @@ val customBrandingPatch = resourcePatch(
 
         writeCustomNameString(customName)
         writeAccentIconResources()
-        prepareManifest(chosenComponent)
-    }
-
-    // The custom name lives in its own string resource so the original
-    // @string/app_name (and every component that references it) keeps
-    // working unchanged.
-    fun writeCustomNameString(customName: String) {
-        fun writeTo(path: String) {
-            document(path).use { document ->
-                val strings = document.getElementsByTagName("string")
-                for (i in 0 until strings.length) {
-                    val element = strings.item(i) as Element
-                    if (element.getAttribute("name") == CUSTOM_NAME_STRING) {
-                        element.textContent = customName
-                        return@use
-                    }
-                }
-                val element = document.createElement("string")
-                element.setAttribute("name", CUSTOM_NAME_STRING)
-                element.textContent = customName
-                document.getElementsByTagName("resources").item(0).appendChild(element)
-            }
-        }
-
-        writeTo("res/values/strings.xml")
-
-        // The XAPK's config.en split can override the default strings on
-        // English devices, so write there too when present.
-        try {
-            writeTo("res/values-en/strings.xml")
-        } catch (e: Exception) {
-            // File not present in this APK.
-        }
-    }
-
-    // The Accent icon: the stock launcher glyph (both pathData strings
-    // copied verbatim from res/drawable/ic_launcher_foreground.xml in
-    // 486.9) filled with @color/core_o3 instead of @color/global_light,
-    // on a @color/global_light background (the inverse of the default
-    // icon, whose background is the brand color and glyph is light).
-    fun writeAccentIconResources() {
-        val foreground = """
-            <?xml version="1.0" encoding="utf-8"?>
-            <vector xmlns:android="http://schemas.android.com/apk/res/android"
-                android:width="108dp"
-                android:height="108dp"
-                android:viewportWidth="108"
-                android:viewportHeight="108">
-                <path
-                    android:fillColor="@color/core_o3"
-                    android:pathData="M51.01,46.47L56.69,57.67H65.03L51.01,30L37,57.67H45.34L51.01,46.47Z" />
-                <path
-                    android:fillColor="@color/core_o3"
-                    android:pathData="M60.86,65.89L56.69,57.66H50.56L60.86,78L71.15,57.66H65.02L60.86,65.89Z" />
-            </vector>
-        """.trimIndent()
-
-        val adaptiveIcon = """
-            <?xml version="1.0" encoding="utf-8"?>
-            <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-                <background android:drawable="@color/global_light" />
-                <foreground android:drawable="@drawable/ic_launcher_foreground_accent" />
-                <monochrome android:drawable="@drawable/ic_launcher_foreground_accent" />
-            </adaptive-icon>
-        """.trimIndent()
-
-        val foregroundFile = this["res/drawable/ic_launcher_foreground_accent.xml", false]
-        foregroundFile.parentFile?.mkdirs()
-        foregroundFile.writeText(foreground)
-
-        val iconFile = this["res/mipmap-anydpi-v26/ic_launcher_accent.xml", false]
-        iconFile.parentFile?.mkdirs()
-        iconFile.writeText(adaptiveIcon)
-    }
-
-    fun prepareManifest(chosenComponent: String) {
-        document("AndroidManifest.xml").use { document ->
-            val application = document.getElementsByTagName("application").item(0) as Element
-
-            // Icon reference per key: read the stock aliases' own icon
-            // attributes where possible so the custom-name copies point
-            // at exactly the same mipmaps.
-            val iconRefs = mutableMapOf(
-                "Original" to DEFAULT_ICON_MIPMAP,
-                "Accent" to ACCENT_ICON_MIPMAP,
-            )
-            iconRefs.putAll(STOCK_ICON_MIPMAPS)
-
-            var appLabel = "@string/app_name"
-            val aliases = document.getElementsByTagName("activity-alias")
-            val stockAliases = ArrayList<Element>()
-            for (i in 0 until aliases.length) {
-                val element = aliases.item(i) as Element
-                stockAliases += element
-                if (element.hasAttribute("android:label")) {
-                    appLabel = element.getAttribute("android:label")
-                }
-                val name = element.getAttribute("android:name")
-                for (key in STOCK_ICON_MIPMAPS.keys) {
-                    if (name == "${SPLASH_ACTIVITY}${key}Icon" &&
-                        element.hasAttribute("android:icon")
-                    ) {
-                        iconRefs[key] = element.getAttribute("android:icon")
-                    }
-                }
-            }
-
-            fun createAlias(
-                name: String,
-                label: String,
-                icon: String,
-            ): Element {
-                val alias = document.createElement("activity-alias")
-                alias.setAttribute("android:name", name)
-                alias.setAttribute("android:label", label)
-                alias.setAttribute("android:icon", icon)
-                alias.setAttribute("android:enabled", "false")
-                alias.setAttribute("android:exported", "true")
-                alias.setAttribute("android:targetActivity", SPLASH_ACTIVITY)
-                val filter = document.createElement("intent-filter")
-                val action = document.createElement("action")
-                action.setAttribute("android:name", "android.intent.action.MAIN")
-                val category = document.createElement("category")
-                category.setAttribute("android:name", "android.intent.category.LAUNCHER")
-                filter.appendChild(action)
-                filter.appendChild(category)
-                alias.appendChild(filter)
-                application.appendChild(alias)
-                return alias
-            }
-
-            val allAliases = ArrayList<Element>(stockAliases)
-
-            // The Accent combination for the original name; the 15
-            // stock aliases already cover the other original-name icons.
-            allAliases += createAlias(
-                componentFor(false, "Accent"),
-                appLabel,
-                iconRefs.getValue("Accent"),
-            )
-
-            // Every custom-name combination.
-            for (key in ICON_KEYS) {
-                allAliases += createAlias(
-                    componentFor(true, key),
-                    "@string/$CUSTOM_NAME_STRING",
-                    iconRefs.getValue(key),
-                )
-            }
-
-            // Enable exactly the chosen combination.
-            val activities = document.getElementsByTagName("activity")
-            for (i in 0 until activities.length) {
-                val element = activities.item(i) as Element
-                if (element.getAttribute("android:name") == SPLASH_ACTIVITY) {
-                    element.setAttribute(
-                        "android:enabled",
-                        (chosenComponent == SPLASH_ACTIVITY).toString(),
-                    )
-                }
-            }
-            for (alias in allAliases) {
-                alias.setAttribute(
-                    "android:enabled",
-                    (alias.getAttribute("android:name") == chosenComponent).toString(),
-                )
-            }
-        }
+        prepareLauncherManifest(chosenComponent)
     }
 }
