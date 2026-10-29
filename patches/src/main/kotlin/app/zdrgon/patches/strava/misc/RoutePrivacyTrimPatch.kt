@@ -9,6 +9,7 @@ import app.morphe.patcher.util.proxy.mutableTypes.encodedValue.MutableIntEncoded
 import app.zdrgon.patches.strava.shared.Constants.COMPATIBILITY_STRAVA
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.value.ImmutableIntEncodedValue
+import java.util.logging.Logger
 
 private const val FILTER_POLYLINE_CLASS =
     "Lcom/strava/activitydetail/universal/data/FilterPolylineForPublicPointsUseCase;"
@@ -57,12 +58,23 @@ val routePrivacyTrimPatch = bytecodePatch(
     execute {
         val trimMeters = trimMetersOption.value ?: 200
 
-        // The option becomes the extension's patch-time default. The
-        // in-app settings (trim on/off and the distance) override it at
-        // runtime; see RoutePrivacyTrimPatch.trimFurtherRuntime.
+        // Best-effort: the option becomes the extension's patch-time
+        // default. The in-app settings (trim on/off and the distance)
+        // override it at runtime; see RoutePrivacyTrimPatch
+        // .trimFurtherRuntime. Patcher 2.1-dev does not expose extension
+        // fields at patch time, so a missing field must not fail the
+        // patch: the extension's baked-in default (200 m) then applies.
         val extensionClass = mutableClassDefBy(TRIM_EXTENSION_CLASS)
-        extensionClass.staticFields.first { field -> field.name == "patchDefaultMeters" }
-            .initialValue = ImmutableIntEncodedValue(trimMeters).toMutable()
+        val defaultField = extensionClass.staticFields
+            .firstOrNull { field -> field.name == "patchDefaultMeters" }
+        if (defaultField == null) {
+            Logger.getLogger("StravaRouteTrim").warning(
+                "Skipping patch-time trim default: extension field not visible to this " +
+                    "patcher version; the baked-in default applies.",
+            )
+        } else {
+            defaultField.initialValue = ImmutableIntEncodedValue(trimMeters).toMutable()
+        }
 
         val classDef = classDefBy(FILTER_POLYLINE_CLASS)
         val mutableClass = mutableClassDefBy(classDef)
