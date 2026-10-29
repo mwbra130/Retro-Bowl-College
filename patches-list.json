@@ -1,10 +1,10 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.31.7",
+  "version": "1.32.0",
   "patches": [
     {
       "name": "Add settings",
-      "description": "Adds a 'Morphe patch settings' entry to Strava's settings screen. Lets you toggle feed cleanup, route trim, bottom bar tabs and the launcher name/icon at runtime, without re-patching.",
+      "description": "Long-press the Home tab in Strava's bottom bar to open 'Morphe patch settings'. Lets you toggle feed cleanup, route trim, bottom bar tabs and the launcher name/icon at runtime, without re-patching.",
       "default": true,
       "dependencies": [
         "ResourcePatch"

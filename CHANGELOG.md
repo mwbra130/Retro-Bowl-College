@@ -1,3 +1,14 @@
+## [1.32.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.7...v1.32.0) (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **strava:** release for long-press Home settings entry ([bb3d1f1](https://github.com/mwbra130/Retro-Bowl-College/commit/bb3d1f1a96c4fb9c0dc384b53234b2a96d7a943b))
+
+### ✨ New Features
+
+* **strava:** long-press Home tab opens patch settings; settings-screen bar removed ([eec743c](https://github.com/mwbra130/Retro-Bowl-College/commit/eec743cfdee6b54b555957833600039fda21dcfc))
+* **strava:** long-press Home tab opens patch settings; settings-screen bar removed ([f3fc1ad](https://github.com/mwbra130/Retro-Bowl-College/commit/f3fc1ad95bef94d5035bdb66ac5fa96c8f794e29))
+
 ## [1.31.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.6...v1.31.7) (2026-10-29)
 
 ### 🐛 Bug Fixes

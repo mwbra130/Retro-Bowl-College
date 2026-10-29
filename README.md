@@ -30,7 +30,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 ---
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.31.7](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.31.7)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;21 patches total
+> **[v1.32.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.32.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;21 patches total
 <details open>
 <summary>Strava&nbsp;&nbsp;•&nbsp;&nbsp;7 patches</summary>
 <br>
@@ -42,7 +42,7 @@ Load this `.mpp` file into [Morphe Desktop](https://github.com/MorpheApp/morphe-
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
-| [Add settings](#add-settings) | Adds a 'Morphe patch settings' entry to Strava's settings screen. Lets you toggle feed cleanup, route trim, bottom bar tabs and the launcher name/icon at runtime, without re-patching. |  |
+| [Add settings](#add-settings) | Long-press the Home tab in Strava's bottom bar to open 'Morphe patch settings'. Lets you toggle feed cleanup, route trim, bottom bar tabs and the launcher name/icon at runtime, without re-patching. |  |
 | [Custom app name and icon](#custom-app-name-and-icon) | Changes the app's displayed name and launcher icon. The icon choices are Strava's own built-in alternate icons, plus an accent-colored one. Name and icon can later be switched at runtime from the patch settings screen. | • App name<br>• App icon |
 | [Custom theme colors](#custom-theme-colors) | Replaces Strava's brand orange (#FC5200) accent color in the app's native screens with a color of your choice. | • Accent color |
 | [Enable password login](#enable-password-login) | Shows the email and password login option instead of forcing the one-time email code flow. Your password is still checked by Strava's servers exactly as in the official app. |  |
