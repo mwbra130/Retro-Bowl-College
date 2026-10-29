@@ -87,7 +87,6 @@ val stravaSettingsPatch = bytecodePatch(
             methodName = "onCreate",
             parameterTypes = emptyList(),
             returnType = "V",
-            minRegisters = 2,
         ) { originalReference ->
             """
                 invoke-virtual {p0}, $originalReference
@@ -96,6 +95,11 @@ val stravaSettingsPatch = bytecodePatch(
             """.trimIndent()
         }
 
+        // The wrapper body reuses the parameter registers p1/p2 as
+        // scratch space (they are dead once the original has run)
+        // instead of local registers: dexlib2's mutable implementation
+        // exposes the register count read-only, so a wrapper that
+        // needs extra locals cannot be built reliably.
         wrapMethod(
             classType = SETTINGS_FRAGMENT_CLASS,
             methodName = "onCreateView",
@@ -105,16 +109,15 @@ val stravaSettingsPatch = bytecodePatch(
                 "Landroid/os/Bundle;",
             ),
             returnType = "Landroid/view/View;",
-            minRegisters = 8,
         ) { originalReference ->
             """
                 invoke-virtual {p0, p1, p2, p3}, $originalReference
-                move-result-object v0
+                move-result-object p1
                 invoke-virtual {p0}, Landroidx/fragment/app/Fragment;->getContext()Landroid/content/Context;
-                move-result-object v1
-                invoke-static {v1, v0}, $SETTINGS_ACTIVITY_CLASS->wrapSettingsView(Landroid/content/Context;Landroid/view/View;)Landroid/view/View;
-                move-result-object v0
-                return-object v0
+                move-result-object p2
+                invoke-static {p2, p1}, $SETTINGS_ACTIVITY_CLASS->wrapSettingsView(Landroid/content/Context;Landroid/view/View;)Landroid/view/View;
+                move-result-object p1
+                return-object p1
             """.trimIndent()
         }
 
@@ -123,7 +126,6 @@ val stravaSettingsPatch = bytecodePatch(
             methodName = "onCreate",
             parameterTypes = listOf("Landroid/os/Bundle;"),
             returnType = "V",
-            minRegisters = 3,
         ) { originalReference ->
             """
                 invoke-virtual {p0, p1}, $originalReference
@@ -146,7 +148,6 @@ private fun BytecodePatchContext.wrapMethod(
     methodName: String,
     parameterTypes: List<String>,
     returnType: String,
-    minRegisters: Int,
     body: (originalReference: String) -> String,
 ) {
     val classDef = classDefBy(classType)
@@ -167,17 +168,6 @@ private fun BytecodePatchContext.wrapMethod(
 
     val clone = ImmutableMethod.of(original).toMutable()
     mutableClass.virtualMethods += clone
-
-    // Note: the register count cannot be raised (dexlib2's mutable
-    // implementation exposes it read-only). The wrapper bodies only use
-    // registers the original methods already have: all three targets
-    // were checked in 486.9 (StravaApplication.onCreate: 13 registers,
-    // SettingsFragment.onCreateView: 6, BottomNavigationActivity
-    // .onCreate: 22), which leaves v0/v1 free where the bodies need
-    // them. minRegisters is kept as documentation of that requirement.
-    require((original.implementation?.registerCount ?: 0) >= minRegisters) {
-        "$classType->$methodName has too few registers to wrap safely"
-    }
 
     clone.addInstructions(0, body(originalReference))
 
