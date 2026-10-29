@@ -22,6 +22,27 @@ import java.util.List;
 public class RoutePrivacyTrimPatch {
     private static final double EARTH_RADIUS_METERS = 6_371_000.0;
 
+    /**
+     * The patch-time trim distance: the "Local route privacy trim" patch
+     * writes its trimMeters option into this field when the APK is built.
+     * The in-app settings override it at runtime; this is only the
+     * fallback for users who never open the settings screen.
+     */
+    public static int patchDefaultMeters = 200;
+
+    /**
+     * Runtime entry point called by the patched polyline filter. Honors
+     * the in-app settings: the trim can be switched off, and the distance
+     * changed, without re-patching.
+     */
+    public static List<GeoPoint> trimFurtherRuntime(List<GeoPoint> points) {
+        if (!StravaSettings.getBoolean(StravaSettings.KEY_TRIM_ENABLED, true)) {
+            return points;
+        }
+        int meters = StravaSettings.getInt(StravaSettings.KEY_TRIM_METERS, patchDefaultMeters);
+        return trimFurther(points, meters);
+    }
+
     public static List<GeoPoint> trimFurther(List<GeoPoint> points, int trimMeters) {
         if (points == null || trimMeters <= 0 || points.size() < 3) {
             return points;
