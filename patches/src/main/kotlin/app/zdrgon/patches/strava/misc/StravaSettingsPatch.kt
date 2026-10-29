@@ -35,7 +35,7 @@ private val stravaSettingsManifestPatch = resourcePatch {
             val activity = document.createElement("activity")
             activity.setAttribute("android:name", SETTINGS_ACTIVITY_NAME)
             activity.setAttribute("android:exported", "false")
-            activity.setAttribute("android:theme", "@android:style/Theme.DeviceDefault.NoActionBar")
+            activity.setAttribute("android:theme", "@style/StravaPreferenceTheme")
             application.appendChild(activity)
         }
     }
