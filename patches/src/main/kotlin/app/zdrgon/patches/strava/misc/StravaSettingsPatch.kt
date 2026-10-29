@@ -15,7 +15,6 @@ private const val SETTINGS_ACTIVITY_CLASS = "Lapp/template/extension/strava/Stra
 private const val SETTINGS_ACTIVITY_NAME = "app.template.extension.strava.StravaSettingsActivity"
 
 private const val APPLICATION_CLASS = "Lcom/strava/StravaApplication;"
-private const val SETTINGS_FRAGMENT_CLASS = "Lcom/strava/settings/view/settings/SettingsFragment;"
 private const val BOTTOM_NAV_ACTIVITY_CLASS =
     "Lcom/strava/view/bottomnavigation/BottomNavigationActivity;"
 private const val METHOD_SUFFIX = "\$original"
@@ -55,13 +54,15 @@ private val stravaSettingsManifestPatch = resourcePatch {
  *    can capture the application context (needed to open
  *    SharedPreferences from the static filter/trim code).
  *
- * 2. Settings entry: Strava's settings screen is a Jetpack Compose
- *    screen (SettingsFragment.onCreateView returns a ComposeView), so
- *    there is no preference list or layout to inject a row into. The
- *    least invasive reliable hook is to wrap the fragment's
- *    onCreateView: the original view is placed in a FrameLayout above a
- *    bottom bar whose button opens the settings activity. The Compose
- *    content itself is untouched and keeps its full area.
+ * 2. Settings entry: a long press on the Home tab of Strava's bottom
+ *    navigation bar opens the settings activity (the extension sets an
+ *    OnLongClickListener on the Home item view; a normal tap still
+ *    selects the tab). Earlier builds put a bar over Strava's Compose
+ *    settings screen instead: the user rejected a docked entry, and a
+ *    real row inside that settings list is impossible — its
+ *    LazyColumn keys rows by their type's fixed sort index, so an
+ *    added row of any existing type duplicates a key and crashes, and
+ *    a new type hits the renderer's else-throw (verified 2026-10-29).
  *
  * 3. Tab visibility: BottomNavigationActivity.onCreate is wrapped so
  *    that, once the bottom navigation menu exists, the extension can
@@ -74,9 +75,9 @@ private val stravaSettingsManifestPatch = resourcePatch {
 @Suppress("unused")
 val stravaSettingsPatch = bytecodePatch(
     name = "Add settings",
-    description = "Adds a 'Morphe patch settings' entry to Strava's settings screen. Lets you " +
-        "toggle feed cleanup, route trim, bottom bar tabs and the launcher name/icon at " +
-        "runtime, without re-patching.",
+    description = "Long-press the Home tab in Strava's bottom bar to open 'Morphe patch " +
+        "settings'. Lets you toggle feed cleanup, route trim, bottom bar tabs and the " +
+        "launcher name/icon at runtime, without re-patching.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_STRAVA)
@@ -99,32 +100,6 @@ val stravaSettingsPatch = bytecodePatch(
             """.trimIndent()
         }
 
-        // The wrapper body reuses the parameter registers p1/p2 as
-        // scratch space (they are dead once the original has run)
-        // instead of local registers: dexlib2's mutable implementation
-        // exposes the register count read-only, so a wrapper that
-        // needs extra locals cannot be built reliably.
-        wrapMethod(
-            classType = SETTINGS_FRAGMENT_CLASS,
-            methodName = "onCreateView",
-            parameterTypes = listOf(
-                "Landroid/view/LayoutInflater;",
-                "Landroid/view/ViewGroup;",
-                "Landroid/os/Bundle;",
-            ),
-            returnType = "Landroid/view/View;",
-        ) { originalReference ->
-            """
-                invoke-virtual {p0, p1, p2, p3}, $originalReference
-                move-result-object p1
-                invoke-virtual {p0}, Landroidx/fragment/app/Fragment;->getContext()Landroid/content/Context;
-                move-result-object p2
-                invoke-static {p2, p1}, $SETTINGS_ACTIVITY_CLASS->wrapSettingsView(Landroid/content/Context;Landroid/view/View;)Landroid/view/View;
-                move-result-object p1
-                return-object p1
-            """.trimIndent()
-        }
-
         // BottomNavigationActivity.onCreate has 22 registers, so its
         // parameter registers are v20/v21. invoke-virtual/invoke-static
         // (format 35c) can only encode registers up to v15, and the
@@ -144,6 +119,7 @@ val stravaSettingsPatch = bytecodePatch(
                 move-object/from16 v1, p1
                 invoke-virtual {v0, v1}, $originalReference
                 invoke-static {v0}, $SETTINGS_ACTIVITY_CLASS->applyTabVisibility(Landroid/app/Activity;)V
+                invoke-static {v0}, $SETTINGS_ACTIVITY_CLASS->attachHomeLongPress(Landroid/app/Activity;)V
                 return-void
             """.trimIndent()
         }
