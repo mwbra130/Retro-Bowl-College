@@ -168,10 +168,15 @@ private fun BytecodePatchContext.wrapMethod(
     val clone = ImmutableMethod.of(original).toMutable()
     mutableClass.virtualMethods += clone
 
-    clone.implementation?.let { implementation ->
-        if (implementation.registerCount < minRegisters) {
-            implementation.registerCount = minRegisters
-        }
+    // Note: the register count cannot be raised (dexlib2's mutable
+    // implementation exposes it read-only). The wrapper bodies only use
+    // registers the original methods already have: all three targets
+    // were checked in 486.9 (StravaApplication.onCreate: 13 registers,
+    // SettingsFragment.onCreateView: 6, BottomNavigationActivity
+    // .onCreate: 22), which leaves v0/v1 free where the bodies need
+    // them. minRegisters is kept as documentation of that requirement.
+    require((original.implementation?.registerCount ?: 0) >= minRegisters) {
+        "$classType->$methodName has too few registers to wrap safely"
     }
 
     clone.addInstructions(0, body(originalReference))
