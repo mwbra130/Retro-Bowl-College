@@ -1,3 +1,9 @@
+## [1.30.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.29.2...v1.30.0) (2026-10-29)
+
+### ✨ New Features
+
+* **strava:** enable password login by forcing OTP response usePassword fall-through ([3e4740c](https://github.com/mwbra130/Retro-Bowl-College/commit/3e4740c27c1202edc5203f0989c2ffa47db46d7d))
+
 ## [1.29.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.29.1...v1.29.2) (2026-10-29)
 
 ### 🐛 Bug Fixes

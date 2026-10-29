@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.29.2",
+  "version": "1.30.0",
   "patches": [
     {
       "name": "Block Ads",
@@ -221,6 +221,32 @@
           "targets": [
             {
               "version": "3.97.1",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Enable password login",
+      "description": "Shows the email and password login option instead of forcing the one-time email code flow. Your password is still checked by Strava's servers exactly as in the official app.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.strava",
+          "name": "Strava",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#FC5200",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "486.9",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
