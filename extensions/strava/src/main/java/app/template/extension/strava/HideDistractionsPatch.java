@@ -29,6 +29,11 @@ import java.util.stream.Collectors;
 
 @SuppressLint("NewApi")
 public class HideDistractionsPatch {
+    // The static fields are the patch-time defaults: the patch options are
+    // written into them when the APK is built. At runtime the in-app
+    // settings (StravaSettings, backed by SharedPreferences) override them
+    // per call, so toggling a switch in the settings screen changes what
+    // is hidden without re-patching.
     public static boolean upselling;
     public static boolean promo;
     public static boolean followSuggestions;
@@ -36,6 +41,11 @@ public class HideDistractionsPatch {
     public static boolean joinChallenge;
     public static boolean joinClub;
     public static boolean activityLookback;
+    public static boolean localEvents = true;
+
+    private static boolean setting(String key, boolean patchDefault) {
+        return StravaSettings.getBoolean(key, patchDefault);
+    }
 
     // The modular model objects are deserialized from server JSON, so any of
     // the intercepted getters can return null at runtime even where the Kotlin
@@ -206,7 +216,8 @@ public class HideDistractionsPatch {
     private static boolean hideModule(Module module) {
         return module == null ||
                 hideByName(module.getPage()) ||
-                hideByName(module.getElement());
+                hideByName(module.getElement()) ||
+                hideByType(module);
     }
 
     private static boolean hideModularEntry(ModularEntry modularEntry) {
@@ -221,8 +232,27 @@ public class HideDistractionsPatch {
             return genericLayoutModule == null ||
                     hideByName(genericLayoutModule.getPage()) ||
                     hideByName(genericLayoutModule.getElement()) ||
-                    hideByDestination(genericLayoutModule.getDestination());
+                    hideByDestination(genericLayoutModule.getDestination()) ||
+                    hideByType(genericLayoutModule);
         } catch (RuntimeException getParentEntryOrThrowException) {
+            return false;
+        }
+    }
+
+    /**
+     * Type-based hiding for modules whose identity is their layout type
+     * rather than an element name. The local events carousel on the home
+     * feed is a GenericLayoutModule of type "event-carousel" (that is the
+     * type string Strava's own EventCarouselConverter registers for in
+     * 486.9); it has no stable element name to match on.
+     */
+    private static boolean hideByType(Module module) {
+        if (!setting(StravaSettings.KEY_HIDE_LOCAL_EVENTS, localEvents)) {
+            return false;
+        }
+        try {
+            return "event-carousel".equals(module.getType());
+        } catch (RuntimeException ignored) {
             return false;
         }
     }
@@ -257,13 +287,19 @@ public class HideDistractionsPatch {
 
     private static boolean hideByName(String name) {
         return name != null && (
-                upselling && name.contains("_upsell") ||
-                        promo && (name.equals("promo") || name.equals("top_of_tab_promo")) ||
-                        followSuggestions && name.equals("suggested_follows") ||
-                        challengeSuggestions && name.equals("suggested_challenges") ||
-                        joinChallenge && name.equals("challenge") ||
-                        joinClub && name.equals("club") ||
-                        activityLookback && name.equals("highlighted_activity_lookback")
+                setting(StravaSettings.KEY_HIDE_UPSELLING, upselling) && name.contains("_upsell") ||
+                        setting(StravaSettings.KEY_HIDE_PROMO, promo) &&
+                                (name.equals("promo") || name.equals("top_of_tab_promo")) ||
+                        setting(StravaSettings.KEY_HIDE_FOLLOW_SUGGESTIONS, followSuggestions) &&
+                                name.equals("suggested_follows") ||
+                        setting(StravaSettings.KEY_HIDE_CHALLENGE_SUGGESTIONS, challengeSuggestions) &&
+                                name.equals("suggested_challenges") ||
+                        setting(StravaSettings.KEY_HIDE_JOIN_CHALLENGE, joinChallenge) &&
+                                name.equals("challenge") ||
+                        setting(StravaSettings.KEY_HIDE_JOIN_CLUB, joinClub) &&
+                                name.equals("club") ||
+                        setting(StravaSettings.KEY_HIDE_ACTIVITY_LOOKBACK, activityLookback) &&
+                                name.equals("highlighted_activity_lookback")
         );
     }
 
@@ -273,7 +309,8 @@ public class HideDistractionsPatch {
         }
         String url = destination.getUrl();
         return url != null && (
-                upselling && url.startsWith("strava://subscription/checkout")
+                setting(StravaSettings.KEY_HIDE_UPSELLING, upselling) &&
+                        url.startsWith("strava://subscription/checkout")
         );
     }
 }
