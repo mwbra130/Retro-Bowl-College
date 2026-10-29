@@ -64,6 +64,13 @@ val hideFeedElementsPatch = bytecodePatch(
             default = false,
             required = true,
         ),
+        booleanOption(
+            key = "localEvents",
+            title = "Local events",
+            description = "The 'See what events are happening' local events carousel.",
+            default = true,
+            required = true,
+        ),
     )
 
     execute {
