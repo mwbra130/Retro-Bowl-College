@@ -2,7 +2,6 @@ package app.template.extension.strava;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -67,13 +66,7 @@ public class StravaSettingsActivity extends Activity {
             bar.setText("Morphe patch settings");
             bar.setTextColor(TEXT_PRIMARY);
             bar.setBackgroundColor(BAR_BACKGROUND);
-            bar.setOnClickListener(view -> {
-                Intent intent = new Intent(context, StravaSettingsActivity.class);
-                if (!(context instanceof Activity)) {
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                }
-                context.startActivity(intent);
-            });
+            bar.setOnClickListener(view -> StravaSettings.openSettings());
             FrameLayout.LayoutParams barParams = new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, barHeight);
             barParams.gravity = Gravity.BOTTOM;
