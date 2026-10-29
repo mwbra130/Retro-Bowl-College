@@ -34,13 +34,18 @@ public class HideDistractionsPatch {
     // settings (StravaSettings, backed by SharedPreferences) override them
     // per call, so toggling a switch in the settings screen changes what
     // is hidden without re-patching.
-    public static boolean upselling;
-    public static boolean promo;
-    public static boolean followSuggestions;
-    public static boolean challengeSuggestions;
-    public static boolean joinChallenge;
-    public static boolean joinClub;
-    public static boolean activityLookback;
+    // The defaults are baked in as field initializers on purpose: the
+    // patch-time write of the option values into these fields is only a
+    // best-effort seed (patcher 2.1-dev does not expose extension fields
+    // at patch time at all), so the initializers must already equal the
+    // patch option defaults. The runtime settings store overrides them.
+    public static boolean upselling = true;
+    public static boolean promo = true;
+    public static boolean followSuggestions = true;
+    public static boolean challengeSuggestions = true;
+    public static boolean joinChallenge = false;
+    public static boolean joinClub = false;
+    public static boolean activityLookback = false;
     public static boolean localEvents = true;
 
     private static boolean setting(String key, boolean patchDefault) {
