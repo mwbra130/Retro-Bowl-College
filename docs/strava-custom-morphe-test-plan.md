@@ -78,3 +78,9 @@ For a feed/promotion UI patch, do not start an outdoor recording as the first te
 5. What happened during the smoke test.
 
 Never send account passwords, session cookies, or API tokens in logs.
+
+## Device test findings (2026-10-28, Galaxy S25)
+
+- **Keep the package name `com.strava`.** A Morphe Manager build installed as `com.strava.morphe` crashed on every launch (10 APP CRASH(EXCEPTION) exits in the system exit history, all with trace=null). Builds that keep the original package name show zero crash records and run normally. The patched app must replace the official install, not sit next to it under a renamed package.
+- **Google sign-in does not work on re-signed builds.** Google validates the app signing certificate against the certificate Strava registered; any re-signed build fails that check. This is a platform limit, not a patch defect. Sign in with email instead.
+- **Email sign-in status: unresolved.** On the verified `com.strava` build the app installs, launches, and reaches sign-in, but email login attempts were rejected in testing. A zero-patch re-signed control build (same bundle, no patches selected) is the discriminator for whether the rejection is caused by the re-signature (server-side attestation) or by a patch; that control test is the next step before any code change.
