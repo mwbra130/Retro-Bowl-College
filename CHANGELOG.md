@@ -1,3 +1,9 @@
+## [1.31.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.4...v1.31.5) (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **strava:** document settings panel theme choice (release v1.31.4 asset never published after GitHub storage error) ([c7c5eb0](https://github.com/mwbra130/Retro-Bowl-College/commit/c7c5eb0daf028c1ca488796cc640d5b976f63d85))
+
 ## [1.31.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.3...v1.31.4) (2026-10-29)
 
 ### 🐛 Bug Fixes
