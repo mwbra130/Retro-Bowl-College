@@ -121,6 +121,14 @@ val stravaSettingsPatch = bytecodePatch(
             """.trimIndent()
         }
 
+        // BottomNavigationActivity.onCreate has 22 registers, so its
+        // parameter registers are v20/v21. invoke-virtual/invoke-static
+        // (format 35c) can only encode registers up to v15, and the
+        // instruction assembler silently drops instructions that name
+        // p0/p1 here (verified in the v1.31.1 output: only the body's
+        // return-void survived, which would have bricked the activity).
+        // Copy the parameters into low registers with move-object/from16
+        // (16-bit register fields) first, then call through them.
         wrapMethod(
             classType = BOTTOM_NAV_ACTIVITY_CLASS,
             methodName = "onCreate",
@@ -128,8 +136,10 @@ val stravaSettingsPatch = bytecodePatch(
             returnType = "V",
         ) { originalReference ->
             """
-                invoke-virtual {p0, p1}, $originalReference
-                invoke-static {p0}, $SETTINGS_ACTIVITY_CLASS->applyTabVisibility(Landroid/app/Activity;)V
+                move-object/from16 v0, p0
+                move-object/from16 v1, p1
+                invoke-virtual {v0, v1}, $originalReference
+                invoke-static {v0}, $SETTINGS_ACTIVITY_CLASS->applyTabVisibility(Landroid/app/Activity;)V
                 return-void
             """.trimIndent()
         }
