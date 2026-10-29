@@ -39,18 +39,33 @@ private val fingerprints = arrayOf(
 )
 
 /**
- * Writes each option's value into the static boolean field of the
- * HideDistractionsPatch extension class that has the same name as the
- * option's key. The extension reads those fields at runtime to decide
- * which modular element names to hide.
+ * Best-effort: writes each option's value into the static boolean field
+ * of the HideDistractionsPatch extension class that has the same name
+ * as the option's key, seeding the patch-time default.
+ *
+ * This write must never fail the patch. Patcher 2.1-dev (Morphe Manager
+ * 2.3.0-dev) does not populate the extension class's fields in the
+ * class pool at patch-execution time, so the lookup can come up empty
+ * even though the field exists. Skipping is harmless: the extension
+ * bakes the same defaults as field initializers, and the runtime
+ * settings store is the real control surface.
  */
 internal fun BytecodePatchContext.writeHideDistractionsOptions(
     options: Array<Option<Boolean>>,
 ) {
+    val logger = Logger.getLogger("StravaModularFilter")
     val extensionClass = mutableClassDefBy(HIDE_DISTRACTIONS_CLASS_DESCRIPTOR)
 
     options.forEach { option ->
-        extensionClass.staticFields.first { field -> field.name == option.key }.initialValue =
+        val field = extensionClass.staticFields.firstOrNull { field -> field.name == option.key }
+        if (field == null) {
+            logger.warning(
+                "Skipping patch-time default for '${option.key}': extension field not " +
+                    "visible to this patcher version; the baked-in default applies.",
+            )
+            return@forEach
+        }
+        field.initialValue =
             ImmutableBooleanEncodedValue.forBoolean(option.value == true).toMutable()
     }
 }
