@@ -1,3 +1,11 @@
+## [1.31.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.2...v1.31.3) (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **strava:** bake hide-filter defaults as extension field initializers ([ae88899](https://github.com/mwbra130/Retro-Bowl-College/commit/ae888990c818ee1078656aa0305aadcaa37e69f4))
+* **strava:** make the trim default write defensive like the hide options write ([b1541fe](https://github.com/mwbra130/Retro-Bowl-College/commit/b1541fe66c784688084dc6b69216a266c9db7156))
+* **strava:** never fail the patch when extension fields are not visible at patch time ([1f1fecd](https://github.com/mwbra130/Retro-Bowl-College/commit/1f1fecd47287a01c629b52fd1a850c73c28744d2))
+
 ## [1.31.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.1...v1.31.2) (2026-10-29)
 
 ### 🐛 Bug Fixes
