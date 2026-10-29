@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
@@ -42,11 +41,15 @@ public class StravaSettingsActivity extends Activity {
     // ------------------------------------------------------------------
 
     /**
-     * Wraps the settings screen's content view with a bottom bar whose
-     * button opens this activity. Strava's settings screen is a Compose
-     * view; wrapping it in a FrameLayout and shrinking it by the bar
-     * height leaves the Compose content fully usable above the bar.
-     * Any failure returns the original view untouched.
+     * Wraps the settings screen's content view with a settings entry
+     * whose button opens this activity. Strava's settings screen is a
+     * Compose view, so there is no row list to inject into; instead the
+     * content and the entry are stacked in a vertical LinearLayout, the
+     * content taking all space above the entry (layout weight). The
+     * entry therefore occupies its own space in the layout — the
+     * settings list really is shorter by the entry's height — instead
+     * of floating over the list's bottom items. Any failure returns the
+     * original view untouched.
      */
     public static View wrapSettingsView(Context context, View content) {
         if (context == null || content == null) {
@@ -54,23 +57,26 @@ public class StravaSettingsActivity extends Activity {
         }
         try {
             int barHeight = dp(context, 56);
-            FrameLayout root = new FrameLayout(context);
+            LinearLayout root = new LinearLayout(context);
+            root.setOrientation(LinearLayout.VERTICAL);
+            root.setBackgroundColor(BACKGROUND);
 
-            FrameLayout.LayoutParams contentParams = new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
-            contentParams.bottomMargin = barHeight;
+            LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f);
             root.addView(content, contentParams);
+
+            View divider = new View(context);
+            divider.setBackgroundColor(Color.rgb(56, 56, 56));
+            root.addView(divider, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, Math.max(1, dp(context, 1) / 2)));
 
             Button bar = new Button(context);
             bar.setText("Morphe patch settings");
             bar.setTextColor(TEXT_PRIMARY);
             bar.setBackgroundColor(BAR_BACKGROUND);
             bar.setOnClickListener(view -> StravaSettings.openSettings());
-            FrameLayout.LayoutParams barParams = new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, barHeight);
-            barParams.gravity = Gravity.BOTTOM;
-            root.addView(bar, barParams);
+            root.addView(bar, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, barHeight));
             return root;
         } catch (Throwable ignored) {
             return content;
