@@ -1,3 +1,9 @@
+## [1.31.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.1...v1.31.2) (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **strava:** call through low registers in the bottom navigation onCreate wrapper ([81a3def](https://github.com/mwbra130/Retro-Bowl-College/commit/81a3defa4e5f94c55334120d3273d5da177fa830))
+
 ## [1.31.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.0...v1.31.1) (2026-10-29)
 
 ### 🐛 Bug Fixes
