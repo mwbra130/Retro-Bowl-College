@@ -35,6 +35,10 @@ private val stravaSettingsManifestPatch = resourcePatch {
             val activity = document.createElement("activity")
             activity.setAttribute("android:name", SETTINGS_ACTIVITY_NAME)
             activity.setAttribute("android:exported", "false")
+            // Use one of the app's own themes: a framework style name
+            // (@android:style/...) is resolved to the wrong framework ID
+            // by the resource pipeline and turned the panel into a
+            // dismissible dialog (v1.31.3 device bug).
             activity.setAttribute("android:theme", "@style/StravaPreferenceTheme")
             application.appendChild(activity)
         }
