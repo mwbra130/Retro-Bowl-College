@@ -1,3 +1,9 @@
+## [1.31.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.3...v1.31.4) (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **strava:** settings panel theme - use StravaPreferenceTheme (framework style name resolved to a dialog theme, panel opened as a dismissible dialog) ([2e93d94](https://github.com/mwbra130/Retro-Bowl-College/commit/2e93d948066006fbc1e6b12c694cf0f8c9911611))
+
 ## [1.31.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.2...v1.31.3) (2026-10-29)
 
 ### 🐛 Bug Fixes

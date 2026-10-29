@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-29T18:16:06",
-  "description": "## [1.31.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.2...v1.31.3) (2026-10-29)\n\n### 🐛 Bug Fixes\n\n* **strava:** bake hide-filter defaults as extension field initializers ([ae88899](https://github.com/mwbra130/Retro-Bowl-College/commit/ae888990c818ee1078656aa0305aadcaa37e69f4))\n* **strava:** make the trim default write defensive like the hide options write ([b1541fe](https://github.com/mwbra130/Retro-Bowl-College/commit/b1541fe66c784688084dc6b69216a266c9db7156))\n* **strava:** never fail the patch when extension fields are not visible at patch time ([1f1fecd](https://github.com/mwbra130/Retro-Bowl-College/commit/1f1fecd47287a01c629b52fd1a850c73c28744d2))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.31.3/patches-1.31.3.mpp",
+  "created_at": "2026-10-29T19:27:19",
+  "description": "## [1.31.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.3...v1.31.4) (2026-10-29)\n\n### 🐛 Bug Fixes\n\n* **strava:** settings panel theme - use StravaPreferenceTheme (framework style name resolved to a dialog theme, panel opened as a dismissible dialog) ([2e93d94](https://github.com/mwbra130/Retro-Bowl-College/commit/2e93d948066006fbc1e6b12c694cf0f8c9911611))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.31.4/patches-1.31.4.mpp",
   "signature_download_url": "",
-  "version": "1.31.3"
+  "version": "1.31.4"
 }
