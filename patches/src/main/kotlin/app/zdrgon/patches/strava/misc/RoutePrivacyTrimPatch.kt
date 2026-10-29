@@ -5,8 +5,10 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.intOption
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
+import app.morphe.patcher.util.proxy.mutableTypes.encodedValue.MutableIntEncodedValue.Companion.toMutable
 import app.zdrgon.patches.strava.shared.Constants.COMPATIBILITY_STRAVA
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
+import com.android.tools.smali.dexlib2.immutable.value.ImmutableIntEncodedValue
 
 private const val FILTER_POLYLINE_CLASS =
     "Lcom/strava/activitydetail/universal/data/FilterPolylineForPublicPointsUseCase;"
@@ -55,6 +57,13 @@ val routePrivacyTrimPatch = bytecodePatch(
     execute {
         val trimMeters = trimMetersOption.value ?: 200
 
+        // The option becomes the extension's patch-time default. The
+        // in-app settings (trim on/off and the distance) override it at
+        // runtime; see RoutePrivacyTrimPatch.trimFurtherRuntime.
+        val extensionClass = mutableClassDefBy(TRIM_EXTENSION_CLASS)
+        extensionClass.staticFields.first { field -> field.name == "patchDefaultMeters" }
+            .initialValue = ImmutableIntEncodedValue(trimMeters).toMutable()
+
         val classDef = classDefBy(FILTER_POLYLINE_CLASS)
         val mutableClass = mutableClassDefBy(classDef)
 
@@ -82,8 +91,7 @@ val routePrivacyTrimPatch = bytecodePatch(
             """
                 invoke-virtual {p0, p1, p2}, $originalReference
                 move-result-object v0
-                const v1, $trimMeters
-                invoke-static {v0, v1}, $TRIM_EXTENSION_CLASS->trimFurther(Ljava/util/List;I)Ljava/util/List;
+                invoke-static {v0}, $TRIM_EXTENSION_CLASS->trimFurtherRuntime(Ljava/util/List;)Ljava/util/List;
                 move-result-object v0
                 return-object v0
             """.trimIndent(),
