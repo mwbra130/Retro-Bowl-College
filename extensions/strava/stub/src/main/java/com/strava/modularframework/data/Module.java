@@ -9,5 +9,7 @@ public interface Module {
     String getElement();
 
     String getPage();
+
+    String getType();
 }
 
