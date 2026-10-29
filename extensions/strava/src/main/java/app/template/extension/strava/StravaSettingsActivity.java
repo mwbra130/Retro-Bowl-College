@@ -21,8 +21,8 @@ import java.lang.reflect.Method;
 /**
  * In-app settings screen for the Strava patches, modelled on hxreborn's
  * BeReal settings panel: a dedicated Activity from the extension, opened
- * from a bar the "Add settings" patch adds to Strava's own settings
- * screen.
+ * by long-pressing the Home tab in Strava's bottom navigation bar (the
+ * "Add settings" patch wires that gesture; see attachHomeLongPress).
  *
  * Every control writes straight to StravaSettings (SharedPreferences).
  * The feed filters and the route trim read that store at call time, so
@@ -40,47 +40,73 @@ public class StravaSettingsActivity extends Activity {
     // Hooks called from patched Strava code (see StravaSettingsPatch).
     // ------------------------------------------------------------------
 
+    private static final String TAG_HOME_LONG_PRESS = "morphe_home_long_press";
+
     /**
-     * Wraps the settings screen's content view with a settings entry
-     * whose button opens this activity. Strava's settings screen is a
-     * Compose view, so there is no row list to inject into; instead the
-     * content and the entry are stacked in a vertical LinearLayout, the
-     * content taking all space above the entry (layout weight). The
-     * entry therefore occupies its own space in the layout — the
-     * settings list really is shorter by the entry's height — instead
-     * of floating over the list's bottom items. Any failure returns the
-     * original view untouched.
+     * Makes a long press on the Home tab of Strava's bottom navigation
+     * bar open this settings activity. Called at the end of
+     * BottomNavigationActivity.onCreate, when the bottom bar exists.
+     * The Home item view carries the menu item's ID, so it can be found
+     * by walking the bar's hierarchy. A normal tap is untouched: it
+     * still selects the Home tab. If the Home tab is hidden by the tab
+     * toggles there is nothing to attach to.
      */
-    public static View wrapSettingsView(Context context, View content) {
-        if (context == null || content == null) {
-            return content;
-        }
+    public static void attachHomeLongPress(Activity activity) {
         try {
-            int barHeight = dp(context, 56);
-            LinearLayout root = new LinearLayout(context);
-            root.setOrientation(LinearLayout.VERTICAL);
-            root.setBackgroundColor(BACKGROUND);
-
-            LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f);
-            root.addView(content, contentParams);
-
-            View divider = new View(context);
-            divider.setBackgroundColor(Color.rgb(56, 56, 56));
-            root.addView(divider, new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, Math.max(1, dp(context, 1) / 2)));
-
-            Button bar = new Button(context);
-            bar.setText("Morphe patch settings");
-            bar.setTextColor(TEXT_PRIMARY);
-            bar.setBackgroundColor(BAR_BACKGROUND);
-            bar.setOnClickListener(view -> StravaSettings.openSettings());
-            root.addView(bar, new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, barHeight));
-            return root;
+            String pkg = activity.getPackageName();
+            int navId = activity.getResources().getIdentifier("bottom_navigation", "id", pkg);
+            int homeId = activity.getResources().getIdentifier("navigation_home", "id", pkg);
+            if (navId == 0 || homeId == 0) {
+                return;
+            }
+            View nav = activity.findViewById(navId);
+            if (nav == null) {
+                return;
+            }
+            if (!attachToHomeItem(nav, homeId)) {
+                // The item views are created with the menu; if one is
+                // not in the hierarchy yet, retry after the next layout.
+                nav.post(() -> {
+                    try {
+                        attachToHomeItem(nav, homeId);
+                    } catch (Throwable ignored) {
+                    }
+                });
+            }
         } catch (Throwable ignored) {
-            return content;
+            // Never let a settings hook failure break the activity.
         }
+    }
+
+    private static boolean attachToHomeItem(View nav, int homeId) {
+        View home = findViewByIdRecursive(nav, homeId);
+        if (home == null) {
+            return false;
+        }
+        if (!TAG_HOME_LONG_PRESS.equals(home.getTag())) {
+            home.setTag(TAG_HOME_LONG_PRESS);
+            home.setOnLongClickListener(view -> {
+                StravaSettings.openSettings();
+                return true;
+            });
+        }
+        return true;
+    }
+
+    private static View findViewByIdRecursive(View root, int id) {
+        if (root.getId() == id) {
+            return root;
+        }
+        if (root instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) root;
+            for (int i = 0; i < group.getChildCount(); i++) {
+                View found = findViewByIdRecursive(group.getChildAt(i), id);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 
     /**
