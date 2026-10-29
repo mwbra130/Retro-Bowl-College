@@ -1,3 +1,9 @@
+## [1.29.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.29.1...v1.29.2) (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **strava:** record device test findings: package rename crash and sign-in limits ([0ec8217](https://github.com/mwbra130/Retro-Bowl-College/commit/0ec821782532634e6545e787f09fcfc846916e2a))
+
 ## [1.29.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.29.0...v1.29.1) (2026-10-28)
 
 ### 🐛 Bug Fixes
