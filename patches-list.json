@@ -1,7 +1,35 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.30.0",
+  "version": "1.31.0",
   "patches": [
+    {
+      "name": "Add settings",
+      "description": "Adds a 'Morphe patch settings' entry to Strava's settings screen. Lets you toggle feed cleanup, route trim, bottom bar tabs and the launcher name/icon at runtime, without re-patching.",
+      "default": true,
+      "dependencies": [
+        "ResourcePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "com.strava",
+          "name": "Strava",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#FC5200",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "486.9",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
     {
       "name": "Block Ads",
       "description": "Blocks all Unity Ads (interstitial and rewarded) by no-opping the show() methods. No ads will display.",
@@ -99,7 +127,7 @@
     },
     {
       "name": "Custom app name and icon",
-      "description": "Changes the app's displayed name and launcher icon. The icon choices are Strava's own built-in alternate icons.",
+      "description": "Changes the app's displayed name and launcher icon. The icon choices are Strava's own built-in alternate icons, plus an accent-colored one. Name and icon can later be switched at runtime from the patch settings screen.",
       "default": false,
       "dependencies": [],
       "compatiblePackages": [
@@ -125,21 +153,22 @@
         {
           "key": "appName",
           "title": "App name",
-          "description": "The name shown under the launcher icon.",
+          "description": "The custom name the launcher can show. The original name stays available in the patch settings screen.",
           "required": true,
           "type": "kotlin.String",
-          "default": "Strava",
+          "default": "Strava Custom",
           "values": null
         },
         {
           "key": "appIcon",
           "title": "App icon",
-          "description": "The launcher icon. Uses Strava's own built-in alternate icons.",
+          "description": "The launcher icon. Uses Strava's own built-in alternate icons, plus an accent-colored one.",
           "required": true,
           "type": "kotlin.String",
           "default": "default",
           "values": {
             "Default": "default",
+            "Accent": "Accent",
             "Local Legend": "LocalLegend",
             "XOM": "Xom",
             "Trophy": "Trophy",
@@ -355,6 +384,15 @@
           "required": true,
           "type": "kotlin.Boolean",
           "default": false,
+          "values": null
+        },
+        {
+          "key": "localEvents",
+          "title": "Local events",
+          "description": "The 'See what events are happening' local events carousel.",
+          "required": true,
+          "type": "kotlin.Boolean",
+          "default": true,
           "values": null
         }
       ]

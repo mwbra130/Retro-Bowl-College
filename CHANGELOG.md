@@ -1,3 +1,21 @@
+## [1.31.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.30.0...v1.31.0) (2026-10-29)
+
+### ✨ New Features
+
+* **strava:** add in-app settings screen and settings/tab hooks ([6b2a5ac](https://github.com/mwbra130/Retro-Bowl-College/commit/6b2a5ace60b708f2eb4ab1ad42477dee0150c678))
+* **strava:** add local events option to hide feed elements ([5807552](https://github.com/mwbra130/Retro-Bowl-College/commit/58075529f0ae97ce2d07075a01b31dd2c850a15c))
+* **strava:** add runtime launcher name/icon switcher ([55657ff](https://github.com/mwbra130/Retro-Bowl-College/commit/55657ff9f9b38c2d8b10d203812ab2fc9addbc50))
+* **strava:** add runtime settings store for the patch settings screen ([32da1c5](https://github.com/mwbra130/Retro-Bowl-College/commit/32da1c5c120014f5203644747cae2ac1c3f6f53e))
+* **strava:** add settings patch (manifest activity, context, settings entry, tab hooks) ([a195742](https://github.com/mwbra130/Retro-Bowl-College/commit/a1957425e46ba5f849f0c4b9f98f5d867bd092bb))
+* **strava:** check register counts instead of mutating them when wrapping methods ([ee01e37](https://github.com/mwbra130/Retro-Bowl-College/commit/ee01e37d8d28106516485bc891a17b9da5d40a06))
+* **strava:** expose module type in the modular framework stub ([f459209](https://github.com/mwbra130/Retro-Bowl-College/commit/f4592095d1a3844f1a15cc5cf1dc92f3e8c880f5))
+* **strava:** move branding helpers to context extension functions ([27fceaf](https://github.com/mwbra130/Retro-Bowl-College/commit/27fceafa1bbef6a275b7ce247658e5f7355f08a9))
+* **strava:** prepare runtime-switchable launcher name/icon combinations ([cf0a6e9](https://github.com/mwbra130/Retro-Bowl-College/commit/cf0a6e9e4299a82e288091cc896232d63e496d10))
+* **strava:** read hide filters from runtime settings and hide local events carousel ([dbd5d20](https://github.com/mwbra130/Retro-Bowl-College/commit/dbd5d2041accf430c88a6e4c9c50a28f1be9d632))
+* **strava:** read route trim enabled/distance from runtime settings ([35d1e05](https://github.com/mwbra130/Retro-Bowl-College/commit/35d1e0522729297d755ecbe458bc78cbdeafec6a))
+* **strava:** replace brand orange across all values, color lists and drawables ([36329ea](https://github.com/mwbra130/Retro-Bowl-College/commit/36329ea4780c017414323bdd12830a48881085b2))
+* **strava:** route trim uses runtime settings with the option as default ([41ac350](https://github.com/mwbra130/Retro-Bowl-College/commit/41ac350ef4cf0c7714b5c8b6362a700df4d09954))
+
 ## [1.30.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.29.2...v1.30.0) (2026-10-29)
 
 ### ✨ New Features
