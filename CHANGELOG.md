@@ -1,3 +1,9 @@
+## [1.31.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.0...v1.31.1) (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **strava:** wrap onCreateView using parameter registers, drop register-count guard ([008fd72](https://github.com/mwbra130/Retro-Bowl-College/commit/008fd722b839797d32fea9bc784b0dbae4d45a19))
+
 ## [1.31.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.30.0...v1.31.0) (2026-10-29)
 
 ### ✨ New Features
