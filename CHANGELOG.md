@@ -1,3 +1,10 @@
+## [1.31.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.5...v1.31.6) (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **strava:** open settings via StravaSettings.openSettings (PatchContext pattern) ([bfe5be5](https://github.com/mwbra130/Retro-Bowl-College/commit/bfe5be56d0abead9bcde9b5df819bbeab22bc65c))
+* **strava:** track resumed activity and add openSettings, hxreborn PatchContext style ([c4ec08b](https://github.com/mwbra130/Retro-Bowl-College/commit/c4ec08b51eb74d162ac1bd6e811965702349f4b5))
+
 ## [1.31.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.31.4...v1.31.5) (2026-10-29)
 
 ### 🐛 Bug Fixes
