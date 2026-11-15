@@ -1,150 +1,212 @@
 package app.template.extension.strava;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LinearGradient;
 import android.graphics.Outline;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 
 /**
- * Liquid Glass styling for Strava's bottom navigation bar.
+ * Liquid Glass bottom navigation for Strava — runtime half.
  *
  * Called from the patched BottomNavigationActivity.onCreate (see
- * LiquidGlassNavPatch), after the original onCreate has run, so the bar
- * exists and the classic BottomNavigationView is the visible variant
- * (the patch forces the classic path). Turns the full-width bar into a
- * floating pill in the style of the current YouTube / YouTube Music /
- * Proton VPN bars:
+ * LiquidGlassNavPatch). The patch forces Strava's classic
+ * BottomNavigationView (the Compose bar paints its own opaque
+ * background and cannot be glassed from outside); this class then
+ * restyles that bar as a floating glass pill like the current
+ * YouTube / YouTube Music / Proton VPN bars:
  *
- *   - detached from the screen edges (side + bottom margins, lifted
- *     above the system navigation / gesture bar)
- *   - fully rounded corners, clipped item ripples
- *   - translucent surface taken from Strava's own navbar_background
- *     color, with a hairline border and a soft shadow (elevation)
- *   - page content re-constrained to the bottom of the screen so it
- *     scrolls underneath the pill instead of stopping above it
+ *   - FLOATING: detached from the screen edges with side margins,
+ *     lifted above the gesture bar, page content re-constrained to
+ *     the bottom of the screen so it scrolls underneath the pill.
+ *   - GLASS: the pill background is a live backdrop sample — the
+ *     content behind the bar is captured, downscaled and blurred,
+ *     then drawn inside the pill under a translucent tint, a top
+ *     light highlight and a hairline border. The sample refreshes
+ *     when the content scrolls or the layout changes, so the blur
+ *     tracks what is actually behind the bar.
  *
- * The extension compiles against the stock Android SDK only, so the
- * ConstraintLayout constraint fields of the content container are set
- * reflectively (the class is present at runtime inside Strava).
- * Everything is wrapped so a styling failure can never break the
- * activity: worst case the bar keeps its stock look.
+ * All tweaks live in Strava's own preferences file, edited from the
+ * Liquid Glass settings dialog (long-press the Home tab, see
+ * GlassSettings):
+ *   morphe.glass.enabled   master switch            (default true)
+ *   morphe.glass.floating  floating pill vs docked  (default true)
+ *   morphe.glass.blur      backdrop blur vs tint    (default true)
+ *   morphe.glass.opacity   tint opacity, percent    (default 72)
+ * Changes apply on the next app start.
+ *
+ * Everything is failure-swallowing: worst case the bar keeps a
+ * plain translucent look, and the activity never breaks.
  */
 public final class GlassNav {
 
     private static final String TAG_GLASS = "morphe_glass_nav";
 
+    public static final String KEY_ENABLED = "morphe.glass.enabled";
+    public static final String KEY_FLOATING = "morphe.glass.floating";
+    public static final String KEY_BLUR = "morphe.glass.blur";
+    public static final String KEY_OPACITY = "morphe.glass.opacity";
+
     private GlassNav() {
     }
 
-    /** Entry point called from the patched BottomNavigationActivity.onCreate. */
     public static void apply(final Activity activity) {
         try {
+            SharedPreferences prefs = activity.getSharedPreferences("com.strava_preferences", Context.MODE_PRIVATE);
+            boolean enabled = prefs.getBoolean(KEY_ENABLED, true);
             String pkg = activity.getPackageName();
             int navId = activity.getResources().getIdentifier("bottom_navigation", "id", pkg);
-            int composeId = activity.getResources()
-                    .getIdentifier("bottom_navigation_compose_view", "id", pkg);
             if (navId == 0) {
                 return;
             }
             final View nav = activity.findViewById(navId);
-            View compose = composeId != 0 ? activity.findViewById(composeId) : null;
-
-            // The patch forces the classic bar, but style whichever
-            // variant is actually visible so a flag change can never
-            // leave a stock full-width bar behind.
-            View target = null;
-            if (nav != null && nav.getVisibility() == View.VISIBLE) {
-                target = nav;
-            } else if (compose != null && compose.getVisibility() == View.VISIBLE) {
-                target = compose;
-            } else if (nav != null) {
-                target = nav;
-            }
-            if (target == null) {
+            if (nav == null) {
                 return;
             }
-
-            final View pill = target;
-            stylePill(activity, pill);
-            // Re-run after the first layout pass: margins and the
-            // content re-constraint only take full effect once the
-            // hierarchy has been measured with the stock constraints.
-            pill.post(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        stylePill(activity, pill);
-                        scrollContentUnder(activity);
-                    } catch (Throwable ignored) {
-                    }
-                }
-            });
-            scrollContentUnder(activity);
+            if (!enabled) {
+                restoreStock(activity, nav);
+                return;
+            }
+            boolean floating = prefs.getBoolean(KEY_FLOATING, true);
+            boolean blur = prefs.getBoolean(KEY_BLUR, true);
+            int opacity = prefs.getInt(KEY_OPACITY, 72);
+            stylePill(activity, nav, floating, blur, opacity);
+            if (floating) {
+                scrollContentUnder(activity);
+            } else {
+                dockContent(activity);
+            }
         } catch (Throwable ignored) {
             // Never let a styling failure break the activity.
         }
     }
 
-    private static void stylePill(Activity activity, View pill) {
-        if (TAG_GLASS.equals(pill.getTag())) {
-            return;
-        }
-        pill.setTag(TAG_GLASS);
+    // ------------------------------------------------------------------
+    // Pill styling
+    // ------------------------------------------------------------------
 
+    private static void stylePill(final Activity activity, final View pill,
+                                  boolean floating, boolean blur, int opacityPct) {
         float density = activity.getResources().getDisplayMetrics().density;
-        int sideMargin = Math.round(18 * density);
-        int bottomMargin = Math.round(10 * density) + navigationBarHeight(activity);
-        int radius = Math.round(30 * density);
+        final int radius = floating ? Math.round(30 * density) : 0;
 
         ViewGroup.LayoutParams raw = pill.getLayoutParams();
         if (raw instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) raw;
-            lp.leftMargin = sideMargin;
-            lp.rightMargin = sideMargin;
-            lp.bottomMargin = bottomMargin;
+            if (floating) {
+                lp.leftMargin = Math.round(18 * density);
+                lp.rightMargin = Math.round(18 * density);
+                lp.bottomMargin = Math.round(10 * density) + navigationBarHeight(activity);
+            } else {
+                lp.leftMargin = 0;
+                lp.rightMargin = 0;
+                lp.bottomMargin = 0;
+            }
             lp.topMargin = 0;
             pill.setLayoutParams(lp);
         }
 
         int surface = surfaceColor(activity);
-        int fill = Color.argb(184, Color.red(surface), Color.green(surface), Color.blue(surface));
-        double luminance = (0.299 * Color.red(surface) + 0.587 * Color.green(surface)
-                + 0.114 * Color.blue(surface)) / 255.0;
-        int stroke = luminance > 0.5
-                ? Color.argb(31, 0, 0, 0)
-                : Color.argb(51, 255, 255, 255);
-
-        GradientDrawable glass = new GradientDrawable();
-        glass.setShape(GradientDrawable.RECTANGLE);
-        glass.setCornerRadius(radius);
-        glass.setColor(fill);
-        glass.setStroke(Math.max(1, Math.round(1 * density)), stroke);
+        int opacity = Math.max(10, Math.min(95, opacityPct));
+        View root = (View) pill.getParent();
+        GlassDrawable glass = new GlassDrawable(
+                activity, pill, root, surface, opacity, radius, blur);
         pill.setBackground(glass);
+        glass.refreshSoon();
 
-        pill.setElevation(10 * density);
-        final int outlineRadius = radius;
+        pill.setElevation(floating ? 10 * density : 4 * density);
         pill.setOutlineProvider(new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
-                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), outlineRadius);
+                if (radius > 0) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+                } else {
+                    outline.setRect(0, 0, view.getWidth(), view.getHeight());
+                }
             }
         });
         pill.setClipToOutline(true);
+        pill.setTag(TAG_GLASS);
+
+        // Keep the backdrop sample fresh: recapture shortly after
+        // layout settles, and (throttled) while anything scrolls.
+        pill.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        glass.refreshSoon();
+                    }
+                });
+        pill.getViewTreeObserver().addOnScrollChangedListener(
+                new ViewTreeObserver.OnScrollChangedListener() {
+                    @Override
+                    public void onScrollChanged() {
+                        glass.refreshSoon();
+                    }
+                });
+        pill.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                glass.refresh();
+            }
+        }, 600);
     }
 
-    /**
-     * The content container (toolbar_container) is constrained to the
-     * top of the bottom-navigation barrier, so content stops exactly
-     * where the bar begins. Re-constrain its bottom to the parent so
-     * feeds and maps scroll underneath the floating pill.
-     */
+    private static void restoreStock(Activity activity, View nav) {
+        try {
+            ViewGroup.LayoutParams raw = nav.getLayoutParams();
+            if (raw instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) raw;
+                lp.leftMargin = 0;
+                lp.rightMargin = 0;
+                lp.bottomMargin = 0;
+                nav.setLayoutParams(lp);
+            }
+            nav.setBackground(null);
+            nav.setElevation(0);
+            nav.setClipToOutline(false);
+            dockContent(activity);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Content constraints (ConstraintLayout fields set reflectively —
+    // the extension compiles against the stock Android SDK only)
+    // ------------------------------------------------------------------
+
+    /** Let page content scroll underneath the floating pill. */
     private static void scrollContentUnder(Activity activity) {
+        setContentConstraint(activity, true);
+    }
+
+    /** Put page content back above the bar (docked / stock layout). */
+    private static void dockContent(Activity activity) {
+        setContentConstraint(activity, false);
+    }
+
+    private static void setContentConstraint(Activity activity, boolean under) {
         try {
             String pkg = activity.getPackageName();
             int containerId = activity.getResources()
@@ -160,10 +222,18 @@ public final class GlassNav {
             if (raw == null) {
                 return;
             }
-            // ConstraintLayout.LayoutParams fields, set reflectively:
-            // bottomToBottom = 0 (PARENT_ID), bottomToTop = -1 (UNSET).
-            setIntField(raw, "bottomToBottom", 0);
-            setIntField(raw, "bottomToTop", -1);
+            if (under) {
+                // bottomToBottom = 0 (PARENT_ID), bottomToTop = -1 (UNSET)
+                setIntField(raw, "bottomToBottom", 0);
+                setIntField(raw, "bottomToTop", -1);
+            } else {
+                int barrierId = activity.getResources()
+                        .getIdentifier("bottom_navigation_barrier", "id", pkg);
+                if (barrierId != 0) {
+                    setIntField(raw, "bottomToBottom", -1);
+                    setIntField(raw, "bottomToTop", barrierId);
+                }
+            }
             if (raw instanceof ViewGroup.MarginLayoutParams) {
                 ((ViewGroup.MarginLayoutParams) raw).bottomMargin = 0;
             }
@@ -180,7 +250,10 @@ public final class GlassNav {
         }
     }
 
-    /** Strava's own navbar surface color, so the pill matches light/dark mode. */
+    // ------------------------------------------------------------------
+    // Colors / insets
+    // ------------------------------------------------------------------
+
     private static int surfaceColor(Activity activity) {
         try {
             String pkg = activity.getPackageName();
@@ -203,12 +276,242 @@ public final class GlassNav {
             if (dimenId != 0) {
                 int height = activity.getResources().getDimensionPixelSize(dimenId);
                 float density = activity.getResources().getDisplayMetrics().density;
-                // Cap it: on gesture devices the reported height can
-                // include more than the bar the pill must clear.
                 return Math.min(height, Math.round(48 * density));
             }
         } catch (Throwable ignored) {
         }
         return 0;
+    }
+
+    // ------------------------------------------------------------------
+    // Glass background drawable: live blurred backdrop + tint + light
+    // ------------------------------------------------------------------
+
+    static final class GlassDrawable extends Drawable {
+        private static final float DOWNSCALE = 0.18f;
+        private static final long REFRESH_DELAY_MS = 120;
+
+        private final WeakReference<View> pillRef;
+        private final WeakReference<View> rootRef;
+        private final int surface;
+        private final int opacityPct;
+        private final int radiusPx;
+        private final boolean blurEnabled;
+        private final Handler handler = new Handler(Looper.getMainLooper());
+
+        private Bitmap blurred;
+        private boolean refreshPosted;
+        private final Runnable refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                refreshPosted = false;
+                refresh();
+            }
+        };
+
+        GlassDrawable(Activity activity, View pill, View root, int surface,
+                      int opacityPct, int radiusPx, boolean blurEnabled) {
+            this.pillRef = new WeakReference<>(pill);
+            this.rootRef = new WeakReference<>(root);
+            this.surface = surface;
+            this.opacityPct = opacityPct;
+            this.radiusPx = radiusPx;
+            this.blurEnabled = blurEnabled;
+        }
+
+        void refreshSoon() {
+            if (!blurEnabled || refreshPosted) {
+                return;
+            }
+            refreshPosted = true;
+            handler.postDelayed(refreshRunnable, REFRESH_DELAY_MS);
+        }
+
+        /** Capture the content behind the pill, blur it, redraw. */
+        void refresh() {
+            if (!blurEnabled) {
+                return;
+            }
+            try {
+                View pill = pillRef.get();
+                View root = rootRef.get();
+                if (pill == null || root == null
+                        || root.getWidth() == 0 || root.getHeight() == 0) {
+                    return;
+                }
+                int w = Math.max(1, Math.round(root.getWidth() * DOWNSCALE));
+                int h = Math.max(1, Math.round(root.getHeight() * DOWNSCALE));
+                Bitmap shot = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(shot);
+                canvas.scale(DOWNSCALE, DOWNSCALE);
+                int vis = pill.getVisibility();
+                pill.setVisibility(View.INVISIBLE);
+                try {
+                    root.draw(canvas);
+                } finally {
+                    pill.setVisibility(vis);
+                }
+                boxBlur(shot, 10);
+                boxBlur(shot, 10);
+                Bitmap old = blurred;
+                blurred = shot;
+                if (old != null && old != shot) {
+                    old.recycle();
+                }
+                invalidateSelf();
+            } catch (Throwable ignored) {
+                // Keep the previous sample (or plain tint) — never crash.
+            }
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            Rect bounds = getBounds();
+            if (bounds.isEmpty()) {
+                return;
+            }
+            View pill = pillRef.get();
+            View root = rootRef.get();
+
+            Path clip = new Path();
+            RectF rect = new RectF(bounds);
+            if (radiusPx > 0) {
+                clip.addRoundRect(rect, radiusPx, radiusPx, Path.Direction.CW);
+            } else {
+                clip.addRect(rect, Path.Direction.CW);
+            }
+            canvas.save();
+            canvas.clipPath(clip);
+
+            // 1. Blurred backdrop, aligned to the pill's real position.
+            Bitmap sample = blurred;
+            if (sample != null && pill != null && root != null) {
+                int[] pillLoc = new int[2];
+                int[] rootLoc = new int[2];
+                pill.getLocationOnScreen(pillLoc);
+                root.getLocationOnScreen(rootLoc);
+                float scale = 1f / DOWNSCALE;
+                canvas.save();
+                canvas.translate(bounds.left, bounds.top);
+                canvas.scale(scale, scale);
+                canvas.translate(-(pillLoc[0] - rootLoc[0]), -(pillLoc[1] - rootLoc[1]));
+                Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+                canvas.drawBitmap(sample, 0, 0, paint);
+                canvas.restore();
+            } else {
+                // No sample yet: solid surface as the base.
+                Paint base = new Paint();
+                base.setColor(surface);
+                canvas.drawRect(rect, base);
+            }
+
+            // 2. Translucent tint (the glass body).
+            int alpha = Math.round(255f * opacityPct / 100f);
+            Paint tint = new Paint();
+            tint.setColor(Color.argb(alpha, Color.red(surface),
+                    Color.green(surface), Color.blue(surface)));
+            canvas.drawRect(rect, tint);
+
+            // 3. Top light highlight (light catching the top edge).
+            Paint highlight = new Paint();
+            highlight.setShader(new LinearGradient(
+                    0, bounds.top, 0, bounds.top + bounds.height() * 0.5f,
+                    Color.argb(46, 255, 255, 255), Color.argb(0, 255, 255, 255),
+                    Shader.TileMode.CLAMP));
+            canvas.drawRect(rect, highlight);
+
+            canvas.restore();
+
+            // 4. Hairline border.
+            double luminance = (0.299 * Color.red(surface) + 0.587 * Color.green(surface)
+                    + 0.114 * Color.blue(surface)) / 255.0;
+            Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+            stroke.setStyle(Paint.Style.STROKE);
+            stroke.setStrokeWidth(Math.max(1f, bounds.height() * 0.012f));
+            stroke.setColor(luminance > 0.5
+                    ? Color.argb(31, 0, 0, 0)
+                    : Color.argb(56, 255, 255, 255));
+            if (radiusPx > 0) {
+                canvas.drawRoundRect(rect, radiusPx, radiusPx, stroke);
+            } else {
+                canvas.drawRect(rect, stroke);
+            }
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter colorFilter) {
+        }
+
+        @Override
+        public int getOpacity() {
+            return PixelFormat.TRANSLUCENT;
+        }
+
+        /** Simple separable box blur, in place (downscaled bitmap). */
+        private static void boxBlur(Bitmap bitmap, int radius) {
+            int w = bitmap.getWidth();
+            int h = bitmap.getHeight();
+            if (w <= 2 || h <= 2 || radius < 1) {
+                return;
+            }
+            int[] pixels = new int[w * h];
+            bitmap.getPixels(pixels, 0, w, 0, 0, w, h);
+            int[] out = new int[w * h];
+            int diameter = radius * 2 + 1;
+
+            // Horizontal pass.
+            for (int y = 0; y < h; y++) {
+                long sr = 0, sg = 0, sb = 0, sa = 0;
+                for (int x = -radius; x <= radius; x++) {
+                    int px = pixels[y * w + clamp(x, 0, w - 1)];
+                    sa += Color.alpha(px);
+                    sr += Color.red(px);
+                    sg += Color.green(px);
+                    sb += Color.blue(px);
+                }
+                for (int x = 0; x < w; x++) {
+                    out[y * w + x] = Color.argb(
+                            (int) (sa / diameter), (int) (sr / diameter),
+                            (int) (sg / diameter), (int) (sb / diameter));
+                    int leave = pixels[y * w + clamp(x - radius, 0, w - 1)];
+                    int enter = pixels[y * w + clamp(x + radius + 1, 0, w - 1)];
+                    sa += Color.alpha(enter) - Color.alpha(leave);
+                    sr += Color.red(enter) - Color.red(leave);
+                    sg += Color.green(enter) - Color.green(leave);
+                    sb += Color.blue(enter) - Color.blue(leave);
+                }
+            }
+            // Vertical pass.
+            for (int x = 0; x < w; x++) {
+                long sr = 0, sg = 0, sb = 0, sa = 0;
+                for (int y = -radius; y <= radius; y++) {
+                    int px = out[clamp(y, 0, h - 1) * w + x];
+                    sa += Color.alpha(px);
+                    sr += Color.red(px);
+                    sg += Color.green(px);
+                    sb += Color.blue(px);
+                }
+                for (int y = 0; y < h; y++) {
+                    pixels[y * w + x] = Color.argb(
+                            (int) (sa / diameter), (int) (sr / diameter),
+                            (int) (sg / diameter), (int) (sb / diameter));
+                    int leave = out[clamp(y - radius, 0, h - 1) * w + x];
+                    int enter = out[clamp(y + radius + 1, 0, h - 1) * w + x];
+                    sa += Color.alpha(enter) - Color.alpha(leave);
+                    sr += Color.red(enter) - Color.red(leave);
+                    sg += Color.green(enter) - Color.green(leave);
+                    sb += Color.blue(enter) - Color.blue(leave);
+                }
+            }
+            bitmap.setPixels(pixels, 0, w, 0, 0, w, h);
+        }
+
+        private static int clamp(int v, int min, int max) {
+            return v < min ? min : (v > max ? max : v);
+        }
     }
 }

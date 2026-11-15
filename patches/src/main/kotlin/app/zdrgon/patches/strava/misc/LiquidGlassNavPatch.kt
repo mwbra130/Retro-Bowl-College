@@ -9,6 +9,7 @@ import app.zdrgon.patches.strava.shared.Constants.COMPATIBILITY_STRAVA
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 
 private const val GLASS_CLASS = "Lapp/template/extension/strava/GlassNav;"
+private const val GLASS_SETTINGS_CLASS = "Lapp/template/extension/strava/GlassSettings;"
 private const val STRAVA_EXTENSION = "extensions/strava.mpe"
 
 private const val BOTTOM_NAV_ACTIVITY_CLASS =
@@ -48,9 +49,10 @@ private const val METHOD_SUFFIX = "\$original"
 val liquidGlassNavPatch = bytecodePatch(
     name = "Liquid Glass navigation",
     description = "Turns Strava's bottom bar into a floating Liquid Glass pill: detached " +
-        "from the screen edges, translucent and rounded, with content scrolling " +
-        "underneath it, like the current YouTube and Proton VPN bars. Uses Strava's " +
-        "classic bottom bar to make the effect possible.",
+        "from the screen edges, live blurred backdrop with a translucent tint, content " +
+        "scrolling underneath it, like the current YouTube and Proton VPN bars. " +
+        "Long-press the Home tab to tweak it (on/off, floating vs docked, blur, tint " +
+        "opacity). Uses Strava's classic bottom bar to make the effect possible.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_STRAVA)
@@ -93,6 +95,7 @@ val liquidGlassNavPatch = bytecodePatch(
                 move-object/from16 v1, p1
                 invoke-virtual {v0, v1}, $originalReference
                 invoke-static {v0}, $GLASS_CLASS->apply(Landroid/app/Activity;)V
+                invoke-static {v0}, $GLASS_SETTINGS_CLASS->attachHomeLongPress(Landroid/app/Activity;)V
                 return-void
             """.trimIndent()
         }
