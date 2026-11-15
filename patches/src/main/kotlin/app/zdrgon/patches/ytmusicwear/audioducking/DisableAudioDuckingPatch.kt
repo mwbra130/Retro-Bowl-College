@@ -83,7 +83,13 @@ val disableAudioDuckingWearPatch = bytecodePatch(
         }
         val ctorInstruction = instructions[ctorIndex]
         val boolRegister = when (ctorInstruction) {
-            is BuilderInstruction35c -> ctorInstruction.getRegister(ctorInstruction.registerCount - 1)
+            is BuilderInstruction35c -> when (ctorInstruction.registerCount) {
+                1 -> ctorInstruction.registerC
+                2 -> ctorInstruction.registerD
+                3 -> ctorInstruction.registerE
+                4 -> ctorInstruction.registerF
+                else -> ctorInstruction.registerG
+            }
             is BuilderInstruction3rc -> ctorInstruction.startRegister + ctorInstruction.registerCount - 1
             else -> throw PatchException("YT Music Wear ducking: unexpected constructor instruction format.")
         }
