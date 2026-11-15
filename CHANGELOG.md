@@ -1,3 +1,9 @@
+## [1.77.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.5...v1.77.6) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* **strava:** compact centered pill, see-through glass ([588ca21](https://github.com/mwbra130/Retro-Bowl-College/commit/588ca21f5f0614854c2e8dced035c91f4ddf38ef))
+
 ## [1.77.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.4...v1.77.5) (2026-11-15)
 
 ### 🐛 Bug Fixes
