@@ -1,3 +1,9 @@
+## [1.77.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.1...v1.77.2) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* **strava:** support Strava 486.11 (build 12400195) ([d9fd94a](https://github.com/mwbra130/Retro-Bowl-College/commit/d9fd94ad69043e390d1ce8bfa15d1c7c663c2ff3))
+
 ## [1.77.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.0...v1.77.1) (2026-11-15)
 
 ### 🐛 Bug Fixes
