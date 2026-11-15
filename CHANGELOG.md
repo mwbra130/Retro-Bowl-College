@@ -1,3 +1,13 @@
+## [1.75.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.74.0...v1.75.0) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* use register properties for the audio ducking constructor call ([9759993](https://github.com/mwbra130/Retro-Bowl-College/commit/9759993b45252a02802b59e7487269d7598094e8))
+
+### ✨ New Features
+
+* add YouTube Music (Wear OS) QUIC, audio ducking, spoof version and skip silence patches ([058b0b2](https://github.com/mwbra130/Retro-Bowl-College/commit/058b0b233de14a108bb381d91207506a24559401))
+
 ## [1.74.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.73.0...v1.74.0) (2026-11-15)
 
 ### ✨ New Features

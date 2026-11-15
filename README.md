@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.74.0. -->
+     block below on purpose. Reflects bundle v1.75.0. -->
 
 <!-- GRID_START -->
 <table>
@@ -471,8 +471,8 @@ Some apps I patched and other apps that were requested if you would like to requ
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
-| [Disable audio ducking](#disable-audio-ducking) | Keeps the volume unchanged when another app plays a short sound, such as a notification, instead of ducking the music. |  |
 | [Disable QUIC protocol](#disable-quic-protocol) | Disables the QUIC (HTTP/3) network protocol in the Wear OS app's Cronet stack, forcing TCP-based HTTP/2 connections. |  |
+| [Disable audio ducking](#disable-audio-ducking) | Keeps the volume unchanged when another app plays a short sound, such as a notification, instead of ducking the music. |  |
 | [Disable network telemetry](#disable-network-telemetry) | Turns off the Cronet networking library's telemetry in the Wear OS app (its manifest switch ships set to true). Does not affect playback, downloads, or sign-in. |  |
 | [Enable downloads](#enable-downloads) | Unlocks the offline save gate (offlineability) for videos and playlists the app delivers, so attempted downloads save instead of refusing or showing a Premium dialog. Does not change what the server sends a free account. |  |
 | [GmsCore support](#gmscore-support) | Routes the app's Google services calls to MicroG (app.revanced.android.gms) instead of real Google Play services, so a re-signed build can sign in. Requires MicroG-RE with a signed-in account on the watch, and the stock app uninstalled first (the package name is not changed). Experimental: verified against 9.45.41-WEAR_RELEASE by dex scan, not yet tested on a watch. |  |
