@@ -153,16 +153,46 @@ public final class GlassNav {
                 if (activity == null || pill == null) {
                     return;
                 }
-                // Margins (the floating part).
+                // Geometry (the floating part). Margins alone do
+                // nothing here: the bar's parent is a ConstraintLayout
+                // and the bar ships with MATCH_PARENT width and only a
+                // bottom anchor, so the solver pins it full-width at
+                // x=0 and side margins are ignored. Give it real
+                // start/end anchors plus a MATCH_CONSTRAINT (0dp)
+                // width so the margins actually inset it into a pill.
                 ViewGroup.LayoutParams raw = pill.getLayoutParams();
                 if (raw instanceof ViewGroup.MarginLayoutParams) {
                     ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) raw;
+                    boolean changed = false;
                     if (lp.leftMargin != sideMarginPx || lp.rightMargin != sideMarginPx
                             || lp.bottomMargin != bottomMarginPx || lp.topMargin != 0) {
                         lp.leftMargin = sideMarginPx;
                         lp.rightMargin = sideMarginPx;
                         lp.bottomMargin = bottomMarginPx;
                         lp.topMargin = 0;
+                        changed = true;
+                    }
+                    if (floating) {
+                        if (lp.width != 0) {
+                            lp.width = 0; // MATCH_CONSTRAINT
+                            changed = true;
+                        }
+                        changed |= setIntField(lp, "startToStart", 0);
+                        changed |= setIntField(lp, "endToEnd", 0);
+                        changed |= setIntField(lp, "bottomToBottom", 0);
+                        changed |= setIntField(lp, "startToEnd", -1);
+                        changed |= setIntField(lp, "endToStart", -1);
+                        changed |= setIntField(lp, "bottomToTop", -1);
+                    } else {
+                        if (lp.width != ViewGroup.LayoutParams.MATCH_PARENT) {
+                            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                            changed = true;
+                        }
+                        changed |= setIntField(lp, "startToStart", -1);
+                        changed |= setIntField(lp, "endToEnd", -1);
+                        changed |= setIntField(lp, "bottomToBottom", 0);
+                    }
+                    if (changed) {
                         pill.setLayoutParams(lp);
                     }
                 }
@@ -217,6 +247,10 @@ public final class GlassNav {
                 lp.leftMargin = 0;
                 lp.rightMargin = 0;
                 lp.bottomMargin = 0;
+                lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                setIntField(lp, "startToStart", -1);
+                setIntField(lp, "endToEnd", -1);
+                setIntField(lp, "bottomToBottom", 0);
                 nav.setLayoutParams(lp);
             }
             nav.setBackground(null);
