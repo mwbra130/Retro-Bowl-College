@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**33 apps · 68 patches** · current bundle: [v1.77.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.77.0)
+**33 apps · 68 patches** · current bundle: [v1.77.1](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.77.1)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.77.0. -->
+     block below on purpose. Reflects bundle v1.77.1. -->
 
 <!-- GRID_START -->
 <table>
@@ -203,7 +203,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.77.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.77.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;68 patches total
+> **[v1.77.1](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.77.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;68 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -602,7 +602,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
-| [Liquid Glass navigation](#liquid-glass-navigation) | Turns Strava's bottom bar into a floating Liquid Glass pill: detached from the screen edges, live blurred backdrop with a translucent tint, content scrolling underneath it, like the current YouTube and Proton VPN bars. Long-press the Home tab to tweak it (on/off, floating vs docked, blur, tint opacity). Uses Strava's classic bottom bar to make the effect possible. |  |
+| [Liquid Glass navigation](#liquid-glass-navigation) | Turns Strava's bottom bar into a floating Liquid Glass pill: detached from the screen edges, live blurred backdrop with a translucent tint, content scrolling underneath it, like the current YouTube and Proton VPN bars. Tweak it under Extra Settings at the top of Strava's Settings screen (on/off, floating vs docked, blur, tint opacity). Uses Strava's classic bottom bar to make the effect possible. |  |
 
 </details>
 

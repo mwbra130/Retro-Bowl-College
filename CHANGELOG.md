@@ -1,3 +1,9 @@
+## [1.77.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.0...v1.77.1) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* **strava:** keep Liquid Glass pill floating and move settings into Extra Settings ([1ee4b4c](https://github.com/mwbra130/Retro-Bowl-College/commit/1ee4b4c35da5d727c399e6786cbbb0b13c3a514a))
+
 ## [1.77.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.76.0...v1.77.0) (2026-11-15)
 
 ### ✨ New Features
