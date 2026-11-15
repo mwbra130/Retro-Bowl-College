@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**33 apps · 69 patches** · current bundle: [v1.73.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.73.0)
+**33 apps · 70 patches** · current bundle: [v1.74.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.74.0)
 
 ## Apps
 
@@ -203,7 +203,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.73.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.73.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;69 patches total
+> **[v1.74.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.74.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;70 patches total
 <a id="app-com-strava" name="app-com-strava"></a>
 <details>
 <summary>Strava: Run, Bike, Walk&nbsp;&nbsp;•&nbsp;&nbsp;7 patches</summary>
@@ -461,7 +461,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 
 <a id="app-com-google-android-apps-youtube-music" name="app-com-google-android-apps-youtube-music"></a>
 <details>
-<summary>YouTube Music (Wear OS)&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
+<summary>YouTube Music (Wear OS)&nbsp;&nbsp;•&nbsp;&nbsp;4 patches</summary>
 <br>
 
 **Supported versions:**
@@ -472,6 +472,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 | Patch | Description | Options |
 |----------|----------------|-----------|
 | [Disable network telemetry](#disable-network-telemetry) | Turns off the Cronet networking library's telemetry in the Wear OS app (its manifest switch ships set to true). Does not affect playback, downloads, or sign-in. |  |
+| [Enable downloads](#enable-downloads) | Unlocks the offline save gate (offlineability) for videos and playlists the app delivers, so attempted downloads save instead of refusing or showing a Premium dialog. Does not change what the server sends a free account. |  |
 | [GmsCore support](#gmscore-support) | Routes the app's Google services calls to MicroG (app.revanced.android.gms) instead of real Google Play services, so a re-signed build can sign in. Requires MicroG-RE with a signed-in account on the watch, and the stock app uninstalled first (the package name is not changed). Experimental: verified against 9.45.41-WEAR_RELEASE by dex scan, not yet tested on a watch. |  |
 | [Remove background playback restrictions](#remove-background-playback-restrictions) | Removes restrictions on background playback in the Wear OS app. Experimental: fingerprint verified against 9.45.41-WEAR_RELEASE, not yet tested on a watch. |  |
 
