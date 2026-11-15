@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.76.0",
+  "version": "1.77.0",
   "patches": [
     {
       "name": "Bypass PairIP application checks",
@@ -1340,7 +1340,7 @@
     },
     {
       "name": "Liquid Glass navigation",
-      "description": "Turns Strava's bottom bar into a floating Liquid Glass pill: detached from the screen edges, translucent and rounded, with content scrolling underneath it, like the current YouTube and Proton VPN bars. Uses Strava's classic bottom bar to make the effect possible.",
+      "description": "Turns Strava's bottom bar into a floating Liquid Glass pill: detached from the screen edges, live blurred backdrop with a translucent tint, content scrolling underneath it, like the current YouTube and Proton VPN bars. Long-press the Home tab to tweak it (on/off, floating vs docked, blur, tint opacity). Uses Strava's classic bottom bar to make the effect possible.",
       "default": true,
       "dependencies": [],
       "compatiblePackages": [

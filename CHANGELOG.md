@@ -1,3 +1,9 @@
+## [1.77.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.76.0...v1.77.0) (2026-11-15)
+
+### ✨ New Features
+
+* **strava:** Liquid Glass v2 — real backdrop blur and in-app settings ([e2c2c45](https://github.com/mwbra130/Retro-Bowl-College/commit/e2c2c451739fddf523711da01e9fab7c1a5d863f))
+
 ## [1.76.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.75.0...v1.76.0) (2026-11-15)
 
 ### ✨ New Features
