@@ -10,13 +10,10 @@ import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 
 private const val GLASS_CLASS = "Lapp/template/extension/strava/GlassNav;"
-private const val GLASS_SETTINGS_CLASS = "Lapp/template/extension/strava/GlassSettings;"
 private const val STRAVA_EXTENSION = "extensions/strava.mpe"
 
 private const val BOTTOM_NAV_ACTIVITY_CLASS =
     "Lcom/strava/view/bottomnavigation/BottomNavigationActivity;"
-private const val SETTINGS_FRAGMENT_CLASS =
-    "Lcom/strava/settings/view/settings/SettingsFragment;"
 private const val NAV_CONTROLLER_CLASS =
     "Lcom/strava/view/bottomnavigation/a;"
 private const val METHOD_SUFFIX = "\$original"
@@ -34,11 +31,16 @@ private const val METHOD_SUFFIX = "\$original"
  *
  * This patch therefore:
  *
- * 1. Forces the classic bar: a.b() returns true from its first
- *    instruction (the same prepend-and-return idiom as the password
- *    login patch). The classic path is fully wired in 486.9 (menu,
- *    listeners, tints), not dead code. Trade-off: Compose-bar-only
- *    behavior (the expandable Record create menu) is lost.
+ * 1. Forces the classic bar: a.b() is the Compose-bar flag — it
+ *    returns FALSE from its first instruction (the same prepend-and-
+ *    return idiom as the password login patch). Verified against the
+ *    486.11 dex: BottomNavigationActivity.onCreate only binds the
+ *    classic BottomNavigationView into the nav controller on the
+ *    b()==false path; b()==true selects the ComposeView bar. (The
+ *    first builds forced true — the Compose bar — and changed
+ *    nothing.) The classic path is fully wired (menu, listeners,
+ *    tints), not dead code. Trade-off: Compose-bar-only behavior
+ *    (the expandable Record create menu) is lost.
  *
  * 2. Wraps BottomNavigationActivity.onCreate (rename-and-clone, the
  *    pattern the old settings patch used, including the move-object/
@@ -76,7 +78,7 @@ val liquidGlassNavPatch = bytecodePatch(
         switch.addInstructions(
             0,
             """
-                const/4 v0, 0x1
+                const/4 v0, 0x0
                 return v0
             """.trimIndent(),
         )
@@ -103,61 +105,6 @@ val liquidGlassNavPatch = bytecodePatch(
             """.trimIndent()
         }
 
-        // 3. Settings entry: wrap SettingsFragment.onCreateView
-        // (rename + wrapper) so GlassSettings can put an
-        // "Extra Settings" row above Strava's own Settings list.
-        val fragment = mutableClassDefBy(classDefBy(SETTINGS_FRAGMENT_CLASS))
-        val fragOriginal = fragment.methods.firstOrNull { method ->
-            method.name == "onCreateView" &&
-                method.returnType == "Landroid/view/View;" &&
-                method.parameterTypes == listOf(
-                    "Landroid/view/LayoutInflater;",
-                    "Landroid/view/ViewGroup;",
-                    "Landroid/os/Bundle;",
-                )
-        } ?: throw PatchException(
-            "Liquid Glass: SettingsFragment.onCreateView not found — re-audit for this version.",
-        )
-
-        val fragRenamed = ImmutableMethod(
-            SETTINGS_FRAGMENT_CLASS,
-            "morpheOnCreateView",
-            fragOriginal.parameters,
-            fragOriginal.returnType,
-            fragOriginal.accessFlags,
-            fragOriginal.annotations,
-            null,
-            MutableMethodImplementation(fragOriginal.implementation!!),
-        ).toMutable()
-        fragment.methods.remove(fragOriginal)
-        fragment.methods.add(fragRenamed)
-
-        val fragWrapper = ImmutableMethod(
-            SETTINGS_FRAGMENT_CLASS,
-            "onCreateView",
-            fragOriginal.parameters,
-            fragOriginal.returnType,
-            fragOriginal.accessFlags,
-            null,
-            null,
-            MutableMethodImplementation(8),
-        ).toMutable().apply {
-            addInstructions(
-                0,
-                """
-                    move-object/from16 v0, p0
-                    move-object/from16 v1, p1
-                    move-object/from16 v2, p2
-                    move-object/from16 v3, p3
-                    invoke-virtual {v0, v1, v2, v3}, $SETTINGS_FRAGMENT_CLASS->morpheOnCreateView(Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
-                    move-result-object v0
-                    invoke-static {v0}, $GLASS_SETTINGS_CLASS->wrapSettingsView(Landroid/view/View;)Landroid/view/View;
-                    move-result-object v0
-                    return-object v0
-                """.trimIndent(),
-            )
-        }
-        fragment.methods.add(fragWrapper)
     }
 }
 

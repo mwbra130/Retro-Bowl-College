@@ -53,9 +53,9 @@ import java.lang.reflect.Field;
  * global layout pass and re-applies anything that drifted, which
  * keeps the pill floating for the life of the activity.
  *
- * All tweaks live in Strava's own preferences file, edited from the
- * Liquid Glass settings (Extra Settings row in Strava's Settings,
- * see GlassSettings):
+ * All tweaks live in Strava's own preferences file (the Liquid
+ * Glass section of the Extra Settings screen writes them; with no
+ * settings UI present the defaults below rule):
  *   morphe.glass.enabled   master switch            (default true)
  *   morphe.glass.floating  floating pill vs docked  (default true)
  *   morphe.glass.blur      backdrop blur vs tint    (default true)
