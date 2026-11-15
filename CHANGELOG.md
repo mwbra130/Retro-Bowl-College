@@ -1,3 +1,9 @@
+## [1.77.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.2...v1.77.3) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* **strava:** force the classic bar with b()=false, drop own settings row ([edc0ab4](https://github.com/mwbra130/Retro-Bowl-College/commit/edc0ab432df161f12ac812da1dd0601db66c2d64))
+
 ## [1.77.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.1...v1.77.2) (2026-11-15)
 
 ### 🐛 Bug Fixes
