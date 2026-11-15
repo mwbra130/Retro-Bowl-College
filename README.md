@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**33 apps · 74 patches** · current bundle: [v1.75.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.75.0)
+**33 apps · 68 patches** · current bundle: [v1.76.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.76.0)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.75.0. -->
+     block below on purpose. Reflects bundle v1.76.0. -->
 
 <!-- GRID_START -->
 <table>
@@ -203,29 +203,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.75.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.75.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;74 patches total
-<a id="app-com-strava" name="app-com-strava"></a>
-<details>
-<summary>Strava: Run, Bike, Walk&nbsp;&nbsp;•&nbsp;&nbsp;7 patches</summary>
-<br>
-
-**Supported versions:**
-
-| 486.9 |
-| :---: |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| [Add settings](#add-settings) | Long-press the Home tab in Strava's bottom bar to open 'Morphe patch settings'. Lets you toggle feed cleanup, route trim, bottom bar tabs and the launcher name/icon at runtime, without re-patching. |  |
-| [Custom app name and icon](#custom-app-name-and-icon) | Changes the app's displayed name and launcher icon. The icon choices are Strava's own built-in alternate icons, plus an accent-colored one. Name and icon can later be switched at runtime from the patch settings screen. | • App name<br>• App icon |
-| [Custom theme colors](#custom-theme-colors) | Replaces Strava's brand orange (#FC5200) accent color in the app's native screens with a color of your choice. | • Accent color |
-| [Enable password login](#enable-password-login) | Shows the email and password login option instead of forcing the one-time email code flow. Your password is still checked by Strava's servers exactly as in the official app. |  |
-| [Hide feed elements](#hide-feed-elements) | Hides who-to-follow suggestions, suggested challenges and other clutter cards from the activity feed. Requires the 'Hide subscription promotions' patch, which provides the shared feed filtering. | • Who to Follow<br>• Suggested Challenges<br>• Join Challenge<br>• Joined a club<br>• Activity lookback<br>• Local events |
-| [Hide subscription promotions](#hide-subscription-promotions) | Hides subscription upsell modules and promotional cards from the feed and other modular screens. UI cleanup only: does not unlock any paid features. | • Upselling<br>• Promotions |
-| [Local route privacy trim](#local-route-privacy-trim) | Trims extra route distance from both ends of the activity map on this device only, on top of Strava's own privacy filtering. Display-only: recorded and uploaded data are unchanged, and other people still see the activity exactly as your Strava privacy settings dictate. | • Meters to trim |
-
-</details>
-
+> **[v1.76.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.76.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;68 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -609,6 +587,22 @@ Some apps I patched and other apps that were requested if you would like to requ
 | [Free store](#free-store) | The in-game store is free. Just tap "Buy" and the item is yours — no payment needed. For an ad-free game, just buy the ad-block item from the store. |  |
 | [Unlimited gold](#unlimited-gold) | Your coin balance always shows 65,535 and spending coins always works without deducting any — pull the prize machine and buy coin characters as much as you want. |  |
 | [Unlock all characters](#unlock-all-characters) | Every character is unlocked and playable — paid, coin, prize machine, progress and secret characters included. Your real collection progress is not changed; characters are unlocked while the patch is applied. |  |
+
+</details>
+
+<a id="app-com-strava" name="app-com-strava"></a>
+<details>
+<summary>Strava: Run, Bike, Walk&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Supported versions:**
+
+| 486.9 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Liquid Glass navigation](#liquid-glass-navigation) | Turns Strava's bottom bar into a floating Liquid Glass pill: detached from the screen edges, translucent and rounded, with content scrolling underneath it, like the current YouTube and Proton VPN bars. Uses Strava's classic bottom bar to make the effect possible. |  |
 
 </details>
 

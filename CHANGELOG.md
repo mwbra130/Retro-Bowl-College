@@ -1,3 +1,9 @@
+## [1.76.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.75.0...v1.76.0) (2026-11-15)
+
+### ✨ New Features
+
+* **strava:** replace Strava patches with Liquid Glass navigation ([180102f](https://github.com/mwbra130/Retro-Bowl-College/commit/180102f059a7ca7f96cd965d2cc35462baafc940))
+
 ## [1.75.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.74.0...v1.75.0) (2026-11-15)
 
 ### 🐛 Bug Fixes
