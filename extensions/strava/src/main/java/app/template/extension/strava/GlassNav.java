@@ -4,66 +4,83 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.LinearGradient;
-import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
+import android.graphics.RecordingCanvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.RenderEffect;
+import android.graphics.RenderNode;
 import android.graphics.Shader;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
+import android.view.WindowInsets;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * Liquid Glass bottom navigation for Strava — runtime half.
  *
- * Called from the patched BottomNavigationActivity.onCreate (see
- * LiquidGlassNavPatch). The patch forces Strava's classic
- * BottomNavigationView (the Compose bar paints its own opaque
- * background and cannot be glassed from outside); this class then
- * restyles that bar as a floating glass pill like the current
- * YouTube / YouTube Music / Proton VPN bars:
+ * Rebuilt after studying how the official Morphe YouTube / YouTube
+ * Music glass navigation bar and hxreborn's Proton VPN floating bar
+ * are implemented. The method is the opposite of the earlier
+ * attempts: the bar view is never moved. Nothing touches its
+ * LayoutParams, margins or constraints — the layout system (here a
+ * ConstraintLayout with a barrier tied to the bar) overwrites or
+ * ignores that from the outside, which is why the margin and anchor
+ * versions never floated.
  *
- *   - FLOATING: detached from the screen edges with side margins,
- *     lifted above the gesture bar, page content re-constrained to
- *     the bottom of the screen so it scrolls underneath the pill.
- *   - GLASS: the pill background is a live backdrop sample — the
- *     content behind the bar is captured, downscaled and blurred,
- *     then drawn inside the pill under a translucent tint, a top
- *     light highlight and a hairline border. The sample refreshes
- *     when the content scrolls or the layout changes, so the blur
- *     tracks what is actually behind the bar.
+ * Instead, like Morphe:
  *
- * Strava adjusts its own bar after onCreate (window-insets passes
- * and fragment transactions can reset margins/background), so the
- * styling is not one-shot: a Styler re-checks the bar on every
- * global layout pass and re-applies anything that drifted, which
- * keeps the pill floating for the life of the activity.
+ *   - The bar keeps its exact box. A capsule drawable becomes its
+ *     background and paints a rounded glass capsule INSET inside
+ *     that box (shadow, blurred backdrop, tint, sheen, rim, bevel);
+ *     everything outside the capsule stays transparent.
+ *   - The float comes from the bar's own PADDING: side padding
+ *     narrows the tab row to the capsule's width, and the top and
+ *     bottom padding are adjusted a few dp per frame so the capsule
+ *     sits the wanted distance above the bottom of the screen. The
+ *     bar grows through its padding, and the app's own layout (the
+ *     barrier, the banner, the content) follows the bar's height.
+ *   - A PreDraw listener re-asserts all of it every frame: if the
+ *     app hands the bar its own background again, the capsule goes
+ *     back; if the geometry drifted, the padding deltas are
+ *     recomputed from the tab row's real position.
+ *   - The backdrop is a RenderNode recording of the page content
+ *     with a RenderEffect blur (Android 14+, the range Morphe
+ *     considers safe; older versions get the page background color
+ *     under the tint instead of a blur). The page content is
+ *     re-constrained to the bottom of the screen so it scrolls
+ *     underneath the capsule, and lists that reach the bottom of
+ *     the page get bottom padding so their last item can scroll
+ *     clear of the bar.
  *
- * All tweaks live in Strava's own preferences file (the Liquid
- * Glass section of the Extra Settings screen writes them; with no
- * settings UI present the defaults below rule):
+ * Tweaks live in Strava's own preferences file (the Liquid Glass
+ * section of the Extra Settings screen writes them; with no
+ * settings UI present the defaults rule):
  *   morphe.glass.enabled   master switch            (default true)
  *   morphe.glass.floating  floating pill vs docked  (default true)
  *   morphe.glass.blur      backdrop blur vs tint    (default true)
  *   morphe.glass.opacity   tint opacity, percent    (default 72)
  * Changes apply on the next app start.
  *
- * Everything is failure-swallowing: worst case the bar keeps a
- * plain translucent look, and the activity never breaks.
+ * Everything is failure-swallowing: worst case the bar keeps its
+ * stock look, and the activity never breaks.
  */
 public final class GlassNav {
 
@@ -75,230 +92,335 @@ public final class GlassNav {
     private GlassNav() {
     }
 
+    static SharedPreferences prefs(Context context) {
+        return context.getSharedPreferences("com.strava_preferences", Context.MODE_PRIVATE);
+    }
+
     public static void apply(final Activity activity) {
         try {
-            SharedPreferences prefs = activity.getSharedPreferences(
-                    "com.strava_preferences", Context.MODE_PRIVATE);
-            boolean enabled = prefs.getBoolean(KEY_ENABLED, true);
+            SharedPreferences prefs = prefs(activity);
+            if (!prefs.getBoolean(KEY_ENABLED, true)) {
+                return;
+            }
             String pkg = activity.getPackageName();
             int navId = activity.getResources().getIdentifier("bottom_navigation", "id", pkg);
             if (navId == 0) {
                 return;
             }
-            final View nav = activity.findViewById(navId);
+            View nav = activity.findViewById(navId);
             if (nav == null) {
                 return;
             }
-            if (!enabled) {
-                restoreStock(activity, nav);
-                return;
-            }
-            Styler styler = new Styler(
-                    activity, nav,
+            int containerId = activity.getResources()
+                    .getIdentifier("toolbar_container", "id", pkg);
+            View content = containerId != 0 ? activity.findViewById(containerId) : null;
+
+            Capsule capsule = new Capsule(
+                    activity, nav, content,
                     prefs.getBoolean(KEY_FLOATING, true),
                     prefs.getBoolean(KEY_BLUR, true),
                     prefs.getInt(KEY_OPACITY, 72));
-            styler.applyNow();
-            // Re-assert after Strava's own post-onCreate passes
-            // (insets, fragment attach) and keep asserting on layout.
-            nav.getViewTreeObserver().addOnGlobalLayoutListener(styler);
-            Handler handler = new Handler(Looper.getMainLooper());
-            for (long delay : new long[]{250, 900, 2000}) {
-                handler.postDelayed(styler::applyNow, delay);
-            }
+            capsule.install();
         } catch (Throwable ignored) {
             // Never let a styling failure break the activity.
         }
     }
 
     // ------------------------------------------------------------------
-    // Styler: applies the pill look and re-applies it if Strava's own
-    // bar handling overwrites any part of it.
+    // Capsule controller: installs the drawable + per-frame upkeep.
     // ------------------------------------------------------------------
 
-    private static final class Styler implements ViewTreeObserver.OnGlobalLayoutListener {
+    private static final class Capsule implements ViewTreeObserver.OnPreDrawListener {
         private final WeakReference<Activity> activityRef;
-        private final WeakReference<View> pillRef;
+        private final WeakReference<View> barRef;
+        private final WeakReference<View> contentRef;
         private final boolean floating;
-        private final boolean blur;
-        private final int opacityPct;
-        private final int radiusPx;
-        private final int sideMarginPx;
-        private final int bottomMarginPx;
-        private GlassDrawable glass;
+        private final int sidePx;
+        private final int topRoomPx;
+        private final int minBottomRoomPx;
+        private final float density;
+        private final CapsuleDrawable glass;
+        private final ListPadding listPadding = new ListPadding();
 
-        Styler(Activity activity, View pill, boolean floating, boolean blur, int opacityPct) {
+        private Drawable appBackground;
+        private int[] appPadding; // left, top, right, bottom as the app set them
+        private boolean active;
+        private int skippedFrames;
+
+        Capsule(Activity activity, View bar, View content,
+                boolean floating, boolean blur, int opacityPct) {
             this.activityRef = new WeakReference<>(activity);
-            this.pillRef = new WeakReference<>(pill);
+            this.barRef = new WeakReference<>(bar);
+            this.contentRef = new WeakReference<>(content);
             this.floating = floating;
-            this.blur = blur;
-            this.opacityPct = Math.max(10, Math.min(95, opacityPct));
-            float density = activity.getResources().getDisplayMetrics().density;
-            this.radiusPx = floating ? Math.round(30 * density) : 0;
-            this.sideMarginPx = floating ? Math.round(18 * density) : 0;
-            this.bottomMarginPx = floating
-                    ? Math.round(10 * density) + navigationBarHeight(activity)
-                    : 0;
+            this.density = activity.getResources().getDisplayMetrics().density;
+            this.sidePx = floating ? Math.round(16 * density) : 0;
+            this.topRoomPx = floating ? Math.round(6 * density) : 0;
+            this.minBottomRoomPx = floating ? Math.round(10 * density) : 0;
+            this.glass = new CapsuleDrawable(bar, content, surfaceColor(activity),
+                    opacityPct, blur, density);
+        }
+
+        void install() {
+            View bar = barRef.get();
+            if (bar == null) {
+                return;
+            }
+            bar.getViewTreeObserver().addOnPreDrawListener(this);
+            bar.getViewTreeObserver().addOnScrollChangedListener(() -> {
+                View b = barRef.get();
+                if (b != null && active) {
+                    b.invalidate();
+                }
+            });
+            View content = contentRef.get();
+            if (content != null) {
+                // Pages scroll underneath the capsule.
+                setContentConstraint(content, true);
+                if (content instanceof ViewGroup) {
+                    ViewGroup group = (ViewGroup) content;
+                    group.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+                        View b = barRef.get();
+                        if (b != null && active) {
+                            listPadding.update(group, b.getHeight());
+                        }
+                    });
+                }
+            }
         }
 
         @Override
-        public void onGlobalLayout() {
-            applyNow();
+        public boolean onPreDraw() {
+            try {
+                View bar = barRef.get();
+                Activity activity = activityRef.get();
+                if (bar == null || activity == null) {
+                    return true;
+                }
+                ViewGroup tabs = tabsOf(bar);
+                boolean eligible = bar.getVisibility() == View.VISIBLE
+                        && bar.getWidth() > 2 * bar.getHeight()
+                        && tabs != null && tabs.getChildCount() > 0;
+                if (!eligible) {
+                    if (active) {
+                        restore(bar);
+                    }
+                    return true;
+                }
+
+                boolean layoutChanged = false;
+
+                // Background: the app re-hands the bar its own
+                // background on theme changes; put the capsule back.
+                if (bar.getBackground() != glass) {
+                    appBackground = bar.getBackground();
+                    if (appPadding == null) {
+                        appPadding = new int[]{bar.getPaddingLeft(), bar.getPaddingTop(),
+                                bar.getPaddingRight(), bar.getPaddingBottom()};
+                    }
+                    bar.setBackground(glass);
+                }
+                active = true;
+
+                // Geometry from the tab row's real position.
+                int capsuleTopWanted = topRoomPx + Math.round(2 * density);
+                int roomWanted = Math.max(minBottomRoomPx,
+                        systemBottomRoom(bar) - Math.round(4 * density));
+
+                int padLeft = sidePx;
+                int padRight = sidePx;
+                int padTop = bar.getPaddingTop()
+                        + (capsuleTopWanted - (tabs.getTop() + Math.round(3 * density)));
+                int capsuleBottom = tabs.getBottom() - Math.round(3 * density);
+                int padBottom = bar.getPaddingBottom()
+                        + (roomWanted - (bar.getHeight() - capsuleBottom));
+                padTop = Math.max(0, padTop);
+                padBottom = Math.max(0, padBottom);
+
+                if (bar.getPaddingLeft() != padLeft || bar.getPaddingTop() != padTop
+                        || bar.getPaddingRight() != padRight
+                        || bar.getPaddingBottom() != padBottom) {
+                    bar.setPadding(padLeft, padTop, padRight, padBottom);
+                    layoutChanged = true;
+                }
+
+                // Capsule hugs the tab row inside the padded box.
+                glass.setCapsule(
+                        padLeft,
+                        tabs.getTop() + Math.round(3 * density),
+                        bar.getWidth() - padRight,
+                        tabs.getBottom() - Math.round(3 * density));
+
+                // Skip a frame after a layout change so no frame is
+                // drawn with stale geometry (Morphe does the same,
+                // capped so drawing can never stall).
+                if (layoutChanged && skippedFrames < 2) {
+                    skippedFrames++;
+                    return false;
+                }
+                skippedFrames = 0;
+                return true;
+            } catch (Throwable ignored) {
+                return true;
+            }
         }
 
-        void applyNow() {
+        private void restore(View bar) {
             try {
-                Activity activity = activityRef.get();
-                View pill = pillRef.get();
-                if (activity == null || pill == null) {
-                    return;
+                if (bar.getBackground() == glass) {
+                    bar.setBackground(appBackground);
                 }
-                // Geometry (the floating part). Margins alone do
-                // nothing here: the bar's parent is a ConstraintLayout
-                // and the bar ships with MATCH_PARENT width and only a
-                // bottom anchor, so the solver pins it full-width at
-                // x=0 and side margins are ignored. Give it real
-                // start/end anchors plus a MATCH_CONSTRAINT (0dp)
-                // width so the margins actually inset it into a pill.
-                ViewGroup.LayoutParams raw = pill.getLayoutParams();
-                if (raw instanceof ViewGroup.MarginLayoutParams) {
-                    ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) raw;
-                    boolean changed = false;
-                    if (lp.leftMargin != sideMarginPx || lp.rightMargin != sideMarginPx
-                            || lp.bottomMargin != bottomMarginPx || lp.topMargin != 0) {
-                        lp.leftMargin = sideMarginPx;
-                        lp.rightMargin = sideMarginPx;
-                        lp.bottomMargin = bottomMarginPx;
-                        lp.topMargin = 0;
-                        changed = true;
-                    }
-                    if (floating) {
-                        if (lp.width != 0) {
-                            lp.width = 0; // MATCH_CONSTRAINT
-                            changed = true;
-                        }
-                        changed |= setIntField(lp, "startToStart", 0);
-                        changed |= setIntField(lp, "endToEnd", 0);
-                        changed |= setIntField(lp, "bottomToBottom", 0);
-                        changed |= setIntField(lp, "startToEnd", -1);
-                        changed |= setIntField(lp, "endToStart", -1);
-                        changed |= setIntField(lp, "bottomToTop", -1);
-                    } else {
-                        if (lp.width != ViewGroup.LayoutParams.MATCH_PARENT) {
-                            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                            changed = true;
-                        }
-                        changed |= setIntField(lp, "startToStart", -1);
-                        changed |= setIntField(lp, "endToEnd", -1);
-                        changed |= setIntField(lp, "bottomToBottom", 0);
-                    }
-                    if (changed) {
-                        pill.setLayoutParams(lp);
+                if (appPadding != null) {
+                    bar.setPadding(appPadding[0], appPadding[1], appPadding[2], appPadding[3]);
+                }
+                View content = contentRef.get();
+                if (content != null) {
+                    setContentConstraint(content, false);
+                }
+            } catch (Throwable ignored) {
+            }
+            active = false;
+        }
+
+        private static ViewGroup tabsOf(View bar) {
+            if (bar instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) bar;
+                for (int i = 0; i < group.getChildCount(); i++) {
+                    if (group.getChildAt(i) instanceof ViewGroup) {
+                        return (ViewGroup) group.getChildAt(i);
                     }
                 }
-                // Background (the glass part).
-                if (glass == null) {
-                    View root = (View) pill.getParent();
-                    glass = new GlassDrawable(pill, root, surfaceColor(activity),
-                            opacityPct, radiusPx, blur);
-                    pill.getViewTreeObserver().addOnScrollChangedListener(
-                            new ViewTreeObserver.OnScrollChangedListener() {
-                                @Override
-                                public void onScrollChanged() {
-                                    if (glass != null) {
-                                        glass.refreshSoon();
-                                    }
-                                }
-                            });
+            }
+            return null;
+        }
+
+        private int systemBottomRoom(View view) {
+            try {
+                WindowInsets insets = view.getRootWindowInsets();
+                if (insets == null) {
+                    return 0;
                 }
-                if (pill.getBackground() != glass) {
-                    pill.setBackground(glass);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    return insets.getInsets(WindowInsets.Type.navigationBars()).bottom;
                 }
-                glass.refreshSoon();
-                // Elevation + clipping.
-                float density = activity.getResources().getDisplayMetrics().density;
-                float wantElevation = (floating ? 10 : 4) * density;
-                if (pill.getElevation() != wantElevation) {
-                    pill.setElevation(wantElevation);
-                }
-                pill.setClipToOutline(true);
-                pill.setOutlineProvider(new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        if (radiusPx > 0) {
-                            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radiusPx);
-                        } else {
-                            outline.setRect(0, 0, view.getWidth(), view.getHeight());
-                        }
-                    }
-                });
-                // Content constraint: scroll under the pill, or dock.
-                setContentConstraint(activity, floating);
+                return insets.getSystemWindowInsetBottom();
+            } catch (Throwable ignored) {
+                return 0;
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // List bottom padding: lists that end at the bottom of the page
+    // get room below their last item, so it can scroll above the bar
+    // (the app set padding is kept and re-based if the app resets it).
+    // ------------------------------------------------------------------
+
+    private static final class ListPadding {
+        private final Map<View, int[]> room = new WeakHashMap<>();
+        private final Map<Class<?>, Boolean> listClasses = new WeakHashMap<>();
+
+        void update(ViewGroup content, int barHeight) {
+            try {
+                walk(content, content, barHeight, 0);
             } catch (Throwable ignored) {
             }
         }
-    }
 
-    private static void restoreStock(Activity activity, View nav) {
-        try {
-            ViewGroup.LayoutParams raw = nav.getLayoutParams();
-            if (raw instanceof ViewGroup.MarginLayoutParams) {
-                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) raw;
-                lp.leftMargin = 0;
-                lp.rightMargin = 0;
-                lp.bottomMargin = 0;
-                lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                setIntField(lp, "startToStart", -1);
-                setIntField(lp, "endToEnd", -1);
-                setIntField(lp, "bottomToBottom", 0);
-                nav.setLayoutParams(lp);
+        private void walk(ViewGroup content, View view, int barHeight, int depth) {
+            if (view.getVisibility() == View.GONE || depth > 12) {
+                return;
             }
-            nav.setBackground(null);
-            nav.setElevation(0);
-            nav.setClipToOutline(false);
-            setContentConstraint(activity, false);
-        } catch (Throwable ignored) {
+            if (view != content && isList(view)) {
+                boolean atBottom = bottomIn(view, content) >= content.getHeight() - 2
+                        && view.getHeight() > content.getHeight() / 3;
+                setRoom(view, atBottom ? barHeight : 0);
+                return; // Items inside the list are not walked.
+            }
+            if (view instanceof ViewGroup) {
+                ViewGroup group = (ViewGroup) view;
+                for (int i = 0; i < group.getChildCount(); i++) {
+                    walk(content, group.getChildAt(i), barHeight, depth + 1);
+                }
+            }
+        }
+
+        private boolean isList(View view) {
+            Class<?> type = view.getClass();
+            Boolean cached = listClasses.get(type);
+            if (cached != null) {
+                return cached;
+            }
+            boolean list = false;
+            for (Class<?> t = type; t != null && t != View.class; t = t.getSuperclass()) {
+                if (t.getSimpleName().equals("RecyclerView")) {
+                    list = true;
+                    break;
+                }
+            }
+            listClasses.put(type, list);
+            return list;
+        }
+
+        private void setRoom(View view, int extra) {
+            int current = view.getPaddingBottom();
+            int[] state = room.get(view);
+            if (state == null) {
+                if (extra <= 0) {
+                    return;
+                }
+                state = new int[]{current, current};
+                room.put(view, state);
+            } else if (current != state[1]) {
+                state[0] = current; // The app set its padding again.
+            }
+            int target = state[0] + extra;
+            state[1] = target;
+            if (current != target) {
+                view.setPadding(view.getPaddingLeft(), view.getPaddingTop(),
+                        view.getPaddingRight(), target);
+            }
+        }
+
+        private static int bottomIn(View view, View ancestor) {
+            int top = 0;
+            View current = view;
+            while (current != ancestor) {
+                top += current.getTop();
+                ViewParent parent = current.getParent();
+                if (!(parent instanceof View)) {
+                    break;
+                }
+                current = (View) parent;
+            }
+            return top + view.getHeight();
         }
     }
 
     // ------------------------------------------------------------------
-    // Content constraints (ConstraintLayout fields set reflectively —
-    // the extension compiles against the stock Android SDK only)
+    // Content constraint: pages extend to the bottom of the screen,
+    // behind the bar (ConstraintLayout fields set reflectively — the
+    // extension compiles against the stock Android SDK only).
     // ------------------------------------------------------------------
 
-    private static void setContentConstraint(Activity activity, boolean under) {
+    private static void setContentConstraint(View container, boolean under) {
         try {
-            String pkg = activity.getPackageName();
-            int containerId = activity.getResources()
-                    .getIdentifier("toolbar_container", "id", pkg);
-            if (containerId == 0) {
-                return;
-            }
-            View container = activity.findViewById(containerId);
-            if (container == null) {
-                return;
-            }
             ViewGroup.LayoutParams raw = container.getLayoutParams();
             if (raw == null) {
                 return;
             }
             boolean changed = false;
             if (under) {
-                // bottomToBottom = 0 (PARENT_ID), bottomToTop = -1 (UNSET)
-                changed |= setIntField(raw, "bottomToBottom", 0);
-                changed |= setIntField(raw, "bottomToTop", -1);
+                changed |= setIntField(raw, "bottomToBottom", 0); // PARENT_ID
+                changed |= setIntField(raw, "bottomToTop", -1);   // UNSET
             } else {
-                int barrierId = activity.getResources()
+                String pkg = container.getContext().getPackageName();
+                int barrierId = container.getResources()
                         .getIdentifier("bottom_navigation_barrier", "id", pkg);
                 if (barrierId != 0) {
                     changed |= setIntField(raw, "bottomToBottom", -1);
                     changed |= setIntField(raw, "bottomToTop", barrierId);
                 }
-            }
-            if (raw instanceof ViewGroup.MarginLayoutParams
-                    && ((ViewGroup.MarginLayoutParams) raw).bottomMargin != 0) {
-                ((ViewGroup.MarginLayoutParams) raw).bottomMargin = 0;
-                changed = true;
             }
             if (changed) {
                 container.setLayoutParams(raw);
@@ -307,7 +429,6 @@ public final class GlassNav {
         }
     }
 
-    /** @return true if the field existed and now holds {@code value}. */
     private static boolean setIntField(Object target, String name, int value) {
         try {
             Field field = target.getClass().getField(name);
@@ -321,7 +442,7 @@ public final class GlassNav {
     }
 
     // ------------------------------------------------------------------
-    // Colors / insets
+    // Colors
     // ------------------------------------------------------------------
 
     private static int surfaceColor(Activity activity) {
@@ -339,172 +460,190 @@ public final class GlassNav {
         return night ? Color.rgb(20, 20, 19) : Color.WHITE;
     }
 
-    private static int navigationBarHeight(Activity activity) {
-        try {
-            int dimenId = activity.getResources()
-                    .getIdentifier("navigation_bar_height", "dimen", "android");
-            if (dimenId != 0) {
-                int height = activity.getResources().getDimensionPixelSize(dimenId);
-                float density = activity.getResources().getDisplayMetrics().density;
-                return Math.min(height, Math.round(48 * density));
+    private static int pageBackgroundColor(View from) {
+        for (ViewParent parent = from.getParent(); parent instanceof View;
+             parent = ((View) parent).getParent()) {
+            Drawable bg = ((View) parent).getBackground();
+            if (bg instanceof ColorDrawable
+                    && Color.alpha(((ColorDrawable) bg).getColor()) == 255) {
+                return ((ColorDrawable) bg).getColor();
             }
-        } catch (Throwable ignored) {
         }
-        return 0;
+        return Color.BLACK;
     }
 
     // ------------------------------------------------------------------
-    // Glass background drawable: live blurred backdrop + tint + light
+    // Capsule drawable: shadow, blurred backdrop, tint, sheen, rim.
     // ------------------------------------------------------------------
 
-    static final class GlassDrawable extends Drawable {
-        private static final float DOWNSCALE = 0.18f;
-        private static final long REFRESH_DELAY_MS = 120;
-
-        private final WeakReference<View> pillRef;
-        private final WeakReference<View> rootRef;
+    static final class CapsuleDrawable extends Drawable {
+        private final WeakReference<View> barRef;
+        private final WeakReference<View> contentRef;
         private final int surface;
         private final int opacityPct;
-        private final int radiusPx;
         private final boolean blurEnabled;
-        private final Handler handler = new Handler(Looper.getMainLooper());
+        private final float rimWidth;
+        private final RectF capsule = new RectF();
+        private final Path capsulePath = new Path();
+        private float shaderTop = Float.NaN;
+        private float shaderBottom = Float.NaN;
 
-        private Bitmap blurred;
-        private boolean refreshPosted;
-        private final Runnable refreshRunnable = new Runnable() {
-            @Override
-            public void run() {
-                refreshPosted = false;
-                refresh();
-            }
-        };
+        private final Paint shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint sheenPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint rimPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint bevelPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        GlassDrawable(View pill, View root, int surface,
-                      int opacityPct, int radiusPx, boolean blurEnabled) {
-            this.pillRef = new WeakReference<>(pill);
-            this.rootRef = new WeakReference<>(root);
+        private Backdrop backdrop;
+        private boolean recordingBackdrop;
+
+        CapsuleDrawable(View bar, View content, int surface,
+                        int opacityPct, boolean blurEnabled, float density) {
+            this.barRef = new WeakReference<>(bar);
+            this.contentRef = new WeakReference<>(content);
             this.surface = surface;
-            this.opacityPct = opacityPct;
-            this.radiusPx = radiusPx;
+            this.opacityPct = Math.max(10, Math.min(95, opacityPct));
             this.blurEnabled = blurEnabled;
+            this.rimWidth = Math.max(1f, 1.5f * density);
+            double luminance = (0.299 * Color.red(surface) + 0.587 * Color.green(surface)
+                    + 0.114 * Color.blue(surface)) / 255.0;
+            boolean dark = luminance <= 0.5;
+            fillPaint.setColor(Color.argb(
+                    Math.round(255f * this.opacityPct / 100f),
+                    Color.red(surface), Color.green(surface), Color.blue(surface)));
+            shadowPaint.setColor(Color.argb(dark ? 90 : 40, 0, 0, 0));
+            bevelPaint.setStyle(Paint.Style.STROKE);
+            bevelPaint.setColor(Color.argb(dark ? 64 : 20, 0, 0, 0));
+            rimPaint.setStyle(Paint.Style.STROKE);
+            strokePaint.setStyle(Paint.Style.STROKE);
+            strokePaint.setStrokeWidth(Math.max(1f, density));
         }
 
-        void refreshSoon() {
-            if (!blurEnabled || refreshPosted) {
-                return;
-            }
-            refreshPosted = true;
-            handler.postDelayed(refreshRunnable, REFRESH_DELAY_MS);
-        }
-
-        /** Capture the content behind the pill, blur it, redraw. */
-        void refresh() {
-            if (!blurEnabled) {
-                return;
-            }
-            try {
-                View pill = pillRef.get();
-                View root = rootRef.get();
-                if (pill == null || root == null
-                        || root.getWidth() == 0 || root.getHeight() == 0) {
-                    return;
-                }
-                int w = Math.max(1, Math.round(root.getWidth() * DOWNSCALE));
-                int h = Math.max(1, Math.round(root.getHeight() * DOWNSCALE));
-                Bitmap shot = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(shot);
-                canvas.scale(DOWNSCALE, DOWNSCALE);
-                int vis = pill.getVisibility();
-                pill.setVisibility(View.INVISIBLE);
-                try {
-                    root.draw(canvas);
-                } finally {
-                    pill.setVisibility(vis);
-                }
-                boxBlur(shot, 10);
-                boxBlur(shot, 10);
-                Bitmap old = blurred;
-                blurred = shot;
-                if (old != null && old != shot) {
-                    old.recycle();
-                }
+        void setCapsule(float left, float top, float right, float bottom) {
+            if (capsule.left != left || capsule.top != top
+                    || capsule.right != right || capsule.bottom != bottom) {
+                capsule.set(left, top, right, bottom);
+                shaderTop = Float.NaN;
                 invalidateSelf();
-            } catch (Throwable ignored) {
-                // Keep the previous sample (or plain tint) — never crash.
             }
+        }
+
+        private void updateShaders() {
+            if (capsule.top == shaderTop && capsule.bottom == shaderBottom) {
+                return;
+            }
+            shaderTop = capsule.top;
+            shaderBottom = capsule.bottom;
+            float radius = capsule.height() / 2;
+            capsulePath.reset();
+            capsulePath.addRoundRect(capsule, radius, radius, Path.Direction.CW);
+            sheenPaint.setShader(new LinearGradient(
+                    0, capsule.top, 0, capsule.bottom,
+                    Color.argb(46, 255, 255, 255), Color.argb(0, 255, 255, 255),
+                    Shader.TileMode.CLAMP));
+            strokePaint.setShader(new LinearGradient(
+                    0, capsule.top, 0, capsule.bottom,
+                    Color.argb(140, 255, 255, 255), Color.argb(18, 255, 255, 255),
+                    Shader.TileMode.CLAMP));
+            float end = Math.min(0.5f, radius / Math.max(1f, capsule.width()));
+            rimPaint.setShader(new LinearGradient(
+                    capsule.left, 0, capsule.right, 0,
+                    new int[]{Color.argb(128, 255, 255, 255), Color.argb(56, 255, 255, 255),
+                            Color.argb(56, 255, 255, 255), Color.argb(128, 255, 255, 255)},
+                    new float[]{0, end, 1 - end, 1}, Shader.TileMode.CLAMP));
         }
 
         @Override
         public void draw(Canvas canvas) {
-            Rect bounds = getBounds();
-            if (bounds.isEmpty()) {
+            try {
+                if (capsule.width() <= 0 || capsule.height() <= 0) {
+                    return;
+                }
+                updateShaders();
+                float radius = capsule.height() / 2;
+
+                // Soft shadow below the capsule.
+                RectF scratch = new RectF();
+                for (int i = 3; i >= 1; i--) {
+                    scratch.set(capsule);
+                    scratch.inset(-i * 0.5f, -i * 0.5f);
+                    scratch.offset(0, i * 1f);
+                    shadowPaint.setAlpha(30 / i + 20);
+                    canvas.drawRoundRect(scratch, radius, radius, shadowPaint);
+                }
+
+                // Backdrop + tint, clipped to the capsule.
+                int save = canvas.save();
+                try {
+                    canvas.clipPath(capsulePath);
+                    drawBackdrop(canvas);
+                    canvas.drawRect(capsule, fillPaint);
+                    canvas.drawRoundRect(capsule, radius, radius, sheenPaint);
+                } finally {
+                    canvas.restoreToCount(save);
+                }
+
+                // Bevel: the dark line inside the rim.
+                float bevelInset = rimWidth + 0.5f;
+                scratch.set(capsule);
+                scratch.inset(bevelInset, bevelInset);
+                bevelPaint.setStrokeWidth(1f);
+                canvas.drawRoundRect(scratch, Math.max(0, radius - bevelInset),
+                        Math.max(0, radius - bevelInset), bevelPaint);
+
+                // Rim: lit from outside, brighter at the ends and top.
+                scratch.set(capsule);
+                scratch.inset(rimWidth / 2, rimWidth / 2);
+                float rimRadius = Math.max(0, radius - rimWidth / 2);
+                rimPaint.setStrokeWidth(rimWidth);
+                canvas.drawRoundRect(scratch, rimRadius, rimRadius, rimPaint);
+                strokePaint.setStrokeWidth(Math.max(1f, rimWidth * 0.66f));
+                canvas.drawRoundRect(scratch, rimRadius, rimRadius, strokePaint);
+            } catch (Throwable ignored) {
+            }
+        }
+
+        private void drawBackdrop(Canvas canvas) {
+            View bar = barRef.get();
+            View content = contentRef.get();
+            if (bar == null || content == null || recordingBackdrop) {
                 return;
             }
-            View pill = pillRef.get();
-            View root = rootRef.get();
-
-            Path clip = new Path();
-            RectF rect = new RectF(bounds);
-            if (radiusPx > 0) {
-                clip.addRoundRect(rect, radiusPx, radiusPx, Path.Direction.CW);
-            } else {
-                clip.addRect(rect, Path.Direction.CW);
+            int background = pageBackgroundColor(content);
+            if (!blurEnabled) {
+                // Sharp page under the tint: draw the page itself.
+                drawPage(canvas, bar, content, background);
+                return;
             }
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+                    || !canvas.isHardwareAccelerated()) {
+                canvas.drawColor(background);
+                return;
+            }
+            if (backdrop == null) {
+                backdrop = new Backdrop(24f * bar.getResources().getDisplayMetrics().density);
+            }
+            recordingBackdrop = true;
+            try {
+                backdrop.draw(canvas, bar, content, background);
+            } finally {
+                recordingBackdrop = false;
+            }
+        }
+
+        private void drawPage(Canvas canvas, View bar, View content, int background) {
+            int[] barLoc = new int[2];
+            int[] contentLoc = new int[2];
+            bar.getLocationInWindow(barLoc);
+            content.getLocationInWindow(contentLoc);
             canvas.save();
-            canvas.clipPath(clip);
-
-            // 1. Blurred backdrop, aligned to the pill's real position.
-            Bitmap sample = blurred;
-            if (sample != null && pill != null && root != null) {
-                int[] pillLoc = new int[2];
-                int[] rootLoc = new int[2];
-                pill.getLocationOnScreen(pillLoc);
-                root.getLocationOnScreen(rootLoc);
-                float scale = 1f / DOWNSCALE;
-                canvas.save();
-                canvas.translate(bounds.left, bounds.top);
-                canvas.scale(scale, scale);
-                canvas.translate(-(pillLoc[0] - rootLoc[0]), -(pillLoc[1] - rootLoc[1]));
-                Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
-                canvas.drawBitmap(sample, 0, 0, paint);
+            try {
+                canvas.translate(contentLoc[0] - barLoc[0], contentLoc[1] - barLoc[1]);
+                canvas.drawColor(background);
+                content.draw(canvas);
+            } finally {
                 canvas.restore();
-            } else {
-                // No sample yet: solid surface as the base.
-                Paint base = new Paint();
-                base.setColor(surface);
-                canvas.drawRect(rect, base);
-            }
-
-            // 2. Translucent tint (the glass body).
-            int alpha = Math.round(255f * opacityPct / 100f);
-            Paint tint = new Paint();
-            tint.setColor(Color.argb(alpha, Color.red(surface),
-                    Color.green(surface), Color.blue(surface)));
-            canvas.drawRect(rect, tint);
-
-            // 3. Top light highlight (light catching the top edge).
-            Paint highlight = new Paint();
-            highlight.setShader(new LinearGradient(
-                    0, bounds.top, 0, bounds.top + bounds.height() * 0.5f,
-                    Color.argb(46, 255, 255, 255), Color.argb(0, 255, 255, 255),
-                    Shader.TileMode.CLAMP));
-            canvas.drawRect(rect, highlight);
-
-            canvas.restore();
-
-            // 4. Hairline border.
-            double luminance = (0.299 * Color.red(surface) + 0.587 * Color.green(surface)
-                    + 0.114 * Color.blue(surface)) / 255.0;
-            Paint stroke = new Paint(Paint.ANTI_ALIAS_FLAG);
-            stroke.setStyle(Paint.Style.STROKE);
-            stroke.setStrokeWidth(Math.max(1f, bounds.height() * 0.012f));
-            stroke.setColor(luminance > 0.5
-                    ? Color.argb(31, 0, 0, 0)
-                    : Color.argb(56, 255, 255, 255));
-            if (radiusPx > 0) {
-                canvas.drawRoundRect(rect, radiusPx, radiusPx, stroke);
-            } else {
-                canvas.drawRect(rect, stroke);
             }
         }
 
@@ -520,68 +659,58 @@ public final class GlassNav {
         public int getOpacity() {
             return PixelFormat.TRANSLUCENT;
         }
+    }
 
-        /** Simple separable box blur, in place (downscaled bitmap). */
-        private static void boxBlur(Bitmap bitmap, int radius) {
-            int w = bitmap.getWidth();
-            int h = bitmap.getHeight();
-            if (w <= 2 || h <= 2 || radius < 1) {
-                return;
-            }
-            int[] pixels = new int[w * h];
-            bitmap.getPixels(pixels, 0, w, 0, 0, w, h);
-            int[] out = new int[w * h];
-            int diameter = radius * 2 + 1;
+    // ------------------------------------------------------------------
+    // Backdrop: the page behind the capsule, recorded into a render
+    // node with a frosted-glass color filter and a blur, Android 14+.
+    // ------------------------------------------------------------------
 
-            // Horizontal pass.
-            for (int y = 0; y < h; y++) {
-                long sr = 0, sg = 0, sb = 0, sa = 0;
-                for (int x = -radius; x <= radius; x++) {
-                    int px = pixels[y * w + clamp(x, 0, w - 1)];
-                    sa += Color.alpha(px);
-                    sr += Color.red(px);
-                    sg += Color.green(px);
-                    sb += Color.blue(px);
-                }
-                for (int x = 0; x < w; x++) {
-                    out[y * w + x] = Color.argb(
-                            (int) (sa / diameter), (int) (sr / diameter),
-                            (int) (sg / diameter), (int) (sb / diameter));
-                    int leave = pixels[y * w + clamp(x - radius, 0, w - 1)];
-                    int enter = pixels[y * w + clamp(x + radius + 1, 0, w - 1)];
-                    sa += Color.alpha(enter) - Color.alpha(leave);
-                    sr += Color.red(enter) - Color.red(leave);
-                    sg += Color.green(enter) - Color.green(leave);
-                    sb += Color.blue(enter) - Color.blue(leave);
-                }
-            }
-            // Vertical pass.
-            for (int x = 0; x < w; x++) {
-                long sr = 0, sg = 0, sb = 0, sa = 0;
-                for (int y = -radius; y <= radius; y++) {
-                    int px = out[clamp(y, 0, h - 1) * w + x];
-                    sa += Color.alpha(px);
-                    sr += Color.red(px);
-                    sg += Color.green(px);
-                    sb += Color.blue(px);
-                }
-                for (int y = 0; y < h; y++) {
-                    pixels[y * w + x] = Color.argb(
-                            (int) (sa / diameter), (int) (sr / diameter),
-                            (int) (sg / diameter), (int) (sb / diameter));
-                    int leave = out[clamp(y - radius, 0, h - 1) * w + x];
-                    int enter = out[clamp(y + radius + 1, 0, h - 1) * w + x];
-                    sa += Color.alpha(enter) - Color.alpha(leave);
-                    sr += Color.red(enter) - Color.red(leave);
-                    sg += Color.green(enter) - Color.green(leave);
-                    sb += Color.blue(enter) - Color.blue(leave);
-                }
-            }
-            bitmap.setPixels(pixels, 0, w, 0, 0, w, h);
+    private static final class Backdrop {
+        private static final ColorMatrix FROSTED = createFrostedColors();
+
+        private static ColorMatrix createFrostedColors() {
+            ColorMatrix colors = new ColorMatrix();
+            colors.setSaturation(1.5f);
+            colors.postConcat(new ColorMatrix(new float[]{
+                    1, 0, 0, 0, 15,
+                    0, 1, 0, 0, 15,
+                    0, 0, 1, 0, 15,
+                    0, 0, 0, 1, 0
+            }));
+            return colors;
         }
 
-        private static int clamp(int v, int min, int max) {
-            return v < min ? min : (v > max ? max : v);
+        private final RenderNode node;
+        private final int[] targetLocation = new int[2];
+        private final int[] sourceLocation = new int[2];
+
+        Backdrop(float blurRadius) {
+            node = new RenderNode("strava glass backdrop");
+            node.setRenderEffect(RenderEffect.createChainEffect(
+                    RenderEffect.createColorFilterEffect(new ColorMatrixColorFilter(FROSTED)),
+                    RenderEffect.createBlurEffect(blurRadius, blurRadius, Shader.TileMode.CLAMP)));
+        }
+
+        void draw(Canvas canvas, View target, View source, int background) {
+            int width = target.getWidth();
+            int height = target.getHeight();
+            if (width <= 0 || height <= 0) {
+                return;
+            }
+            target.getLocationInWindow(targetLocation);
+            source.getLocationInWindow(sourceLocation);
+            node.setPosition(0, 0, width, height);
+            RecordingCanvas recording = node.beginRecording(width, height);
+            try {
+                recording.drawColor(background);
+                recording.translate(sourceLocation[0] - targetLocation[0],
+                        sourceLocation[1] - targetLocation[1]);
+                source.draw(recording);
+            } finally {
+                node.endRecording();
+            }
+            canvas.drawRenderNode(node);
         }
     }
 }
