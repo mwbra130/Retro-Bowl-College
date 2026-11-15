@@ -47,9 +47,15 @@ import java.lang.reflect.Field;
  *     when the content scrolls or the layout changes, so the blur
  *     tracks what is actually behind the bar.
  *
+ * Strava adjusts its own bar after onCreate (window-insets passes
+ * and fragment transactions can reset margins/background), so the
+ * styling is not one-shot: a Styler re-checks the bar on every
+ * global layout pass and re-applies anything that drifted, which
+ * keeps the pill floating for the life of the activity.
+ *
  * All tweaks live in Strava's own preferences file, edited from the
- * Liquid Glass settings dialog (long-press the Home tab, see
- * GlassSettings):
+ * Liquid Glass settings (Extra Settings row in Strava's Settings,
+ * see GlassSettings):
  *   morphe.glass.enabled   master switch            (default true)
  *   morphe.glass.floating  floating pill vs docked  (default true)
  *   morphe.glass.blur      backdrop blur vs tint    (default true)
@@ -61,8 +67,6 @@ import java.lang.reflect.Field;
  */
 public final class GlassNav {
 
-    private static final String TAG_GLASS = "morphe_glass_nav";
-
     public static final String KEY_ENABLED = "morphe.glass.enabled";
     public static final String KEY_FLOATING = "morphe.glass.floating";
     public static final String KEY_BLUR = "morphe.glass.blur";
@@ -73,7 +77,8 @@ public final class GlassNav {
 
     public static void apply(final Activity activity) {
         try {
-            SharedPreferences prefs = activity.getSharedPreferences("com.strava_preferences", Context.MODE_PRIVATE);
+            SharedPreferences prefs = activity.getSharedPreferences(
+                    "com.strava_preferences", Context.MODE_PRIVATE);
             boolean enabled = prefs.getBoolean(KEY_ENABLED, true);
             String pkg = activity.getPackageName();
             int navId = activity.getResources().getIdentifier("bottom_navigation", "id", pkg);
@@ -88,14 +93,18 @@ public final class GlassNav {
                 restoreStock(activity, nav);
                 return;
             }
-            boolean floating = prefs.getBoolean(KEY_FLOATING, true);
-            boolean blur = prefs.getBoolean(KEY_BLUR, true);
-            int opacity = prefs.getInt(KEY_OPACITY, 72);
-            stylePill(activity, nav, floating, blur, opacity);
-            if (floating) {
-                scrollContentUnder(activity);
-            } else {
-                dockContent(activity);
+            Styler styler = new Styler(
+                    activity, nav,
+                    prefs.getBoolean(KEY_FLOATING, true),
+                    prefs.getBoolean(KEY_BLUR, true),
+                    prefs.getInt(KEY_OPACITY, 72));
+            styler.applyNow();
+            // Re-assert after Strava's own post-onCreate passes
+            // (insets, fragment attach) and keep asserting on layout.
+            nav.getViewTreeObserver().addOnGlobalLayoutListener(styler);
+            Handler handler = new Handler(Looper.getMainLooper());
+            for (long delay : new long[]{250, 900, 2000}) {
+                handler.postDelayed(styler::applyNow, delay);
             }
         } catch (Throwable ignored) {
             // Never let a styling failure break the activity.
@@ -103,74 +112,101 @@ public final class GlassNav {
     }
 
     // ------------------------------------------------------------------
-    // Pill styling
+    // Styler: applies the pill look and re-applies it if Strava's own
+    // bar handling overwrites any part of it.
     // ------------------------------------------------------------------
 
-    private static void stylePill(final Activity activity, final View pill,
-                                  boolean floating, boolean blur, int opacityPct) {
-        float density = activity.getResources().getDisplayMetrics().density;
-        final int radius = floating ? Math.round(30 * density) : 0;
+    private static final class Styler implements ViewTreeObserver.OnGlobalLayoutListener {
+        private final WeakReference<Activity> activityRef;
+        private final WeakReference<View> pillRef;
+        private final boolean floating;
+        private final boolean blur;
+        private final int opacityPct;
+        private final int radiusPx;
+        private final int sideMarginPx;
+        private final int bottomMarginPx;
+        private GlassDrawable glass;
 
-        ViewGroup.LayoutParams raw = pill.getLayoutParams();
-        if (raw instanceof ViewGroup.MarginLayoutParams) {
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) raw;
-            if (floating) {
-                lp.leftMargin = Math.round(18 * density);
-                lp.rightMargin = Math.round(18 * density);
-                lp.bottomMargin = Math.round(10 * density) + navigationBarHeight(activity);
-            } else {
-                lp.leftMargin = 0;
-                lp.rightMargin = 0;
-                lp.bottomMargin = 0;
-            }
-            lp.topMargin = 0;
-            pill.setLayoutParams(lp);
+        Styler(Activity activity, View pill, boolean floating, boolean blur, int opacityPct) {
+            this.activityRef = new WeakReference<>(activity);
+            this.pillRef = new WeakReference<>(pill);
+            this.floating = floating;
+            this.blur = blur;
+            this.opacityPct = Math.max(10, Math.min(95, opacityPct));
+            float density = activity.getResources().getDisplayMetrics().density;
+            this.radiusPx = floating ? Math.round(30 * density) : 0;
+            this.sideMarginPx = floating ? Math.round(18 * density) : 0;
+            this.bottomMarginPx = floating
+                    ? Math.round(10 * density) + navigationBarHeight(activity)
+                    : 0;
         }
 
-        int surface = surfaceColor(activity);
-        int opacity = Math.max(10, Math.min(95, opacityPct));
-        View root = (View) pill.getParent();
-        GlassDrawable glass = new GlassDrawable(
-                activity, pill, root, surface, opacity, radius, blur);
-        pill.setBackground(glass);
-        glass.refreshSoon();
+        @Override
+        public void onGlobalLayout() {
+            applyNow();
+        }
 
-        pill.setElevation(floating ? 10 * density : 4 * density);
-        pill.setOutlineProvider(new ViewOutlineProvider() {
-            @Override
-            public void getOutline(View view, Outline outline) {
-                if (radius > 0) {
-                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
-                } else {
-                    outline.setRect(0, 0, view.getWidth(), view.getHeight());
+        void applyNow() {
+            try {
+                Activity activity = activityRef.get();
+                View pill = pillRef.get();
+                if (activity == null || pill == null) {
+                    return;
                 }
-            }
-        });
-        pill.setClipToOutline(true);
-        pill.setTag(TAG_GLASS);
-
-        // Keep the backdrop sample fresh: recapture shortly after
-        // layout settles, and (throttled) while anything scrolls.
-        pill.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
+                // Margins (the floating part).
+                ViewGroup.LayoutParams raw = pill.getLayoutParams();
+                if (raw instanceof ViewGroup.MarginLayoutParams) {
+                    ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) raw;
+                    if (lp.leftMargin != sideMarginPx || lp.rightMargin != sideMarginPx
+                            || lp.bottomMargin != bottomMarginPx || lp.topMargin != 0) {
+                        lp.leftMargin = sideMarginPx;
+                        lp.rightMargin = sideMarginPx;
+                        lp.bottomMargin = bottomMarginPx;
+                        lp.topMargin = 0;
+                        pill.setLayoutParams(lp);
+                    }
+                }
+                // Background (the glass part).
+                if (glass == null) {
+                    View root = (View) pill.getParent();
+                    glass = new GlassDrawable(pill, root, surfaceColor(activity),
+                            opacityPct, radiusPx, blur);
+                    pill.getViewTreeObserver().addOnScrollChangedListener(
+                            new ViewTreeObserver.OnScrollChangedListener() {
+                                @Override
+                                public void onScrollChanged() {
+                                    if (glass != null) {
+                                        glass.refreshSoon();
+                                    }
+                                }
+                            });
+                }
+                if (pill.getBackground() != glass) {
+                    pill.setBackground(glass);
+                }
+                glass.refreshSoon();
+                // Elevation + clipping.
+                float density = activity.getResources().getDisplayMetrics().density;
+                float wantElevation = (floating ? 10 : 4) * density;
+                if (pill.getElevation() != wantElevation) {
+                    pill.setElevation(wantElevation);
+                }
+                pill.setClipToOutline(true);
+                pill.setOutlineProvider(new ViewOutlineProvider() {
                     @Override
-                    public void onGlobalLayout() {
-                        glass.refreshSoon();
+                    public void getOutline(View view, Outline outline) {
+                        if (radiusPx > 0) {
+                            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radiusPx);
+                        } else {
+                            outline.setRect(0, 0, view.getWidth(), view.getHeight());
+                        }
                     }
                 });
-        pill.getViewTreeObserver().addOnScrollChangedListener(
-                new ViewTreeObserver.OnScrollChangedListener() {
-                    @Override
-                    public void onScrollChanged() {
-                        glass.refreshSoon();
-                    }
-                });
-        pill.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                glass.refresh();
+                // Content constraint: scroll under the pill, or dock.
+                setContentConstraint(activity, floating);
+            } catch (Throwable ignored) {
             }
-        }, 600);
+        }
     }
 
     private static void restoreStock(Activity activity, View nav) {
@@ -186,7 +222,7 @@ public final class GlassNav {
             nav.setBackground(null);
             nav.setElevation(0);
             nav.setClipToOutline(false);
-            dockContent(activity);
+            setContentConstraint(activity, false);
         } catch (Throwable ignored) {
         }
     }
@@ -195,16 +231,6 @@ public final class GlassNav {
     // Content constraints (ConstraintLayout fields set reflectively —
     // the extension compiles against the stock Android SDK only)
     // ------------------------------------------------------------------
-
-    /** Let page content scroll underneath the floating pill. */
-    private static void scrollContentUnder(Activity activity) {
-        setContentConstraint(activity, true);
-    }
-
-    /** Put page content back above the bar (docked / stock layout). */
-    private static void dockContent(Activity activity) {
-        setContentConstraint(activity, false);
-    }
 
     private static void setContentConstraint(Activity activity, boolean under) {
         try {
@@ -222,32 +248,42 @@ public final class GlassNav {
             if (raw == null) {
                 return;
             }
+            boolean changed = false;
             if (under) {
                 // bottomToBottom = 0 (PARENT_ID), bottomToTop = -1 (UNSET)
-                setIntField(raw, "bottomToBottom", 0);
-                setIntField(raw, "bottomToTop", -1);
+                changed |= setIntField(raw, "bottomToBottom", 0);
+                changed |= setIntField(raw, "bottomToTop", -1);
             } else {
                 int barrierId = activity.getResources()
                         .getIdentifier("bottom_navigation_barrier", "id", pkg);
                 if (barrierId != 0) {
-                    setIntField(raw, "bottomToBottom", -1);
-                    setIntField(raw, "bottomToTop", barrierId);
+                    changed |= setIntField(raw, "bottomToBottom", -1);
+                    changed |= setIntField(raw, "bottomToTop", barrierId);
                 }
             }
-            if (raw instanceof ViewGroup.MarginLayoutParams) {
+            if (raw instanceof ViewGroup.MarginLayoutParams
+                    && ((ViewGroup.MarginLayoutParams) raw).bottomMargin != 0) {
                 ((ViewGroup.MarginLayoutParams) raw).bottomMargin = 0;
+                changed = true;
             }
-            container.setLayoutParams(raw);
+            if (changed) {
+                container.setLayoutParams(raw);
+            }
         } catch (Throwable ignored) {
         }
     }
 
-    private static void setIntField(Object target, String name, int value) {
+    /** @return true if the field existed and now holds {@code value}. */
+    private static boolean setIntField(Object target, String name, int value) {
         try {
             Field field = target.getClass().getField(name);
-            field.setInt(target, value);
+            if (field.getInt(target) != value) {
+                field.setInt(target, value);
+                return true;
+            }
         } catch (Throwable ignored) {
         }
+        return false;
     }
 
     // ------------------------------------------------------------------
@@ -309,7 +345,7 @@ public final class GlassNav {
             }
         };
 
-        GlassDrawable(Activity activity, View pill, View root, int surface,
+        GlassDrawable(View pill, View root, int surface,
                       int opacityPct, int radiusPx, boolean blurEnabled) {
             this.pillRef = new WeakReference<>(pill);
             this.rootRef = new WeakReference<>(root);

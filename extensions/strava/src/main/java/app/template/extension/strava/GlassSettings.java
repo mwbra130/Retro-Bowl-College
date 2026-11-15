@@ -3,7 +3,11 @@ package app.template.extension.strava;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -12,10 +16,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 /**
- * Liquid Glass settings for Strava — in-app tweaks without a
- * separate settings activity: a long press on the Home tab of the
- * bottom bar opens a dialog with the glass controls (the same
- * gesture this bundle's old Strava settings used).
+ * Liquid Glass settings for Strava — an "Extra Settings" row at the
+ * top of Strava's own Settings screen (the Liquid Glass patch wraps
+ * SettingsFragment.onCreateView and calls wrapSettingsView), which
+ * opens a dialog with the glass controls.
  *
  * Controls write the morphe.glass.* keys in Strava's own
  * com.strava_preferences file; GlassNav reads them when the main
@@ -23,7 +27,7 @@ import android.widget.TextView;
  */
 public final class GlassSettings {
 
-    private static final String TAG_HOME_LONG_PRESS = "morphe_glass_settings";
+    private static final String TAG_ROW = "morphe_glass_settings_row";
 
     private GlassSettings() {
     }
@@ -33,71 +37,96 @@ public final class GlassSettings {
     }
 
     // ------------------------------------------------------------------
-    // Long-press Home tab -> settings dialog
+    // Settings-screen row
     // ------------------------------------------------------------------
 
-    /** Called from the patched BottomNavigationActivity.onCreate. */
-    public static void attachHomeLongPress(final Activity activity) {
+    /**
+     * Returns a new root containing an "Extra Settings" header row
+     * above the original Settings view. Called from the patched
+     * SettingsFragment.onCreateView.
+     */
+    public static View wrapSettingsView(View original) {
         try {
-            String pkg = activity.getPackageName();
-            int navId = activity.getResources().getIdentifier("bottom_navigation", "id", pkg);
-            int homeId = activity.getResources().getIdentifier("navigation_home", "id", pkg);
-            if (navId == 0 || homeId == 0) {
-                return;
+            if (original == null || TAG_ROW.equals(original.getTag())) {
+                return original;
             }
-            final View nav = activity.findViewById(navId);
-            if (nav == null) {
-                return;
-            }
-            if (!attachToHomeItem(activity, nav, homeId)) {
-                // Item views are created with the menu; retry after layout.
-                nav.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            attachToHomeItem(activity, nav, homeId);
-                        } catch (Throwable ignored) {
-                        }
-                    }
-                });
-            }
-        } catch (Throwable ignored) {
-            // Never let a settings hook failure break the activity.
-        }
-    }
+            Context context = original.getContext();
+            float density = context.getResources().getDisplayMetrics().density;
 
-    private static boolean attachToHomeItem(final Activity activity, View nav, int homeId) {
-        View home = findViewByIdRecursive(nav, homeId);
-        if (home == null) {
-            return false;
-        }
-        if (!TAG_HOME_LONG_PRESS.equals(home.getTag())) {
-            home.setTag(TAG_HOME_LONG_PRESS);
-            home.setOnLongClickListener(new View.OnLongClickListener() {
+            LinearLayout root = new LinearLayout(context);
+            root.setOrientation(LinearLayout.VERTICAL);
+            root.setTag(TAG_ROW);
+            root.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT));
+
+            LinearLayout row = new LinearLayout(context);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setGravity(Gravity.CENTER_VERTICAL);
+            row.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, Math.round(56 * density)));
+            row.setPadding(Math.round(20 * density), 0, Math.round(20 * density), 0);
+            row.setClickable(true);
+            row.setFocusable(true);
+
+            TextView label = new TextView(context);
+            label.setText("Extra Settings");
+            label.setTextSize(16);
+            label.setTextColor(themeColor(context, android.R.attr.textColorPrimary, Color.WHITE));
+            label.setLayoutParams(new LinearLayout.LayoutParams(
+                    0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+            row.addView(label);
+
+            TextView chevron = new TextView(context);
+            chevron.setText("›");
+            chevron.setTextSize(22);
+            chevron.setTextColor(themeColor(context, android.R.attr.textColorSecondary, Color.LTGRAY));
+            row.addView(chevron);
+
+            final View originalRef = original;
+            row.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View view) {
-                    show(activity);
-                    return true;
+                public void onClick(View v) {
+                    Activity activity = activityFrom(originalRef.getContext());
+                    if (activity != null) {
+                        show(activity);
+                    }
                 }
             });
+            root.addView(row);
+
+            ViewGroup.LayoutParams lp = original.getLayoutParams();
+            root.addView(original, new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+            if (lp != null) {
+                root.setLayoutParams(lp);
+            }
+            return root;
+        } catch (Throwable ignored) {
+            return original;
         }
-        return true;
     }
 
-    private static View findViewByIdRecursive(View root, int id) {
-        if (root.getId() == id) {
-            return root;
-        }
-        if (root instanceof ViewGroup) {
-            ViewGroup group = (ViewGroup) root;
-            for (int i = 0; i < group.getChildCount(); i++) {
-                View found = findViewByIdRecursive(group.getChildAt(i), id);
-                if (found != null) {
-                    return found;
-                }
+    private static Activity activityFrom(Context context) {
+        Context ctx = context;
+        while (ctx instanceof ContextWrapper) {
+            if (ctx instanceof Activity) {
+                return (Activity) ctx;
             }
+            ctx = ((ContextWrapper) ctx).getBaseContext();
         }
-        return null;
+        return context instanceof Activity ? (Activity) context : null;
+    }
+
+    private static int themeColor(Context context, int attr, int fallback) {
+        try {
+            TypedArray ta = context.getTheme().obtainStyledAttributes(new int[]{attr});
+            int color = ta.getColor(0, fallback);
+            ta.recycle();
+            return color;
+        } catch (Throwable ignored) {
+            return fallback;
+        }
     }
 
     // ------------------------------------------------------------------
@@ -113,6 +142,12 @@ public final class GlassSettings {
             LinearLayout root = new LinearLayout(activity);
             root.setOrientation(LinearLayout.VERTICAL);
             root.setPadding(pad, Math.round(8 * density), pad, 0);
+
+            TextView section = new TextView(activity);
+            section.setText("LIQUID GLASS");
+            section.setTextSize(13);
+            section.setPadding(0, 0, 0, Math.round(4 * density));
+            root.addView(section);
 
             addSwitch(root, activity, prefs, "Liquid Glass navigation",
                     GlassNav.KEY_ENABLED, true);
@@ -159,7 +194,7 @@ public final class GlassSettings {
             root.addView(note);
 
             new AlertDialog.Builder(activity)
-                    .setTitle("Liquid Glass")
+                    .setTitle("Extra Settings")
                     .setView(root)
                     .setPositiveButton("Done", null)
                     .show();
@@ -170,11 +205,11 @@ public final class GlassSettings {
     private static void addSwitch(LinearLayout root, Activity activity,
                                   final SharedPreferences prefs, String title,
                                   final String key, boolean def) {
+        float density = activity.getResources().getDisplayMetrics().density;
+        int vPad = Math.round(10 * density);
         LinearLayout row = new LinearLayout(activity);
         row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, Math.round(10 * activity.getResources()
-                .getDisplayMetrics().density), 0, Math.round(10 * activity
-                .getResources().getDisplayMetrics().density));
+        row.setPadding(0, vPad, 0, vPad);
 
         TextView tv = new TextView(activity);
         tv.setText(title);

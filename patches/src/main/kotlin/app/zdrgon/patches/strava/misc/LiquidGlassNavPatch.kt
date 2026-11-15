@@ -6,6 +6,7 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod.Companion.toMutable
 import app.zdrgon.patches.strava.shared.Constants.COMPATIBILITY_STRAVA
+import com.android.tools.smali.dexlib2.builder.MutableMethodImplementation
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 
 private const val GLASS_CLASS = "Lapp/template/extension/strava/GlassNav;"
@@ -14,6 +15,8 @@ private const val STRAVA_EXTENSION = "extensions/strava.mpe"
 
 private const val BOTTOM_NAV_ACTIVITY_CLASS =
     "Lcom/strava/view/bottomnavigation/BottomNavigationActivity;"
+private const val SETTINGS_FRAGMENT_CLASS =
+    "Lcom/strava/settings/view/settings/SettingsFragment;"
 private const val NAV_CONTROLLER_CLASS =
     "Lcom/strava/view/bottomnavigation/a;"
 private const val METHOD_SUFFIX = "\$original"
@@ -51,8 +54,9 @@ val liquidGlassNavPatch = bytecodePatch(
     description = "Turns Strava's bottom bar into a floating Liquid Glass pill: detached " +
         "from the screen edges, live blurred backdrop with a translucent tint, content " +
         "scrolling underneath it, like the current YouTube and Proton VPN bars. " +
-        "Long-press the Home tab to tweak it (on/off, floating vs docked, blur, tint " +
-        "opacity). Uses Strava's classic bottom bar to make the effect possible.",
+        "Tweak it under Extra Settings at the top of Strava's Settings screen " +
+        "(on/off, floating vs docked, blur, tint opacity). Uses Strava's classic " +
+        "bottom bar to make the effect possible.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_STRAVA)
@@ -95,10 +99,65 @@ val liquidGlassNavPatch = bytecodePatch(
                 move-object/from16 v1, p1
                 invoke-virtual {v0, v1}, $originalReference
                 invoke-static {v0}, $GLASS_CLASS->apply(Landroid/app/Activity;)V
-                invoke-static {v0}, $GLASS_SETTINGS_CLASS->attachHomeLongPress(Landroid/app/Activity;)V
                 return-void
             """.trimIndent()
         }
+
+        // 3. Settings entry: wrap SettingsFragment.onCreateView
+        // (rename + wrapper) so GlassSettings can put an
+        // "Extra Settings" row above Strava's own Settings list.
+        val fragment = mutableClassDefBy(classDefBy(SETTINGS_FRAGMENT_CLASS))
+        val fragOriginal = fragment.methods.firstOrNull { method ->
+            method.name == "onCreateView" &&
+                method.returnType == "Landroid/view/View;" &&
+                method.parameterTypes == listOf(
+                    "Landroid/view/LayoutInflater;",
+                    "Landroid/view/ViewGroup;",
+                    "Landroid/os/Bundle;",
+                )
+        } ?: throw PatchException(
+            "Liquid Glass: SettingsFragment.onCreateView not found — re-audit for this version.",
+        )
+
+        val fragRenamed = ImmutableMethod(
+            SETTINGS_FRAGMENT_CLASS,
+            "morpheOnCreateView",
+            fragOriginal.parameters,
+            fragOriginal.returnType,
+            fragOriginal.accessFlags,
+            fragOriginal.annotations,
+            null,
+            MutableMethodImplementation(fragOriginal.implementation!!),
+        ).toMutable()
+        fragment.methods.remove(fragOriginal)
+        fragment.methods.add(fragRenamed)
+
+        val fragWrapper = ImmutableMethod(
+            SETTINGS_FRAGMENT_CLASS,
+            "onCreateView",
+            fragOriginal.parameters,
+            fragOriginal.returnType,
+            fragOriginal.accessFlags,
+            null,
+            null,
+            MutableMethodImplementation(8),
+        ).toMutable().apply {
+            addInstructions(
+                0,
+                """
+                    move-object/from16 v0, p0
+                    move-object/from16 v1, p1
+                    move-object/from16 v2, p2
+                    move-object/from16 v3, p3
+                    invoke-virtual {v0, v1, v2, v3}, $SETTINGS_FRAGMENT_CLASS->morpheOnCreateView(Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+                    move-result-object v0
+                    invoke-static {v0}, $GLASS_SETTINGS_CLASS->wrapSettingsView(Landroid/view/View;)Landroid/view/View;
+                    move-result-object v0
+                    return-object v0
+                """.trimIndent(),
+            )
+        }
+        fragment.methods.add(fragWrapper)
     }
 }
 
