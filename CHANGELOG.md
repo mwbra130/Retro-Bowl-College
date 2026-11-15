@@ -1,3 +1,9 @@
+## [1.77.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.3...v1.77.4) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* **strava:** make the glass pill actually float (ConstraintLayout anchors) ([fc7a577](https://github.com/mwbra130/Retro-Bowl-College/commit/fc7a577e8ac15c53989284c0b3b5a1e5ec0fac7c))
+
 ## [1.77.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.2...v1.77.3) (2026-11-15)
 
 ### 🐛 Bug Fixes
