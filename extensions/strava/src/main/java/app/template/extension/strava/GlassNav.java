@@ -76,7 +76,7 @@ import java.util.WeakHashMap;
  *   morphe.glass.enabled   master switch            (default true)
  *   morphe.glass.floating  floating pill vs docked  (default true)
  *   morphe.glass.blur      backdrop blur vs tint    (default true)
- *   morphe.glass.opacity   tint opacity, percent    (default 72)
+ *   morphe.glass.opacity   tint opacity, percent    (default 45)
  * Changes apply on the next app start.
  *
  * Everything is failure-swallowing: worst case the bar keeps its
@@ -119,7 +119,7 @@ public final class GlassNav {
                     activity, nav, content,
                     prefs.getBoolean(KEY_FLOATING, true),
                     prefs.getBoolean(KEY_BLUR, true),
-                    prefs.getInt(KEY_OPACITY, 72));
+                    prefs.getInt(KEY_OPACITY, 45));
             capsule.install();
         } catch (Throwable ignored) {
             // Never let a styling failure break the activity.
@@ -135,7 +135,8 @@ public final class GlassNav {
         private final WeakReference<View> barRef;
         private final WeakReference<View> contentRef;
         private final boolean floating;
-        private final int sidePx;
+        private int measuredSidePad = -1;
+        private int measuredForWidth = -1;
         private final int topRoomPx;
         private final int minBottomRoomPx;
         private final float density;
@@ -154,7 +155,6 @@ public final class GlassNav {
             this.contentRef = new WeakReference<>(content);
             this.floating = floating;
             this.density = activity.getResources().getDisplayMetrics().density;
-            this.sidePx = floating ? Math.round(16 * density) : 0;
             this.topRoomPx = floating ? Math.round(6 * density) : 0;
             this.minBottomRoomPx = floating ? Math.round(10 * density) : 0;
             this.glass = new CapsuleDrawable(bar, content, surfaceColor(activity),
@@ -222,13 +222,20 @@ public final class GlassNav {
                 }
                 active = true;
 
+                // Pages scroll underneath the capsule; Strava can
+                // re-constrain them, so re-assert while active.
+                View contentNow = contentRef.get();
+                if (contentNow != null) {
+                    setContentConstraint(contentNow, true);
+                }
+
                 // Geometry from the tab row's real position.
                 int capsuleTopWanted = topRoomPx + Math.round(2 * density);
                 int roomWanted = Math.max(minBottomRoomPx,
                         systemBottomRoom(bar) - Math.round(4 * density));
 
-                int padLeft = sidePx;
-                int padRight = sidePx;
+                int padLeft = sidePadFor(bar, tabs);
+                int padRight = padLeft;
                 int padTop = bar.getPaddingTop()
                         + (capsuleTopWanted - (tabs.getTop() + Math.round(3 * density)));
                 int capsuleBottom = tabs.getBottom() - Math.round(3 * density);
@@ -280,6 +287,82 @@ public final class GlassNav {
             } catch (Throwable ignored) {
             }
             active = false;
+        }
+
+        /**
+         * The side padding that makes the capsule hug the tabs,
+         * centered — Morphe's layout rule: the capsule is as wide as
+         * the buttons need (their content width plus spacing), not
+         * the full width of the bar. Falls back to 16dp.
+         */
+        private int sidePadFor(View bar, ViewGroup tabs) {
+            if (!floating) {
+                return 0;
+            }
+            int w = bar.getWidth();
+            if (measuredSidePad >= 0 && measuredForWidth == w) {
+                return measuredSidePad;
+            }
+            int pad = Math.round(16 * density);
+            try {
+                java.util.List<Integer> widths = new java.util.ArrayList<>();
+                for (int i = 0; i < tabs.getChildCount(); i++) {
+                    View item = tabs.getChildAt(i);
+                    if (item.getVisibility() == View.GONE) {
+                        continue;
+                    }
+                    int cw = contentWidth(item, 0);
+                    if (cw > 0) {
+                        widths.add(cw);
+                    }
+                }
+                if (!widths.isEmpty()) {
+                    java.util.Collections.sort(widths);
+                    int median = widths.get(widths.size() / 2);
+                    int button = Math.max(Math.round(56 * density),
+                            median + Math.round(20 * density));
+                    int capsuleWidth = widths.size() * button + Math.round(20 * density);
+                    int maxWidth = w - Math.round(24 * density);
+                    if (capsuleWidth > maxWidth) {
+                        capsuleWidth = maxWidth;
+                    }
+                    pad = Math.max(Math.round(12 * density), (w - capsuleWidth) / 2);
+                }
+            } catch (Throwable ignored) {
+            }
+            measuredSidePad = pad;
+            measuredForWidth = w;
+            return pad;
+        }
+
+        /** The width of a tab's content: its widest visible icon or label. */
+        private static int contentWidth(View view, int depth) {
+            if (view.getVisibility() != View.VISIBLE) {
+                return 0;
+            }
+            if (view instanceof android.widget.TextView) {
+                android.widget.TextView label = (android.widget.TextView) view;
+                CharSequence text = label.getText();
+                if (text == null || text.length() == 0) {
+                    return 0;
+                }
+                return (int) Math.ceil(label.getPaint().measureText(text.toString()))
+                        + label.getPaddingLeft() + label.getPaddingRight();
+            }
+            if (view instanceof android.widget.ImageView) {
+                Drawable icon = ((android.widget.ImageView) view).getDrawable();
+                int intrinsic = icon != null ? icon.getIntrinsicWidth() : 0;
+                return Math.max(view.getWidth(), intrinsic);
+            }
+            if (view instanceof ViewGroup && depth < 3) {
+                int max = 0;
+                ViewGroup group = (ViewGroup) view;
+                for (int i = 0; i < group.getChildCount(); i++) {
+                    max = Math.max(max, contentWidth(group.getChildAt(i), depth + 1));
+                }
+                return max;
+            }
+            return 0;
         }
 
         private static ViewGroup tabsOf(View bar) {
