@@ -1,3 +1,9 @@
+## [1.77.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.4...v1.77.5) (2026-11-15)
+
+### 🐛 Bug Fixes
+
+* **strava:** rebuild GlassNav the Morphe way - capsule inside the bar ([bf49a12](https://github.com/mwbra130/Retro-Bowl-College/commit/bf49a1232ff2802dee9e5c3410449b38ab965391))
+
 ## [1.77.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.3...v1.77.4) (2026-11-15)
 
 ### 🐛 Bug Fixes
