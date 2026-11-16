@@ -1,3 +1,9 @@
+## [1.79.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.5...v1.79.6) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **timemark:** use long-suffixed const-wide literals in Timemark patches ([59c7760](https://github.com/mwbra130/Retro-Bowl-College/commit/59c77607ab3fe876e736cc2befd5b0d6a5de0b91))
+
 ## [1.79.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.4...v1.79.5) (2026-11-16)
 
 ### 🐛 Bug Fixes
