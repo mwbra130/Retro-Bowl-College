@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-16T19:22:30",
-  "description": "## [1.79.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.5...v1.79.6) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** use long-suffixed const-wide literals in Timemark patches ([59c7760](https://github.com/mwbra130/Retro-Bowl-College/commit/59c77607ab3fe876e736cc2befd5b0d6a5de0b91))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.6/patches-1.79.6.mpp",
+  "created_at": "2026-11-16T19:28:47",
+  "description": "## [1.79.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.6...v1.79.7) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** make Remove telemetry bytecode-only (stock manifest breaks XML parsing) ([bf4b5ce](https://github.com/mwbra130/Retro-Bowl-College/commit/bf4b5ce28216501566e628a9cb417f0415fc57c6))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.7/patches-1.79.7.mpp",
   "signature_download_url": "",
-  "version": "1.79.6"
+  "version": "1.79.7"
 }

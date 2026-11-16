@@ -1,3 +1,9 @@
+## [1.79.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.6...v1.79.7) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **timemark:** make Remove telemetry bytecode-only (stock manifest breaks XML parsing) ([bf4b5ce](https://github.com/mwbra130/Retro-Bowl-College/commit/bf4b5ce28216501566e628a9cb417f0415fc57c6))
+
 ## [1.79.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.5...v1.79.6) (2026-11-16)
 
 ### 🐛 Bug Fixes

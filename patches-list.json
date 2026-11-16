@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.79.6",
+  "version": "1.79.7",
   "patches": [
     {
       "name": "Bypass PairIP application checks",
@@ -1908,11 +1908,9 @@
     },
     {
       "name": "Remove telemetry",
-      "description": "Stops the app reporting usage to SensorsData: both analytics event funnels are cut, the Sensors Focus campaign provider is disabled, and the Firebase datatransport upload services are disabled. Camera, backup, weather and all other features are unaffected.",
+      "description": "Stops the app reporting usage to SensorsData: both analytics event funnels (the SensorAnalyzeUtil sinks and the framework logger's LogService sinks) are cut, so no clicks, watermark edits, purchase steps or location-page events leave the device. Camera, backup, weather and all other features are unaffected.",
       "default": true,
-      "dependencies": [
-        "ResourcePatch"
-      ],
+      "dependencies": [],
       "compatiblePackages": [
         {
           "packageName": "com.oceangalaxy.camera.new",

@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**39 apps · 82 patches** · current bundle: [v1.79.6](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.6)
+**39 apps · 82 patches** · current bundle: [v1.79.7](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.7)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.79.6. -->
+     block below on purpose. Reflects bundle v1.79.7. -->
 
 <!-- GRID_START -->
 <table>
@@ -230,7 +230,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.79.6](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.6)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;82 patches total
+> **[v1.79.7](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.7)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;82 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -569,7 +569,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 | Patch | Description | Options |
 |----------|----------------|-----------|
 | [Enable Plus](#enable-plus) | Turns on the app's Plus premium state: edit and remove watermarks, ultra quality, custom file names, unlimited annotations and saves, exports and the other personal Plus features, as if the Plus plan were bought. |  |
-| [Remove telemetry](#remove-telemetry) | Stops the app reporting usage to SensorsData: both analytics event funnels are cut, the Sensors Focus campaign provider is disabled, and the Firebase datatransport upload services are disabled. Camera, backup, weather and all other features are unaffected. |  |
+| [Remove telemetry](#remove-telemetry) | Stops the app reporting usage to SensorsData: both analytics event funnels (the SensorAnalyzeUtil sinks and the framework logger's LogService sinks) are cut, so no clicks, watermark edits, purchase steps or location-page events leave the device. Camera, backup, weather and all other features are unaffected. |  |
 | [Spoof watermark location](#spoof-watermark-location) | Stamps photos as if taken at the latitude/longitude set in the patch options: the app resolves the place name and address for those coordinates, so the watermark shows that location. With both options empty (the default) nothing changes and the real GPS location is used. | • Spoofed latitude<br>• Spoofed longitude |
 
 </details>
