@@ -41,7 +41,7 @@ val enableProPatch = bytecodePatch(
         EntitlementStateFingerprint.method.addInstructions(
             0,
             """
-                sget-object v0, Llb6;->c Llb6;
+                sget-object v0, Llb6;->c:Llb6;
                 return-object v0
             """,
         )
