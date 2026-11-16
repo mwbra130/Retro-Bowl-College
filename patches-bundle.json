@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-16T20:17:22",
-  "description": "## [1.79.10](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.9...v1.79.10) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** resolve Plus fingerprints in patch context for the shared pin helper ([cc829d7](https://github.com/mwbra130/Retro-Bowl-College/commit/cc829d7bf7b95492a50a07a49dde3ab8db7b3a95))\n* **timemark:** split Enable Business patch, runtime OSM location picker in settings tab ([a183bc2](https://github.com/mwbra130/Retro-Bowl-College/commit/a183bc2b0a3c2c1ae6bff1e9cf19aae9a5d51262))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.10/patches-1.79.10.mpp",
+  "created_at": "2026-11-16T20:30:49",
+  "description": "## [1.79.11](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.10...v1.79.11) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **callrecorder:** retarget patches to 3.6.9; 3.7.8 native payload cannot run re-signed ([b7fa96b](https://github.com/mwbra130/Retro-Bowl-College/commit/b7fa96b2638bd1e5cb55466146685a5bec9c5507))\n* **callrecorder:** retarget patches to 3.6.9; 3.7.8 native payload cannot run re-signed ([e719ea0](https://github.com/mwbra130/Retro-Bowl-College/commit/e719ea0d9a3dcff0b5e2bafb5551d71809fe70da))\n* **callrecorder:** retarget patches to 3.6.9; 3.7.8 native payload cannot run re-signed ([0ef8c58](https://github.com/mwbra130/Retro-Bowl-College/commit/0ef8c58eaa343460cc7d2d587f26b8d92c359db1))\n* **callrecorder:** retarget patches to 3.6.9; 3.7.8 native payload cannot run re-signed ([418fc59](https://github.com/mwbra130/Retro-Bowl-College/commit/418fc59f7337d1a5082e2657df872b2c42c1da77))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.11/patches-1.79.11.mpp",
   "signature_download_url": "",
-  "version": "1.79.10"
+  "version": "1.79.11"
 }

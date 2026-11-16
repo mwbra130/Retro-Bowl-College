@@ -1,3 +1,12 @@
+## [1.79.11](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.10...v1.79.11) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **callrecorder:** retarget patches to 3.6.9; 3.7.8 native payload cannot run re-signed ([b7fa96b](https://github.com/mwbra130/Retro-Bowl-College/commit/b7fa96b2638bd1e5cb55466146685a5bec9c5507))
+* **callrecorder:** retarget patches to 3.6.9; 3.7.8 native payload cannot run re-signed ([e719ea0](https://github.com/mwbra130/Retro-Bowl-College/commit/e719ea0d9a3dcff0b5e2bafb5551d71809fe70da))
+* **callrecorder:** retarget patches to 3.6.9; 3.7.8 native payload cannot run re-signed ([0ef8c58](https://github.com/mwbra130/Retro-Bowl-College/commit/0ef8c58eaa343460cc7d2d587f26b8d92c359db1))
+* **callrecorder:** retarget patches to 3.6.9; 3.7.8 native payload cannot run re-signed ([418fc59](https://github.com/mwbra130/Retro-Bowl-College/commit/418fc59f7337d1a5082e2657df872b2c42c1da77))
+
 ## [1.79.10](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.9...v1.79.10) (2026-11-16)
 
 ### 🐛 Bug Fixes

@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**39 apps · 83 patches** · current bundle: [v1.79.10](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.10)
+**39 apps · 83 patches** · current bundle: [v1.79.11](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.11)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.79.10. -->
+     block below on purpose. Reflects bundle v1.79.11. -->
 
 <!-- GRID_START -->
 <table>
@@ -230,7 +230,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.79.10](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.10)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;83 patches total
+> **[v1.79.11](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.11)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;83 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -565,13 +565,13 @@ Some apps I patched and other apps that were requested if you would like to requ
 
 **Supported versions:**
 
-| 3.7.8 |
+| 3.6.9 |
 | :---: |
 
 | Patch | Description | Options |
 |----------|----------------|-----------|
-| [Enable Lifetime](#enable-lifetime) | Pins the license state to the permanent verified state (the $49.99 Lifetime tier) at its single writer, so the app always runs as a lifetime license. Experimental: the license verdict is computed in the app's native library, so whether the recording engine honors the Java-side state can only be settled on a device. Call Recorder 3.7.8 only. |  |
-| [Remove telemetry](#remove-telemetry) | Disables the Bugsnag crash-reporting startup provider so no crash, ANR or session reports are sent. Call Recorder ships no other telemetry SDK. Recording and all other features are unaffected. Call Recorder 3.7.8 only. |  |
+| [Enable Lifetime](#enable-lifetime) | Pins the license state to the permanent verified state (the $49.99 Lifetime tier) at its single writer, so the app always runs as a lifetime license. Experimental: the license verdict is computed in the app's native library, so whether every feature honors the Java-side state can only be settled on a device. Call Recorder 3.6.9 only — 3.7.x wraps its native code in an anti-tamper payload that cannot run re-signed. Get the exact 3.6.9 APK from the developer's own release archive: https://github.com/skvalex/callrecorder/releases/tag/3.6.9 |  |
+| [Remove telemetry](#remove-telemetry) | Disables the Bugsnag crash-reporting startup provider so no crash, ANR or session reports are sent. Call Recorder ships no other telemetry SDK. Recording and all other features are unaffected. Call Recorder 3.6.9 only. |  |
 
 </details>
 
