@@ -9,7 +9,8 @@ import org.w3c.dom.Element
 /**
  * Call Recorder — Remove telemetry.
  *
- * Census (verified 2026-11-16 against the exact 3.7.8 APK): the
+ * Census (verified 2026-11-16 against the exact 3.6.9 APK; the
+ * 3.7.8 build is identical here): the
  * only telemetry in the app is Bugsnag crash/ANR reporting (SDK
  * classes plus its native library). It is initialized purely by
  * its manifest ContentProvider — there is not one Bugsnag call in
@@ -31,7 +32,7 @@ val removeTelemetryPatch = resourcePatch(
     name = "Remove telemetry",
     description = "Disables the Bugsnag crash-reporting startup provider so no crash, " +
         "ANR or session reports are sent. Call Recorder ships no other telemetry SDK. " +
-        "Recording and all other features are unaffected. Call Recorder 3.7.8 only.",
+        "Recording and all other features are unaffected. Call Recorder 3.6.9 only.",
     default = true,
 ) {
     compatibleWith(COMPATIBILITY_CALL_RECORDER)
