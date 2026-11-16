@@ -126,9 +126,10 @@ object SaveQuotaFingerprint : Fingerprint(
 // watermark text in one move.
 //
 // refreshPlace is "public" (0x0001), 36 registers, 4 ins: with
-// parameters (Lry/c;, List, List) the fix sits in v33, addressed
-// in the patch as p1 (the inline smali compiler drops instructions
-// that reference high v-registers; p-registers resolve correctly).
+// parameters (Lry/c;, List, List) the fix sits in v33. The patch
+// writes it through dexlib2 builder instructions, because the
+// inline smali compiler silently dropped this snippet's iput-wide
+// instructions on two consecutive desktop verification runs.
 
 /** The single location funnel entry. The spoof overwrites the fix's lat/lng here. */
 object RefreshPlaceFingerprint : Fingerprint(

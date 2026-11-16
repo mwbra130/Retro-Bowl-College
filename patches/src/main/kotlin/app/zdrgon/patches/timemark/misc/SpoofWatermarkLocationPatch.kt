@@ -5,6 +5,10 @@ import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.stringOption
 import app.zdrgon.patches.timemark.shared.Constants.COMPATIBILITY_TIMEMARK
+import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction22c
+import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction51l
+import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReference
 import java.util.logging.Logger
 
 /**
@@ -41,13 +45,16 @@ import java.util.logging.Logger
  *
  * Register math (verified against the exact v10.0.316 dex):
  * refreshPlace has 36 registers and 4 ins (this + 3 parameters),
- * so the fix parameter sits in v33. The instructions below address
- * it as p1 (the smali parameter alias): the inline smali compiler
- * silently drops instructions that reference high v-registers
- * outside its template, while p-registers resolve against the
- * target method's real layout — proven on the v1.79.7 desktop run,
- * where the const-wide halves landed but v33-addressed iput-wide
- * halves were dropped. v0/v1 are entry scratch.
+ * so the fix parameter sits in v33; v0/v1 are entry scratch.
+ *
+ * The four instructions are built with dexlib2's builder API and
+ * inserted through the List<BuilderInstruction> overload, NOT as
+ * inline smali: on the v1.79.7 and v1.79.8 desktop verification
+ * runs the inline smali compiler silently dropped the iput-wide
+ * halves of this snippet (both v33- and p1-addressed forms) while
+ * keeping the const-wide halves — the patch "applied" but the
+ * writes never landed. The builder path carries absolute registers
+ * and references, with no template compilation in between.
  *
  * Scope note: the mutation happens on the fix object handed to
  * refreshPlace — the watermark/place-resolution path. Code that
@@ -106,17 +113,27 @@ val spoofWatermarkLocationPatch = bytecodePatch(
                 throw PatchException("Timemark spoof: longitude $lng is out of range (-180 to 180).")
             }
 
-            val latBits = java.lang.Long.toHexString(java.lang.Double.doubleToRawLongBits(lat))
-            val lngBits = java.lang.Long.toHexString(java.lang.Double.doubleToRawLongBits(lng))
+            val latBits = java.lang.Double.doubleToRawLongBits(lat)
+            val lngBits = java.lang.Double.doubleToRawLongBits(lng)
 
+            // The fix parameter is v33 (36 registers, 4 ins —
+            // verified in the dex). Built as raw builder
+            // instructions: see the register note above for why
+            // this is not inline smali.
             RefreshPlaceFingerprint.method.addInstructions(
                 0,
-                """
-                    const-wide v0, 0x${latBits}L
-                    iput-wide v0, p1, Lry/c;->a:D
-                    const-wide v0, 0x${lngBits}L
-                    iput-wide v0, p1, Lry/c;->b:D
-                """.trimIndent()
+                listOf(
+                    BuilderInstruction51l(Opcode.CONST_WIDE, 0, latBits),
+                    BuilderInstruction22c(
+                        Opcode.IPUT_WIDE, 0, 33,
+                        ImmutableFieldReference("Lry/c;", "a", "D")
+                    ),
+                    BuilderInstruction51l(Opcode.CONST_WIDE, 0, lngBits),
+                    BuilderInstruction22c(
+                        Opcode.IPUT_WIDE, 0, 33,
+                        ImmutableFieldReference("Lry/c;", "b", "D")
+                    )
+                )
             )
             logger.info("Timemark spoof: watermark location set to $lat, $lng.")
         }
