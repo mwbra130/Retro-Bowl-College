@@ -88,7 +88,7 @@ val enablePlusPatch = bytecodePatch(
         VipExpireTimeFingerprint.method.addInstructions(
             0,
             """
-                const-wide v0, 0x3bb2cc3d800
+                const-wide v0, 0x3bb2cc3d800L
                 return-wide v0
             """.trimIndent()
         )

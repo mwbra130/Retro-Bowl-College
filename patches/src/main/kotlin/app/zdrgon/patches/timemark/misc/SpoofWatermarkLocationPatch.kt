@@ -106,9 +106,9 @@ val spoofWatermarkLocationPatch = bytecodePatch(
             RefreshPlaceFingerprint.method.addInstructions(
                 0,
                 """
-                    const-wide v0, 0x$latBits
+                    const-wide v0, 0x${latBits}L
                     iput-wide v0, v33, Lry/c;->a:D
-                    const-wide v0, 0x$lngBits
+                    const-wide v0, 0x${lngBits}L
                     iput-wide v0, v33, Lry/c;->b:D
                 """.trimIndent()
             )
