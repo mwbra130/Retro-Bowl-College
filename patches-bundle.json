@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-16T17:19:06",
-  "description": "## [1.78.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.6...v1.78.0) (2026-11-16)\n\n### ✨ New Features\n\n* **vpngate:** add Enable premium patch for VPN Gate 20261111 ([860cb38](https://github.com/mwbra130/Retro-Bowl-College/commit/860cb383d6c4c852299ef9c7936de68e8a51fd09))\n* **vpngate:** add Enable premium patch for VPN Gate 20261111 ([af6b3aa](https://github.com/mwbra130/Retro-Bowl-College/commit/af6b3aabe6db277c317f33e9d48c26ab3f446d17))\n* **vpngate:** add Enable premium patch for VPN Gate 20261111 ([4cccbc5](https://github.com/mwbra130/Retro-Bowl-College/commit/4cccbc51fd9b90410b4fec690eed29f44fbfabeb))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.78.0/patches-1.78.0.mpp",
+  "created_at": "2026-11-16T17:30:53",
+  "description": "## [1.79.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.78.0...v1.79.0) (2026-11-16)\n\n### ✨ New Features\n\n* **appfinder:** add Enable Professional patch for App Finder 1.5.1 ([e0cda7b](https://github.com/mwbra130/Retro-Bowl-College/commit/e0cda7ba11042abdc7e36fe050dede685203b81f))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.0/patches-1.79.0.mpp",
   "signature_download_url": "",
-  "version": "1.78.0"
+  "version": "1.79.0"
 }

@@ -1,3 +1,9 @@
+## [1.79.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.78.0...v1.79.0) (2026-11-16)
+
+### ✨ New Features
+
+* **appfinder:** add Enable Professional patch for App Finder 1.5.1 ([e0cda7b](https://github.com/mwbra130/Retro-Bowl-College/commit/e0cda7ba11042abdc7e36fe050dede685203b81f))
+
 ## [1.78.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.6...v1.78.0) (2026-11-16)
 
 ### ✨ New Features

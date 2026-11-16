@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**34 apps · 69 patches** · current bundle: [v1.78.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.78.0)
+**35 apps · 70 patches** · current bundle: [v1.79.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.0)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.78.0. -->
+     block below on purpose. Reflects bundle v1.79.0. -->
 
 <!-- GRID_START -->
 <table>
@@ -31,15 +31,19 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><a href="#app-com-jamworks-alwaysondisplay"><b>aodNotify</b></a>
 </td>
 <td align="center" width="20%">
+<img src="https://play-lh.googleusercontent.com/sgVJqaKZ27hD-ez3ZH5kyEk0L0xABLhmLssUrPSDUalao8Y21aiCaFPM0MEXBptNIGIGa68we1K35MiQYz6K=w128-h128" width="72" height="72" alt="App Finder icon">
+<br><a href="#app-scadica-aq"><b>App Finder</b></a>
+</td>
+<td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/LX__Y8tKCvkvEgboZtQfDsvYiNFa6kwWSpqObipZI2MLK5rFVd5tEU8xgMNoMj1ICOf9TO7PFoFmiKGeIpf1=w128-h128" width="72" height="72" alt="Crossy Road icon">
 <br><a href="#app-com-yodo1-crossyroad"><b>Crossy Road</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/CTnZKfZowST3s4ZCC-NC21uh05IwUVr4HznYUb-TepWC43fZ3qPlUCxtz5x682PGQ9VqG743zUtGBJGlo5cDcqs=w128-h128" width="72" height="72" alt="DroidCam icon">
 <br><a href="#app-com-dev47apps-obsdroidcam"><b>DroidCam</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/pVUW445uF1ek7vCeJetlNWk6bb4gMBnbSUtMEbzMkNHU6dDwoyO3KiEsSvYoiFByfHfAHXtcKf8nIGrCsu4ueQ=w128-h128" width="72" height="72" alt="Echo icon">
 <br><a href="#app-com-hapibits-soundlift"><b>Echo</b></a>
@@ -57,12 +61,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><a href="#app-com-pixel-art-coloring-color-number"><b>Happy Color</b></a>
 <br><sub>🧪 experimental</sub>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/SkxvvpzgHvzG3ODTIf3EZA5kbAvFX6ahey_-wQppGxG4X6jxXBHY2LeBQShRLi7RktS02Tl6HlqON22dH62TZQ=w128-h128" width="72" height="72" alt="Hermit icon">
 <br><a href="#app-com-chimbori-hermitcrab"><b>Hermit</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/bOSkPoR8m9Qc_TPwrID8_Db51EL9oO0rq4UzRPAHKN2Zc1mq7gCq_0tySpBp1h6PkV5h7IOr0IvA1MTBiGyQCw=w128-h128" width="72" height="72" alt="ISS Live Now icon">
 <br><a href="#app-com-nicedayapps-iss-free"><b>ISS Live Now</b></a>
@@ -80,12 +84,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/DrvO8zMElYMrKfmdRtxwyH_kkvk6MJD87mBaC_38Bw1Pkq0DJB0h-SpfbK5SOAkoJQRJ2TpUU0QvW3bSdUe8=w128-h128" width="72" height="72" alt="Retro Bowl College icon">
 <br><a href="#app-com-newstargames-retrobowlcollege"><b>Retro Bowl College</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/ssy9sm_kmFckXCA5OT-VpT4pYOE_P0dy8oM8mTvvXaD692W14esUS6saR8qaprJcrfMrmPyYG4Dvyr4Mudp3gg=w128-h128" width="72" height="72" alt="Rocket Player icon">
 <br><a href="#app-com-jrtstudio-anothermusicplayer"><b>Rocket Player</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/8Y6RokzLQKhDAFcI5vYbgCd-_Hi8b6pQbrSAYB3a40ZH_NoBOz3U25qcvzOOEOkQrXzraI9DCs1NzJxpgZs2=w128-h128" width="72" height="72" alt="Roku Remote icon">
 <br><a href="#app-com-swiftsofts-rokuremote"><b>Roku Remote</b></a>
@@ -102,12 +106,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/G1eIJ3yor1yW20izrYjOfCzHgVkRtewlfPFG9CEFTHzSI2m0Lwds_Y1xYgeg21CFok_UXrol-ox2IwqL4JMrLQ=w128-h128" width="72" height="72" alt="Subway Surfers icon">
 <br><a href="#app-com-kiloo-subwaysurf"><b>Subway Surfers</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/5wJZegUK2e_dXD14bp1NqX_Op20rpfnSLAYiuVJR7e32095qA8-yEDlezpbT7r1mx69VzjqWbCyVhHMm1T8O=w128-h128" width="72" height="72" alt="Tuner icon">
 <br><a href="#app-com-studiosol-afinadorlite"><b>Tuner</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/o2AAUlWu7gGP5WwbE7eg0aP3vqNKjna0HbfFP3LIFVAHpUpT3KfLxnGv3R8Nn6z0XUP9hsly0SBR4jniSW08Dw=w128-h128" width="72" height="72" alt="Unified Remote icon">
 <br><a href="#app-com-relmtech-remote"><b>Unified Remote</b></a>
@@ -207,7 +211,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.78.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.78.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;69 patches total
+> **[v1.79.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;70 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -573,6 +577,22 @@ Some apps I patched and other apps that were requested if you would like to requ
 | Patch | Description | Options |
 |----------|----------------|-----------|
 | [Enable Pro](#enable-pro) | Turns on the app's Pro state (no ads, Pro features) as if the lifetime plan were active. |  |
+
+</details>
+
+<a id="app-scadica-aq" name="app-scadica-aq"></a>
+<details>
+<summary>App Finder&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Supported versions:**
+
+| 1.5.1 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Enable Professional](#enable-professional) | Turns on the app's Professional plan state (all Advance and Ultimate features, CSV export of up to 20,000 results) as if the lifetime Professional plan were bought. |  |
 
 </details>
 

@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.78.0",
+  "version": "1.79.0",
   "patches": [
     {
       "name": "Bypass PairIP application checks",
@@ -1246,6 +1246,32 @@
           "targets": [
             {
               "version": "1.3.2",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Enable Professional",
+      "description": "Turns on the app's Professional plan state (all Advance and Ultimate features, CSV export of up to 20,000 results) as if the lifetime Professional plan were bought.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "scadica.aq",
+          "name": "App Finder",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#3F51B5",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "1.5.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
