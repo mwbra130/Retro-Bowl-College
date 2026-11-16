@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.79.1",
+  "version": "1.79.2",
   "patches": [
     {
       "name": "Bypass PairIP application checks",
@@ -1740,6 +1740,34 @@
               "version": "9.45.41-WEAR_RELEASE",
               "versionCodes": null,
               "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove telemetry",
+      "description": "Stops the app reporting usage to the developer's backend: the persistent install ID is never attached to searches, the settings-change log built into every search query is emptied, and the unused Google datatransport upload services are disabled. Search and all other features are unaffected.",
+      "default": true,
+      "dependencies": [
+        "ResourcePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "scadica.aq",
+          "name": "App Finder",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#3F51B5",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "1.5.1",
+              "versionCodes": null,
+              "isExperimental": false,
               "minSdk": null,
               "description": null
             }

@@ -1,3 +1,10 @@
+## [1.79.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.1...v1.79.2) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **appfinder:** add Remove telemetry patch ([637b85e](https://github.com/mwbra130/Retro-Bowl-College/commit/637b85e66c3f29b64fc2c3603dc9ff5ab8b6519d))
+* **drapes:** correct field reference syntax in Enable Pro smali ([1834e93](https://github.com/mwbra130/Retro-Bowl-College/commit/1834e93eb4ba7c556a6ee096e2f2a1c69ec6b9b5))
+
 ## [1.79.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.0...v1.79.1) (2026-11-16)
 
 ### 🐛 Bug Fixes
