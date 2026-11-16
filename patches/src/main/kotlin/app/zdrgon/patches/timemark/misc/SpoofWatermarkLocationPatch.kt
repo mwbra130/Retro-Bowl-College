@@ -41,7 +41,13 @@ import java.util.logging.Logger
  *
  * Register math (verified against the exact v10.0.316 dex):
  * refreshPlace has 36 registers and 4 ins (this + 3 parameters),
- * so the fix parameter sits in v33; v0/v1 are entry scratch.
+ * so the fix parameter sits in v33. The instructions below address
+ * it as p1 (the smali parameter alias): the inline smali compiler
+ * silently drops instructions that reference high v-registers
+ * outside its template, while p-registers resolve against the
+ * target method's real layout — proven on the v1.79.7 desktop run,
+ * where the const-wide halves landed but v33-addressed iput-wide
+ * halves were dropped. v0/v1 are entry scratch.
  *
  * Scope note: the mutation happens on the fix object handed to
  * refreshPlace — the watermark/place-resolution path. Code that
@@ -107,9 +113,9 @@ val spoofWatermarkLocationPatch = bytecodePatch(
                 0,
                 """
                     const-wide v0, 0x${latBits}L
-                    iput-wide v0, v33, Lry/c;->a:D
+                    iput-wide v0, p1, Lry/c;->a:D
                     const-wide v0, 0x${lngBits}L
-                    iput-wide v0, v33, Lry/c;->b:D
+                    iput-wide v0, p1, Lry/c;->b:D
                 """.trimIndent()
             )
             logger.info("Timemark spoof: watermark location set to $lat, $lng.")
