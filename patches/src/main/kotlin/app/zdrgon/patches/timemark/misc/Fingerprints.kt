@@ -163,19 +163,81 @@ object RefreshPlaceFingerprint : Fingerprint(
 //
 // Lb50/y0;->W(Z)V is the producer: called with the server-synced
 // business value, it writes BOTH the cache (sput y0.k) and the
-// persisted config (i1.g) whenever they differ. Pinning its
-// argument to true at entry makes the app's own sync persist the
-// business flag through its own writer, after which every read
-// site above answers true naturally. W is "public static"
-// (0x0009), 4 registers, so its boolean argument sits in v3.
+// persisted config (i1.g) whenever they differ. W is "public
+// static" (0x0009), 4 registers, so its boolean argument sits
+// in v3.
+//
+// WHY THE v1.79.10 WRITER-ONLY PIN FAILED ON-DEVICE (diagnosed
+// 2026-11-16 from the dex; see RECON.md): W is called from
+// exactly three places — Lb50/y0;->k0(MemberSubscriptionInfo)
+// and the Lb50/k0; coroutine, both fed by the SERVER's
+// MemberSubscriptionInfo.getStatus() inside team-space /
+// subscription sync flows, and Lb50/p0;->invokeSuspend, which
+// is the teamSpaceLogOut coroutine calling W(false). For an
+// account that never enters those flows W never runs at all,
+// so the flag is never persisted — and every other path derives
+// the cached flag from the (still false) persisted value: the
+// ONLY writers of Lb50/y0;->k Z in the whole app are W (its
+// argument), I()V and H(...) (both re-read the persisted flag
+// into k). The paywall (PurchaseActivity) reads k directly, so
+// it kept presenting the personal Plus state. The store is NOT
+// mismatched — i1.a and i1.g resolve through the same i1.e key
+// mapping into the same util/f prefs; the write simply never
+// happened.
+//
+// The fix therefore pins the READ side: k is seeded true in
+// y0's <clinit>, and the two refreshers' flag reads (I and H)
+// are forced true at their move-result, so every write of k
+// writes true regardless of sync state. W's argument pin is
+// kept: when the subscription sync does run, it now also
+// persists the flag true through i1.g. RenewalOfferHost.f —
+// the one remaining functional literal read site — is forced
+// the same way. (The Lb50/p0; read's result is discarded, and
+// Lq50/j;->e is analytics; neither needs a pin. Ldb0/n;->e/g
+// are already pinned by the Plus set.)
 
-/** The business-plan sync writer. Forcing its argument to true persists the business state locally. */
+/** The business-plan sync writer. Kept pinned so a subscription sync persists the flag true. */
 object BusinessSyncFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Z"),
     accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
     definingClass = "Lb50/y0;",
     name = "W"
+)
+
+/** Team-space state holder's static initializer — seeds the cached business flag (y0.k) true at class load. */
+object BusinessStaticInitFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(),
+    definingClass = "Lb50/y0;",
+    name = "<clinit>"
+)
+
+/** Team-space cache refresh (public static I()V): re-reads the persisted business flag into y0.k. */
+object BusinessCacheRefreshFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    definingClass = "Lb50/y0;",
+    name = "I"
+)
+
+/** TeamSpaceStatusManager refresh (public final H): re-reads the persisted business flag into y0.k. */
+object BusinessStatusRefreshFingerprint : Fingerprint(
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf("Landroidx/fragment/app/FragmentActivity;", "Lyf0/c;"),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lb50/y0;",
+    name = "H"
+)
+
+/** Renewal-offer host's business read (public final f): business users are not shown the personal renewal offer. */
+object RenewalOfferBusinessReadFingerprint : Fingerprint(
+    returnType = "Lo70/w2;",
+    parameters = listOf(),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lcom/xhey/xcamera/ui/bill/renewal/RenewalOfferHost;",
+    name = "f"
 )
 
 // ── Patch-settings machinery — Timemark v10.0.316 ──────────────────
