@@ -9,7 +9,7 @@ object Constants {
         packageName = "org.skvalex.cr",
         appIconColor = 0x689F38,
         targets = listOf(
-            AppTarget(version = "3.7.8", isExperimental = true)
+            AppTarget(version = "3.6.9", isExperimental = true)
         )
     )
 }
