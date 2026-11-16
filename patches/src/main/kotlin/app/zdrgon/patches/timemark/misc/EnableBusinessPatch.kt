@@ -55,8 +55,17 @@ val enableBusinessPatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_TIMEMARK)
 
     execute {
-        // Business includes Plus: the full shared pin set first.
-        applyPlusPins()
+        // Business includes Plus: the full shared pin set first
+        // (fingerprints are resolved here, in the patch context,
+        // and handed to the shared helper).
+        applyPlusPins(
+            VipIsVipFingerprint.method,
+            VipExpireTimeFingerprint.method,
+            VipReaderDFingerprint.method,
+            VipReaderEFingerprint.method,
+            VipStateFingerprint.method,
+            SaveQuotaFingerprint.method
+        )
 
         // The business-plan producer: force the sync writer's
         // argument to true so the app persists the business flag

@@ -2,6 +2,7 @@ package app.zdrgon.patches.timemark.misc
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
 import app.zdrgon.patches.timemark.shared.Constants.COMPATIBILITY_TIMEMARK
 
 /**
@@ -65,19 +66,30 @@ import app.zdrgon.patches.timemark.shared.Constants.COMPATIBILITY_TIMEMARK
  */
 
 /**
- * Applies the Plus pin set. Shared with the "Enable Business"
- * patch, which is self-contained (Business alone must work) and
- * adds the business-plan pins on top. If both patches are selected
- * in one run, the pins are applied twice to the same methods; the
- * blocks are value-identical and stack harmlessly at index 0, so
- * the combined run is safe (verified on the desktop test run).
+ * Applies the Plus pin set to the already-resolved fingerprint
+ * methods. Shared with the "Enable Business" patch, which is
+ * self-contained (Business alone must work) and adds the
+ * business-plan pins on top. The methods are resolved by each
+ * patch inside its own execute block (fingerprint resolution
+ * needs the patch context) and passed in. If both patches are
+ * selected in one run, the pins are applied twice to the same
+ * methods; the blocks are value-identical and stack harmlessly
+ * at index 0, so the combined run is safe (verified on the
+ * desktop test run).
  */
-internal fun applyPlusPins() {
+internal fun applyPlusPins(
+    isVip: MutableMethod,
+    expireTime: MutableMethod,
+    readerD: MutableMethod,
+    readerE: MutableMethod,
+    state: MutableMethod,
+    saveQuota: MutableMethod
+) {
     // 1. The producer: the server bean now reports a Plus
     // subscription expiring 2100-01-01 (4102444800000 ms), so
     // the app's own refresh writes the Plus state into its
     // statics and persisted prefs.
-    VipIsVipFingerprint.method.addInstructions(
+    isVip.addInstructions(
         0,
         """
             const/4 v0, 0x1
@@ -85,7 +97,7 @@ internal fun applyPlusPins() {
         """.trimIndent()
     )
 
-    VipExpireTimeFingerprint.method.addInstructions(
+    expireTime.addInstructions(
         0,
         """
             const-wide v0, 0x3bb2cc3d800L
@@ -94,7 +106,7 @@ internal fun applyPlusPins() {
     )
 
     // 2. The readers: every feature gate asks these.
-    VipReaderDFingerprint.method.addInstructions(
+    readerD.addInstructions(
         0,
         """
             const/4 v0, 0x1
@@ -102,7 +114,7 @@ internal fun applyPlusPins() {
         """.trimIndent()
     )
 
-    VipReaderEFingerprint.method.addInstructions(
+    readerE.addInstructions(
         0,
         """
             const/4 v0, 0x1
@@ -110,7 +122,7 @@ internal fun applyPlusPins() {
         """.trimIndent()
     )
 
-    VipStateFingerprint.method.addInstructions(
+    state.addInstructions(
         0,
         """
             sget-object v0, Lp50/e;->ACTIVE:Lp50/e;
@@ -119,7 +131,7 @@ internal fun applyPlusPins() {
     )
 
     // 3. The photo-save quota reader: never exhausted.
-    SaveQuotaFingerprint.method.addInstructions(
+    saveQuota.addInstructions(
         0,
         """
             sget-object v0, Leb0/a;->UNLIMITED:Leb0/a;
@@ -137,6 +149,13 @@ val enablePlusPatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_TIMEMARK)
 
     execute {
-        applyPlusPins()
+        applyPlusPins(
+            VipIsVipFingerprint.method,
+            VipExpireTimeFingerprint.method,
+            VipReaderDFingerprint.method,
+            VipReaderEFingerprint.method,
+            VipStateFingerprint.method,
+            SaveQuotaFingerprint.method
+        )
     }
 }
