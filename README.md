@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**37 apps · 77 patches** · current bundle: [v1.79.3](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.3)
+**38 apps · 79 patches** · current bundle: [v1.79.4](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.4)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.79.3. -->
+     block below on purpose. Reflects bundle v1.79.4. -->
 
 <!-- GRID_START -->
 <table>
@@ -35,11 +35,16 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><a href="#app-scadica-aq"><b>App Finder</b></a>
 </td>
 <td align="center" width="20%">
-<img src="https://play-lh.googleusercontent.com/qT9Drz6krjycwLb6o0xrvk0Ju0JUQPbORoFX9SHHx1UYO5tA-5Lwy9fKmz15n_Na96TNsftMhaAFYk_iCyAeMY4=w128-h128" width="72" height="72" alt="ContentCam icon">
-<br><a href="#app-app-contentcam-android"><b>ContentCam</b></a>
+<img src="https://play-lh.googleusercontent.com/ldoC6AYZEHze9vFmmXz7nDIFPQK866Cw0oWSL6R7TGH3a5ZUabqplWV5kuJj5fKEBPIwDAxYmTzKII9K-2sC_w=w128-h128" width="72" height="72" alt="Call Recorder icon">
+<br><a href="#app-org-skvalex-cr"><b>Call Recorder</b></a>
+<br><sub>🧪 experimental</sub>
 </td>
 </tr>
 <tr>
+<td align="center" width="20%">
+<img src="https://play-lh.googleusercontent.com/qT9Drz6krjycwLb6o0xrvk0Ju0JUQPbORoFX9SHHx1UYO5tA-5Lwy9fKmz15n_Na96TNsftMhaAFYk_iCyAeMY4=w128-h128" width="72" height="72" alt="ContentCam icon">
+<br><a href="#app-app-contentcam-android"><b>ContentCam</b></a>
+</td>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/LX__Y8tKCvkvEgboZtQfDsvYiNFa6kwWSpqObipZI2MLK5rFVd5tEU8xgMNoMj1ICOf9TO7PFoFmiKGeIpf1=w128-h128" width="72" height="72" alt="Crossy Road icon">
 <br><a href="#app-com-yodo1-crossyroad"><b>Crossy Road</b></a>
@@ -56,12 +61,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/pVUW445uF1ek7vCeJetlNWk6bb4gMBnbSUtMEbzMkNHU6dDwoyO3KiEsSvYoiFByfHfAHXtcKf8nIGrCsu4ueQ=w128-h128" width="72" height="72" alt="Echo icon">
 <br><a href="#app-com-hapibits-soundlift"><b>Echo</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/n-VW4rcGGAZNvcAxpAA6gM64UTXU2iuPuCXBluW83Kd21zGhNgOThvhsYTo25mME4VioiXXbg3oL3S_BIk5QvYQ=w128-h128" width="72" height="72" alt="Games In One - Watch Games icon">
 <br><a href="#app-com-mustbefun-gamesinonewatchgames"><b>Games In One</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/04xiToIui2lD8Co9xPb-_V3JW90vSS8ej7aEAMqzdA9uadnjkGbPFvtkQPxB4okIIkrZquPYnxE3Eg6d6Ik_XQ=w128-h128" width="72" height="72" alt="Gradient Weather icon">
 <br><a href="#app-com-subtlesignals-gradientweather"><b>Gradient Weather</b></a>
@@ -79,13 +84,13 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/bOSkPoR8m9Qc_TPwrID8_Db51EL9oO0rq4UzRPAHKN2Zc1mq7gCq_0tySpBp1h6PkV5h7IOr0IvA1MTBiGyQCw=w128-h128" width="72" height="72" alt="ISS Live Now icon">
 <br><a href="#app-com-nicedayapps-iss-free"><b>ISS Live Now</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/juZBxj0uxtz80RMbyvPxco2O7rD7aU71VvhLsgConfsM4FmtzXTprkGXiEZQHugPU0A17AYnQ_tgF-0Nph9MIQ=w128-h128" width="72" height="72" alt="Notes icon">
 <br><a href="#app-com-inotesapp-inotes"><b>Notes</b></a>
 <br><sub>🧪 experimental</sub>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/-21ASw97RWIu-CnDVbEEtTrfVIDqpfhY4eofgk5aT98q4E8jnrMVxNqI0J7JYgRTkHjoOoWM58ScUzu30cxevQ=w128-h128" width="72" height="72" alt="Poweramp icon">
 <br><a href="#app-com-maxmpz-audioplayer"><b>Poweramp</b></a>
@@ -102,12 +107,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/8Y6RokzLQKhDAFcI5vYbgCd-_Hi8b6pQbrSAYB3a40ZH_NoBOz3U25qcvzOOEOkQrXzraI9DCs1NzJxpgZs2=w128-h128" width="72" height="72" alt="Roku Remote icon">
 <br><a href="#app-com-swiftsofts-rokuremote"><b>Roku Remote</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/OdQDxdeo_WyMUftwJbJHF4PALrfSJ4B4vpOWkXPKar1_JN3NKc9ULakQ5o3mjzcuRRTDheF36xSh9mxVRnjD=w128-h128" width="72" height="72" alt="Smart MP3 Tagger icon">
 <br><a href="#app-tageditor-automatictageditor-audiotagging-audioedit-mp3edit"><b>Smart MP3 Tagger</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/c-cyyIsMn659H-p3XFezpj3wjkC9Z7XhmZIz-WiZuVGZyMWp7t_pGUdpS0_be_Qu8_9UewBqVxFtONQ4-GiwaQ=w128-h128" width="72" height="72" alt="Smashy Road 2 icon">
 <br><a href="#app-com-rkgames-basisgame"><b>Smashy Road 2</b></a>
@@ -124,12 +129,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/o2AAUlWu7gGP5WwbE7eg0aP3vqNKjna0HbfFP3LIFVAHpUpT3KfLxnGv3R8Nn6z0XUP9hsly0SBR4jniSW08Dw=w128-h128" width="72" height="72" alt="Unified Remote icon">
 <br><a href="#app-com-relmtech-remote"><b>Unified Remote</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/z74H5YZukP3qJGkbJGUZj39y_1rDADZI_rkRUB04ID1x9WjhpuBA_t_FMdMQ7vFm0MFwLWkMFQPInRq-kC7MXg=w128-h128" width="72" height="72" alt="Video Cutter icon">
 <br><a href="#app-com-losslessvideocutter"><b>Video Cutter</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/79Q266gifrq0sHAhSLlPk2Bur1fgWIZJW-B4vWPpoEcvlIOCFIFooR7OV3qXhWMNJbE8MTTmtIoHwWUYj0hLVA=w128-h128" width="72" height="72" alt="VPN Gate icon">
 <br><a href="#app-com-giamping-sevpn"><b>VPN Gate</b></a>
@@ -221,7 +226,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.79.3](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.3)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;77 patches total
+> **[v1.79.4](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.4)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;79 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -527,6 +532,23 @@ Some apps I patched and other apps that were requested if you would like to requ
 | Patch | Description | Options |
 |----------|----------------|-----------|
 | [Enable Full](#enable-full) | Unlocks Unified Remote Full for free, as if the one-time Full purchase were bought: 70+ remotes, no ads, screen mirroring, floating remotes, extended keyboard, widgets and quick actions, voice commands, custom remotes, IR and NFC actions. |  |
+
+</details>
+
+<a id="app-org-skvalex-cr" name="app-org-skvalex-cr"></a>
+<details>
+<summary>Call Recorder - SKVALEX&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**Supported versions:**
+
+| 3.7.8 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Enable Lifetime](#enable-lifetime) | Pins the license state to the permanent verified state (the $49.99 Lifetime tier) at its single writer, so the app always runs as a lifetime license. Experimental: the license verdict is computed in the app's native library, so whether the recording engine honors the Java-side state can only be settled on a device. Call Recorder 3.7.8 only. |  |
+| [Remove telemetry](#remove-telemetry) | Disables the Bugsnag crash-reporting startup provider so no crash, ANR or session reports are sent. Call Recorder ships no other telemetry SDK. Recording and all other features are unaffected. Call Recorder 3.7.8 only. |  |
 
 </details>
 

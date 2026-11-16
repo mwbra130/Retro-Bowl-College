@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.79.3",
+  "version": "1.79.4",
   "patches": [
     {
       "name": "Bypass PairIP application checks",
@@ -877,6 +877,32 @@
               "version": "3.25.1",
               "versionCodes": null,
               "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Enable Lifetime",
+      "description": "Pins the license state to the permanent verified state (the $49.99 Lifetime tier) at its single writer, so the app always runs as a lifetime license. Experimental: the license verdict is computed in the app's native library, so whether the recording engine honors the Java-side state can only be settled on a device. Call Recorder 3.7.8 only.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "org.skvalex.cr",
+          "name": "Call Recorder",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": "#689F38",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.7.8",
+              "versionCodes": null,
+              "isExperimental": true,
               "minSdk": null,
               "description": null
             }
@@ -1768,6 +1794,32 @@
               "version": "1.5.1",
               "versionCodes": null,
               "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove telemetry",
+      "description": "Disables the Bugsnag crash-reporting startup provider so no crash, ANR or session reports are sent. Call Recorder ships no other telemetry SDK. Recording and all other features are unaffected. Call Recorder 3.7.8 only.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "org.skvalex.cr",
+          "name": "Call Recorder",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": "#689F38",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "3.7.8",
+              "versionCodes": null,
+              "isExperimental": true,
               "minSdk": null,
               "description": null
             }

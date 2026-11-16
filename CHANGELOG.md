@@ -1,3 +1,12 @@
+## [1.79.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.3...v1.79.4) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **callrecorder:** add App state writer fingerprint for Call Recorder ([bf6200f](https://github.com/mwbra130/Retro-Bowl-College/commit/bf6200f8f999d6f7d6c79ef10301230bb4e30da4))
+* **callrecorder:** add Call Recorder 3.7.8 compatibility ([d964862](https://github.com/mwbra130/Retro-Bowl-College/commit/d9648623e492eb853f0beb6fd1cbb78176768a23))
+* **callrecorder:** add Enable Lifetime patch for Call Recorder 3.7.8 ([ef75957](https://github.com/mwbra130/Retro-Bowl-College/commit/ef75957696ab5fff01dd125892ddda0392cee5c7))
+* **callrecorder:** add Remove telemetry patch for Call Recorder 3.7.8 ([926811e](https://github.com/mwbra130/Retro-Bowl-College/commit/926811eb1d9191f2063fb75161977e108250ba09))
+
 ## [1.79.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.2...v1.79.3) (2026-11-16)
 
 ### 🐛 Bug Fixes
