@@ -12,6 +12,7 @@ import app.morphe.patcher.util.smali.ExternalLabel
 import app.zdrgon.patches.timemark.shared.Constants.COMPATIBILITY_TIMEMARK
 import app.zdrgon.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.NarrowLiteralInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
@@ -127,12 +128,51 @@ private fun MutableMethod.forceConfigReadTrue(label: String) {
  * on the team-space header, the team-space plan page, the
  * team chooser and the paywall's Business-tab "Current Plan"
  * block. No code maps the local business boolean to a plan
- * name, and VipInfo.vipType has zero UI readers, so no local
- * pin can make those surfaces print "Business": they require
- * a server-issued team subscription object that this patch
- * does not fabricate. What the pins do change is every local
- * decision the flag feeds (feature gates, quota, paywall
- * button/bar state, renewal-offer suppression).
+ * name, and VipInfo.vipType has zero UI readers.
+ *
+ * Round 4 takes the remaining step the round-3
+ * verdict identified: pin the model funnels themselves — the
+ * same technique as the shipped VipInfo pins — and rewrite
+ * the one banner that is pure local presentation:
+ *
+ *   6. MemberSubscriptionInfo.getType() -> 1 (Business) and
+ *      getStatus() -> 1 (active) at method entry. A full
+ *      reader census (RECON.md round 4) confirms every reader
+ *      is display, gating, analytics or a local derived-state
+ *      cache; no purchase flow or sync writer consumes these
+ *      getters into a request, an order or a persisted model
+ *      (serialization reads the bean's fields, which stay
+ *      untouched), and the one sync derivation (y0.k0) feeds
+ *      only the already-pinned local flag writer W.
+ *      TeamMemberSubscriptionInfo has no type/status getters
+ *      of its own — it wraps a MemberSubscriptionInfo — so it
+ *      is covered by the same pins.
+ *   7. The paywall banner: PurchaseActivity.P() is the sole
+ *      code site loading string 0x7f120f58
+ *      ('「Timemark Plus」 purchased and activated') and sets
+ *      it on the banner whenever e() is true. The string has
+ *      no Business variant in the app's resources, so this
+ *      patch overwrites the loaded string, in P() only, with
+ *      '「Timemark Business」 purchased and activated'. This
+ *      banner is the literal text shown as the current plan
+ *      on the paywall's status page, and it is visible for
+ *      every premium account — no team needed.
+ *
+ * Reach of the model pins, stated plainly: the GroupInfo
+ * holders (y0.j / y0.p) are populated only from a locally
+ * persisted JSON written by earlier server sync flows, or by
+ * the sync coroutines themselves; nothing constructs a
+ * GroupInfo locally. For an account that has never had a
+ * team, those holders stay empty and the model-fed name
+ * surfaces (team-space header and plan page, team chooser,
+ * the paywall Business tab's "Current Plan" block) cannot
+ * render — there is no subscription object for the pinned
+ * getters to be called on. Where a GroupInfo does exist
+ * (cached or downloaded), every one of those surfaces now
+ * reads its subscription as Business/active. This patch
+ * still does not fabricate a team: no invented group, name,
+ * members or billing, and nothing is written to any sync
+ * path.
  *
  * What this changes on screen: the paywall's plan state reads
  * business (its PAGE_STATUS logic branches on k), the
@@ -237,6 +277,62 @@ val enableBusinessPatch = bytecodePatch(
                     return v0
                 """.trimIndent(),
                 ExternalLabel("original_body", getInstruction(0))
+            )
+        }
+
+        // 6. Round 4: pin the subscription model funnels. Any
+        // MemberSubscriptionInfo the app actually holds (inside
+        // a cached or downloaded GroupInfo) now reports plan
+        // type 1 (Business) and status 1 (active) — the exact
+        // pair Lb50/y0;->v maps to the "Business" plan name,
+        // and the pair every plan-name surface and business
+        // gate reads. Same shape as the VipInfo pins: a bare
+        // entry return, the bean's fields untouched.
+        MemberSubscriptionTypeFingerprint.method.addInstructions(
+            0,
+            """
+                const/4 v0, 0x1
+                return v0
+            """.trimIndent()
+        )
+        MemberSubscriptionStatusFingerprint.method.addInstructions(
+            0,
+            """
+                const/4 v0, 0x1
+                return v0
+            """.trimIndent()
+        )
+
+        // 7. Round 4: the paywall banner. PurchaseActivity.P()
+        // loads string resource 0x7f120f58 ('「Timemark Plus」
+        // purchased and activated') — the ONLY code site that
+        // loads it — via Context.getString, then sets the
+        // result on the banner TextView. Overwrite the loaded
+        // string in its own register, right after the
+        // move-result-object that receives it and before the
+        // setText call consumes it, with the Business wording.
+        // No Business variant of this string exists in the
+        // app's resources; the literal mirrors the original
+        // exactly, with the plan name swapped.
+        PurchaseBannerFingerprint.method.run {
+            val insns = instructions.toList()
+            val constIndices = insns.indices.filter { i ->
+                (insns[i] as? NarrowLiteralInstruction)?.narrowLiteral == 0x7f120f58
+            }
+            if (constIndices.size != 1) {
+                throw PatchException(
+                    "Enable Business: expected exactly one load of the paywall banner string in PurchaseActivity.P, found ${constIndices.size}."
+                )
+            }
+            val moveResultIndex = (constIndices[0] + 1 until minOf(constIndices[0] + 6, insns.size))
+                .firstOrNull { insns[it].opcode == Opcode.MOVE_RESULT_OBJECT }
+                ?: throw PatchException(
+                    "Enable Business: the paywall banner getString result was not found in PurchaseActivity.P."
+                )
+            val register = (insns[moveResultIndex] as OneRegisterInstruction).registerA
+            addInstruction(
+                moveResultIndex + 1,
+                "const-string v$register, \"「Timemark Business」 purchased and activated\""
             )
         }
     }

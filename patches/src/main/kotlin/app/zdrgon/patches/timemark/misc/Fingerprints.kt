@@ -280,6 +280,85 @@ object PrefsBoolReadFingerprint : Fingerprint(
     name = "p"
 )
 
+// ── Business round 4 (2026-11-16): the subscription model funnels ──
+//
+// Round 3 proved the displayed plan NAME is rendered only from the
+// server subscription model, MemberSubscriptionInfo inside the
+// downloaded (or locally cached) GroupInfo, via Lb50/y0;->v:
+// type==1 && status==1 -> Business (1), type==1 && status==2 ->
+// Trial (2), else Free (0). Round 3 left the model untouched;
+// round 4 pins its two getters — the same technique as the shipped
+// VipInfo pins (isVip/getVipExpireTime) — so any MemberSubscription-
+// Info the app actually holds reports Business/active:
+//
+//   getType()   -> 1 (Business)
+//   getStatus() -> 1 (active)
+//
+// Full 8-dex reader census of both getters (2026-11-16, RECON.md
+// round 4): every reader is display, gating, analytics or a local
+// derived-state cache (y0.v/O/D/E/j/e/h, PurchaseActivity A/U/j0,
+// Lw40/g3;->D, Lw40/ia via v, Lm40/e rows, Ls40/v;->B, Lig0/b;->N,
+// Lb50/d1;->j and Lb50/h1;->i analytics property builders, and the
+// y0.w per-group state map fed by centerGroupList$2 / y0.a). The
+// two network-response handlers that read them (queryGroupInfo$2,
+// centerGroupList$2) use them only in branch conditions and to
+// derive that same local state; nothing writes getter values into
+// a request, an order or a persisted model — Gson serializes the
+// bean's FIELDS, which the pins do not touch, and the one sync
+// derivation (y0.k0 / Lb50/k0;) feeds only Lb50/y0;->W, the local
+// flag writer already pinned. TeamMemberSubscriptionInfo is a
+// wrapper bean with NO type/status getters of its own (it holds a
+// MemberSubscriptionInfo), so these two pins cover it. The third
+// status-like getter, getSubscriptionStatus, has exactly one
+// reader (Ln40/h;->c, an analytics property builder) and is not
+// part of the plan-name path; it is deliberately not pinned.
+//
+// Reach limit (dex-proven): the holders Lb50/y0;->j (current
+// GroupInfo) and y0.p (cached group list) are populated ONLY from
+// Lcom/xhey/xcamera/data/pref/b;->b()/d() — Gson deserialization of
+// a JSON string persisted by earlier server sync flows — and from
+// the sync coroutines themselves. Nothing constructs a GroupInfo
+// locally. For an account that has never had a team, j stays null
+// and p stays empty, so the model-fed name surfaces (team-space
+// header/plan page, team chooser, the paywall Business tab's
+// "Current Plan" block) cannot render at all; where a GroupInfo
+// does exist, these pins make its subscription read Business.
+
+/** The server subscription model's plan-type getter (1 = Business). Pinned to 1 in Enable Business. */
+object MemberSubscriptionTypeFingerprint : Fingerprint(
+    returnType = "I",
+    parameters = listOf(),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lcom/xhey/xcamera/data/model/bean/teamspace/MemberSubscriptionInfo;",
+    name = "getType"
+)
+
+/** The server subscription model's status getter (1 = active). Pinned to 1 in Enable Business. */
+object MemberSubscriptionStatusFingerprint : Fingerprint(
+    returnType = "I",
+    parameters = listOf(),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lcom/xhey/xcamera/data/model/bean/teamspace/MemberSubscriptionInfo;",
+    name = "getStatus"
+)
+
+/**
+ * The paywall's status-page builder. Its P() method is the SOLE
+ * code site that loads string resource 0x7f120f58
+ * ('「Timemark Plus」 purchased and activated') and sets it on the
+ * banner TextView (view-binding field K) whenever Ldb0/n;->e() is
+ * true. The string has no Business variant anywhere in the app's
+ * resources; Enable Business overwrites the loaded string with
+ * the Business literal right after the getString call.
+ */
+object PurchaseBannerFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lcom/xhey/xcamera/ui/bill/PurchaseActivity;",
+    name = "P"
+)
+
 // ── Patch-settings machinery — Timemark v10.0.316 ──────────────────
 //
 // The spoof's runtime half lives in the bundle extension
