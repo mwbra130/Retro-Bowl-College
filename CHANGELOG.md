@@ -1,3 +1,9 @@
+## [1.79.15](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.14...v1.79.15) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **timemark:** pin the subscription model getters and present the Business banner in the paywall ([6f60bd9](https://github.com/mwbra130/Retro-Bowl-College/commit/6f60bd9d9d104a591fb3bca7bf6a910565a792d7))
+
 ## [1.79.14](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.13...v1.79.14) (2026-11-16)
 
 ### 🐛 Bug Fixes
