@@ -1,3 +1,9 @@
+## [1.79.14](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.13...v1.79.14) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **timemark:** pin the prefs funnel so every read of the business flag returns true ([84810bf](https://github.com/mwbra130/Retro-Bowl-College/commit/84810bfc124f43aafb1fba847b54ac23147486fb))
+
 ## [1.79.13](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.12...v1.79.13) (2026-11-16)
 
 ### 🐛 Bug Fixes
