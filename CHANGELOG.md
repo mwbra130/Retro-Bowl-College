@@ -1,3 +1,11 @@
+## [1.78.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.6...v1.78.0) (2026-11-16)
+
+### ✨ New Features
+
+* **vpngate:** add Enable premium patch for VPN Gate 20261111 ([860cb38](https://github.com/mwbra130/Retro-Bowl-College/commit/860cb383d6c4c852299ef9c7936de68e8a51fd09))
+* **vpngate:** add Enable premium patch for VPN Gate 20261111 ([af6b3aa](https://github.com/mwbra130/Retro-Bowl-College/commit/af6b3aabe6db277c317f33e9d48c26ab3f446d17))
+* **vpngate:** add Enable premium patch for VPN Gate 20261111 ([4cccbc5](https://github.com/mwbra130/Retro-Bowl-College/commit/4cccbc51fd9b90410b4fec690eed29f44fbfabeb))
+
 ## [1.77.6](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.77.5...v1.77.6) (2026-11-15)
 
 ### 🐛 Bug Fixes

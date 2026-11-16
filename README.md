@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**33 apps · 68 patches** · current bundle: [v1.77.6](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.77.6)
+**34 apps · 69 patches** · current bundle: [v1.78.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.78.0)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.77.6. -->
+     block below on purpose. Reflects bundle v1.78.0. -->
 
 <!-- GRID_START -->
 <table>
@@ -117,6 +117,10 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><a href="#app-com-losslessvideocutter"><b>Video Cutter</b></a>
 </td>
 <td align="center" width="20%">
+<img src="https://play-lh.googleusercontent.com/79Q266gifrq0sHAhSLlPk2Bur1fgWIZJW-B4vWPpoEcvlIOCFIFooR7OV3qXhWMNJbE8MTTmtIoHwWUYj0hLVA=w128-h128" width="72" height="72" alt="VPN Gate icon">
+<br><a href="#app-com-giamping-sevpn"><b>VPN Gate</b></a>
+</td>
+<td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/MyptZXmcCyF59phIWPsNCfHq6zSO_ojEdw_4rMYYWPOGdikSjqeOXcoszBZ053VYpINe5K7ZR9KV1nkFWgxdOw=w128-h128" width="72" height="72" alt="YouTube Music (Wear OS) icon">
 <br><a href="#app-com-google-android-apps-youtube-music"><b>YouTube Music (Wear OS)</b></a>
 <br><sub>🧪 experimental</sub>
@@ -203,7 +207,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.77.6](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.77.6)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;68 patches total
+> **[v1.78.0](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.78.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;69 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -569,6 +573,22 @@ Some apps I patched and other apps that were requested if you would like to requ
 | Patch | Description | Options |
 |----------|----------------|-----------|
 | [Enable Pro](#enable-pro) | Turns on the app's Pro state (no ads, Pro features) as if the lifetime plan were active. |  |
+
+</details>
+
+<a id="app-com-giamping-sevpn" name="app-com-giamping-sevpn"></a>
+<details>
+<summary>VPN Gate - Software Ethernet&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
+
+**Supported versions:**
+
+| 20261111 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Enable premium](#enable-premium) | Enables premium: removes all ads and unlocks unlimited VPN session time (free sessions are capped at 30 to 60 minutes). VPN Gate 20261111 only. |  |
 
 </details>
 
