@@ -1,3 +1,9 @@
+## [1.79.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.4...v1.79.5) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **timemark:** add Timemark Plus unlock, watermark location spoof and telemetry removal ([e76b468](https://github.com/mwbra130/Retro-Bowl-College/commit/e76b4685096bed125237f038acfa029cb6b4505e))
+
 ## [1.79.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.3...v1.79.4) (2026-11-16)
 
 ### 🐛 Bug Fixes

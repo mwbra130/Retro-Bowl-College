@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.79.4",
+  "version": "1.79.5",
   "patches": [
     {
       "name": "Bypass PairIP application checks",
@@ -964,6 +964,32 @@
       "options": []
     },
     {
+      "name": "Enable Plus",
+      "description": "Turns on the app's Plus premium state: edit and remove watermarks, ultra quality, custom file names, unlimited annotations and saves, exports and the other personal Plus features, as if the Plus plan were bought.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.oceangalaxy.camera.new",
+          "name": "Timemark",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#2196F3",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v10.0.316",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Enable Premium",
       "description": "Turns on the app's premium state (premium features, no ads) as if a lifetime premium were active.",
       "default": true,
@@ -1881,6 +1907,34 @@
       "options": []
     },
     {
+      "name": "Remove telemetry",
+      "description": "Stops the app reporting usage to SensorsData: both analytics event funnels are cut, the Sensors Focus campaign provider is disabled, and the Firebase datatransport upload services are disabled. Camera, backup, weather and all other features are unaffected.",
+      "default": true,
+      "dependencies": [
+        "ResourcePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "com.oceangalaxy.camera.new",
+          "name": "Timemark",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#2196F3",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v10.0.316",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Skip silence",
       "description": "Automatically skips silent pauses in audio playback.",
       "default": true,
@@ -1957,6 +2011,51 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "Spoof watermark location",
+      "description": "Stamps photos as if taken at the latitude/longitude set in the patch options: the app resolves the place name and address for those coordinates, so the watermark shows that location. With both options empty (the default) nothing changes and the real GPS location is used.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.oceangalaxy.camera.new",
+          "name": "Timemark",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#2196F3",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "v10.0.316",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "latitude",
+          "title": "Spoofed latitude",
+          "description": "Decimal latitude, e.g. 33.4484. Must be set together with the longitude; leave both empty to keep the real GPS location.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        },
+        {
+          "key": "longitude",
+          "title": "Spoofed longitude",
+          "description": "Decimal longitude, e.g. -112.0740. Must be set together with the latitude; leave both empty to keep the real GPS location.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "",
+          "values": null
+        }
+      ]
     },
     {
       "name": "Unlimited coins & unlocks",

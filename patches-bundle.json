@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-16T18:29:51",
-  "description": "## [1.79.4](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.3...v1.79.4) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **callrecorder:** add App state writer fingerprint for Call Recorder ([bf6200f](https://github.com/mwbra130/Retro-Bowl-College/commit/bf6200f8f999d6f7d6c79ef10301230bb4e30da4))\n* **callrecorder:** add Call Recorder 3.7.8 compatibility ([d964862](https://github.com/mwbra130/Retro-Bowl-College/commit/d9648623e492eb853f0beb6fd1cbb78176768a23))\n* **callrecorder:** add Enable Lifetime patch for Call Recorder 3.7.8 ([ef75957](https://github.com/mwbra130/Retro-Bowl-College/commit/ef75957696ab5fff01dd125892ddda0392cee5c7))\n* **callrecorder:** add Remove telemetry patch for Call Recorder 3.7.8 ([926811e](https://github.com/mwbra130/Retro-Bowl-College/commit/926811eb1d9191f2063fb75161977e108250ba09))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.4/patches-1.79.4.mpp",
+  "created_at": "2026-11-16T19:15:06",
+  "description": "## [1.79.5](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.4...v1.79.5) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** add Timemark Plus unlock, watermark location spoof and telemetry removal ([e76b468](https://github.com/mwbra130/Retro-Bowl-College/commit/e76b4685096bed125237f038acfa029cb6b4505e))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.5/patches-1.79.5.mpp",
   "signature_download_url": "",
-  "version": "1.79.4"
+  "version": "1.79.5"
 }
