@@ -38,9 +38,8 @@ import com.android.tools.smali.dexlib2.AccessFlags
 //
 // vipType is never persisted and no feature gate reads it; locally
 // the app has exactly one premium boolean, and that boolean IS the
-// Plus state. Business is a separate server-pushed account flag
-// plus workgroup server APIs (shared storage, team billing, admin)
-// and has no local representation to pin.
+// Plus state. The Business distinction rides on a separate local
+// flag — see the Business section below.
 //
 // The free-tier photo-save quota is a second state machine:
 // Leb0/d;->a()Leb0/a; derives UNLIMITED / NON_MEMBER /
@@ -126,10 +125,14 @@ object SaveQuotaFingerprint : Fingerprint(
 // watermark text in one move.
 //
 // refreshPlace is "public" (0x0001), 36 registers, 4 ins: with
-// parameters (Lry/c;, List, List) the fix sits in v33. The patch
-// writes it through dexlib2 builder instructions, because the
-// inline smali compiler silently dropped this snippet's iput-wide
-// instructions on two consecutive desktop verification runs.
+// parameters (Lry/c;, List, List) the fix arrives in v33 and the
+// method's own prologue copies it to v4 (move-object/from16 at
+// index 1). The spoof hooks right after that copy and hands v4 to
+// the extension, which overwrites a/b from the coordinates the
+// user picked at runtime in the patch settings — no patch-time
+// coordinates, no re-patch to change location. (Direct iput-wide
+// writes into v33 are impossible: iput-wide is format 22c, whose
+// register fields are 4-bit; see RECON.md.)
 
 /** The single location funnel entry. The spoof overwrites the fix's lat/lng here. */
 object RefreshPlaceFingerprint : Fingerprint(
@@ -138,6 +141,103 @@ object RefreshPlaceFingerprint : Fingerprint(
     accessFlags = listOf(AccessFlags.PUBLIC),
     definingClass = "Lcom/xhey/xcamera/location/GlobalLocationService;",
     name = "refreshPlace"
+)
+
+// ── Business plan state — Timemark v10.0.316 ───────────────────────
+//
+// The Business distinction locally is the boolean config flag
+// "key_team_space_is_business_plan_user" (string resource
+// 0x7f1212c5), read through the config store Lcom/xhey/xcamera/
+// util/i1;->a(I Z)Z, which resolves the id to its key string and
+// reads the SAME prefs store that holds "key_is_vip". A full
+// census found exactly 8 literal read sites: Ldb0/n;->e() and
+// Ldb0/n;->g() (both already pinned by the Plus set), the team-
+// space cache refreshers Lb50/y0;->H(...) and Lb50/y0;->I()V,
+// the sync writer Lb50/y0;->W(Z)V, an account coroutine
+// (Lb50/p0;->invokeSuspend, which calls W(false) when the
+// account has no team space), RenewalOfferHost.f (suppresses the
+// personal renewal offer for business users) and one analytics
+// call. The cached static Lb50/y0;->k Z is read by the quota
+// reader (Leb0/d;), the paywall (PurchaseActivity) and the ad
+// service (XAdServices).
+//
+// Lb50/y0;->W(Z)V is the producer: called with the server-synced
+// business value, it writes BOTH the cache (sput y0.k) and the
+// persisted config (i1.g) whenever they differ. Pinning its
+// argument to true at entry makes the app's own sync persist the
+// business flag through its own writer, after which every read
+// site above answers true naturally. W is "public static"
+// (0x0009), 4 registers, so its boolean argument sits in v3.
+
+/** The business-plan sync writer. Forcing its argument to true persists the business state locally. */
+object BusinessSyncFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("Z"),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    definingClass = "Lb50/y0;",
+    name = "W"
+)
+
+// ── Patch-settings machinery — Timemark v10.0.316 ──────────────────
+//
+// The spoof's runtime half lives in the bundle extension
+// (app.template.extension.timemark): a PatchContext that tracks
+// the resumed activity (hxreborn's pattern), an OpenStreetMap
+// pin-drop picker, and the saved-coordinates store. Three hooks
+// wire it into the app:
+//
+//   1. TodayApplication.onCreate ("public final", 14 registers,
+//      p0 = v13): PatchContext.attach(Application) at index 0.
+//   2. The settings fragment Lcom/xhey/xcamera/ui/setting/z0;
+//      builds its rows (ArrayList field o0 of NewSettingItem) in
+//      onViewCreated ("public", 10 registers) and copies them
+//      into the adapter's own list (field n on
+//      Lcom/xhey/xcamera/ui/setting/e;) with an ArrayList.addAll
+//      right before setAdapter. The settings patch inserts the
+//      row-append call immediately after that addAll, and a
+//      value-refresh call at the fragment's p() ("public final",
+//      the onResume refresh).
+//   3. Row clicks are delivered by the adapter as a synthetic
+//      Lbz/i; Function1 whose e0 field holds the NewSettingItem
+//      (constructor (Object, Object, int, int): X = 4th arg = 1
+//      for settings rows, e0 = 2nd arg = the item). Its invoke
+//      ("public final", 16 registers: p0 = v14, p1 = v15) is
+//      hooked at index 0 with a key check for the patch row.
+
+/** Host Application.onCreate — the PatchContext.attach hook point. */
+object ApplicationOnCreateFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lcom/xhey/xcamera/TodayApplication;",
+    name = "onCreate"
+)
+
+/** Settings fragment onViewCreated — the row-append hook point (after the adapter addAll). */
+object SettingsOnViewCreatedFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("Landroid/view/View;", "Landroid/os/Bundle;"),
+    accessFlags = listOf(AccessFlags.PUBLIC),
+    definingClass = "Lcom/xhey/xcamera/ui/setting/z0;",
+    name = "onViewCreated"
+)
+
+/** Settings fragment refresh (called from onResume) — keeps the patch row's value current. */
+object SettingsRefreshFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lcom/xhey/xcamera/ui/setting/z0;",
+    name = "p"
+)
+
+/** Settings row click dispatcher — the patch-row click hook point. */
+object SettingsClickFingerprint : Fingerprint(
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf("Ljava/lang/Object;"),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lbz/i;",
+    name = "invoke"
 )
 
 // ── Telemetry — Timemark v10.0.316 ──────────────────────────────────

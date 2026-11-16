@@ -1,141 +1,70 @@
 package app.zdrgon.patches.timemark.misc
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
-import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
-import app.morphe.patcher.patch.stringOption
 import app.zdrgon.patches.timemark.shared.Constants.COMPATIBILITY_TIMEMARK
-import com.android.tools.smali.dexlib2.Opcode
-import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction22c
-import com.android.tools.smali.dexlib2.builder.instruction.BuilderInstruction51l
-import com.android.tools.smali.dexlib2.immutable.reference.ImmutableFieldReference
-import java.util.logging.Logger
 
 /**
  * Timemark — Spoof watermark location.
  *
- * Every GPS fix in Timemark flows through a single funnel:
- * Lcom/xhey/xcamera/location/GlobalLocationService; (the only
- * subclass of the location engine Lcom/xhey/xcamera/location/a;) and
- * its refreshPlace(Lry/c;, List, List) entry, which the engine calls
- * with each new fix. The fix object Lry/c; carries the coordinates
- * in two public fields — a:D = latitude, b:D = longitude — and
- * refreshPlace resolves exactly that pair into the watermark's
- * place data (LocationInfoData: large position, small position,
- * address list, EXIF location detail) through the developer's
- * server place list and the Android Geocoder.
+ * Modeled on hxreborn's BeReal "Custom location" patch
+ * (github.com/hxreborn/morphe-patches): no coordinates are baked
+ * in at patch time. Instead the user picks the location at
+ * runtime, on an OpenStreetMap pin-drop picker in the patch
+ * settings (Timemark's settings tab gains a real "Timemark
+ * patches" row — see TimemarkSettingsPatch), the choice is saved
+ * in the app's SharedPreferences, and this hook applies it to
+ * every new GPS fix. Changing the location never needs a
+ * re-patch; turning the custom location off (or clearing it in
+ * the picker) restores real GPS behavior exactly.
  *
- * This patch overwrites the fix's latitude/longitude at the top of
- * refreshPlace with the coordinates set in the patch options, so
- * the server lookup, the geocoder, the geo-address cache and the
- * composed watermark text all describe the spoofed place, exactly
- * as if the photo had been taken there. The watermark's location
- * text follows the coordinates through the app's own place
- * resolution; there is no separate text funnel to pin (the composed
- * strings live in LocationInfoData fields read at many sites).
+ * The hook sits at Timemark's single location funnel,
+ * GlobalLocationService.refreshPlace — the only subclass entry
+ * of the location engine, through which every fix flows before
+ * it is resolved into the watermark's LocationInfoData (server
+ * place list + Geocoder). The fix object (Lry/c;) carries the
+ * position in two public double fields, a = latitude and
+ * b = longitude. refreshPlace's own prologue copies the fix
+ * from its parameter register (v33) into v4; the hook is
+ * inserted immediately after that copy and hands v4 to the
+ * extension's SpoofLocation.applyToFix, which overwrites a/b
+ * from the saved coordinates when a custom location is set, and
+ * does nothing otherwise. Because the overwrite happens at the
+ * funnel, the server place lookup, the geocoder, the geo-cache
+ * keys and the composed watermark text all follow the picked
+ * location — there is no separate text funnel to spoof.
  *
- * Configuration: set BOTH options, or neither.
- *   - Both empty (the default): the patch inserts nothing and the
- *     app uses the real GPS fix. That is why this patch can ship
- *     enabled by default — an unconfigured install changes nothing
- *     and can never mislabel a photo.
- *   - Exactly one set, an unparseable value, or an out-of-range
- *     value: the patch run fails loudly with a PatchException
- *     instead of silently stamping a half-spoofed location.
+ * (An earlier design wrote patch-option coordinates straight
+ * into v33; that is impossible in dex — iput-wide is format 22c
+ * with 4-bit register fields — and was replaced by this runtime
+ * design, which is also what Matsen asked for: pick on a map,
+ * not typed numbers.)
  *
- * Register math (verified against the exact v10.0.316 dex):
- * refreshPlace has 36 registers and 4 ins (this + 3 parameters),
- * so the fix parameter sits in v33; v0/v1 are entry scratch.
- *
- * The four instructions are built with dexlib2's builder API and
- * inserted through the List<BuilderInstruction> overload, NOT as
- * inline smali: on the v1.79.7 and v1.79.8 desktop verification
- * runs the inline smali compiler silently dropped the iput-wide
- * halves of this snippet (both v33- and p1-addressed forms) while
- * keeping the const-wide halves — the patch "applied" but the
- * writes never landed. The builder path carries absolute registers
- * and references, with no template compilation in between.
- *
- * Scope note: the mutation happens on the fix object handed to
- * refreshPlace — the watermark/place-resolution path. Code that
- * reads a raw Location from the platform location APIs directly
- * (outside this funnel) is not affected.
+ * Default: on. With no location picked (the state right after
+ * patching) the hook is a no-op and photos keep the real GPS
+ * location; the patch only changes anything once the user picks
+ * a location in the settings, so the default cannot silently
+ * mislabel photos.
  */
 @Suppress("unused")
 val spoofWatermarkLocationPatch = bytecodePatch(
     name = "Spoof watermark location",
-    description = "Stamps photos as if taken at the latitude/longitude set in the patch options: the app resolves the place name and address for those coordinates, so the watermark shows that location. With both options empty (the default) nothing changes and the real GPS location is used.",
+    description = "Stamps photos with a location you pick on an OpenStreetMap pin-drop map (Timemark settings → Timemark patches) instead of your real GPS location. Off or unpicked means real GPS; change it any time without re-patching.",
     default = true
 ) {
     compatibleWith(COMPATIBILITY_TIMEMARK)
 
-    val latitude = stringOption(
-        key = "latitude",
-        default = "",
-        title = "Spoofed latitude",
-        description = "Decimal latitude, e.g. 33.4484. Must be set together with the longitude; leave both empty to keep the real GPS location."
-    )
-
-    val longitude = stringOption(
-        key = "longitude",
-        default = "",
-        title = "Spoofed longitude",
-        description = "Decimal longitude, e.g. -112.0740. Must be set together with the latitude; leave both empty to keep the real GPS location."
-    )
+    dependsOn(timemarkSettingsPatch)
 
     execute {
-        val logger = Logger.getLogger(this::class.java.name)
-
-        val latText = latitude.value?.trim().orEmpty()
-        val lngText = longitude.value?.trim().orEmpty()
-
-        if (latText.isEmpty() && lngText.isEmpty()) {
-            // Unconfigured: insert nothing. The app keeps using the
-            // real GPS fix, so an install that never set the options
-            // behaves exactly like stock.
-            logger.info("Timemark spoof: no coordinates configured; location left unchanged.")
-        } else {
-            if (latText.isEmpty() || lngText.isEmpty()) {
-                throw PatchException(
-                    "Timemark spoof: latitude and longitude must be set together " +
-                        "(latitude='$latText', longitude='$lngText'). Set both, or clear both " +
-                        "to keep the real GPS location."
-                )
-            }
-            val lat = latText.toDoubleOrNull()
-                ?: throw PatchException("Timemark spoof: latitude '$latText' is not a number.")
-            val lng = lngText.toDoubleOrNull()
-                ?: throw PatchException("Timemark spoof: longitude '$lngText' is not a number.")
-            if (lat < -90.0 || lat > 90.0) {
-                throw PatchException("Timemark spoof: latitude $lat is out of range (-90 to 90).")
-            }
-            if (lng < -180.0 || lng > 180.0) {
-                throw PatchException("Timemark spoof: longitude $lng is out of range (-180 to 180).")
-            }
-
-            val latBits = java.lang.Double.doubleToRawLongBits(lat)
-            val lngBits = java.lang.Double.doubleToRawLongBits(lng)
-
-            // The fix parameter is v33 (36 registers, 4 ins —
-            // verified in the dex). Built as raw builder
-            // instructions: see the register note above for why
-            // this is not inline smali.
-            RefreshPlaceFingerprint.method.addInstructions(
-                0,
-                listOf(
-                    BuilderInstruction51l(Opcode.CONST_WIDE, 0, latBits),
-                    BuilderInstruction22c(
-                        Opcode.IPUT_WIDE, 0, 33,
-                        ImmutableFieldReference("Lry/c;", "a", "D")
-                    ),
-                    BuilderInstruction51l(Opcode.CONST_WIDE, 0, lngBits),
-                    BuilderInstruction22c(
-                        Opcode.IPUT_WIDE, 0, 33,
-                        ImmutableFieldReference("Lry/c;", "b", "D")
-                    )
-                )
-            )
-            logger.info("Timemark spoof: watermark location set to $lat, $lng.")
-        }
+        // Insert right after the stock prologue copy that lands
+        // the fix in v4 (index 1), i.e. at index 2 — before the
+        // null-check and any use of the fix.
+        RefreshPlaceFingerprint.method.addInstructions(
+            2,
+            """
+                invoke-static { v4 }, Lapp/template/extension/timemark/SpoofLocation;->applyToFix(Ljava/lang/Object;)V
+            """.trimIndent()
+        )
     }
 }

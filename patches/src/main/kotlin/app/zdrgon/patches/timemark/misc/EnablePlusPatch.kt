@@ -50,13 +50,12 @@ import app.zdrgon.patches.timemark.shared.Constants.COMPATIBILITY_TIMEMARK
  * OCR text-entry gate, personal Excel/PDF/Zip/KMZ export, and
  * unlimited saves. What it cannot cover, because the data lives on
  * the developer's servers: professional weather data (the gate is
- * local, the pro feed is served per-account), and the Business
- * tier — shared/team storage, team billing, admin control and the
- * business-plan account flag are server-side account state with no
- * local representation; this patch does not fake one. Cloud backup
- * to the user's own Google Drive / OneDrive is gated locally and
+ * local, the pro feed is served per-account). Cloud backup to the
+ * user's own Google Drive / OneDrive is gated locally and
  * unlocked; the backup itself runs against the user's own cloud
- * account, as it does for a subscriber.
+ * account, as it does for a subscriber. The Business tier is a
+ * separate patch ("Enable Business") that adds the local
+ * business-plan state on top of this same pin set.
  *
  * No purchase is created and no receipt is forged; the patch only
  * changes the app's own answers about its own cached state.
@@ -64,6 +63,71 @@ import app.zdrgon.patches.timemark.shared.Constants.COMPATIBILITY_TIMEMARK
  * self-check (its SecNeo wrapper leaves the dexes readable and the
  * app launches re-signed), so no companion patch is needed.
  */
+
+/**
+ * Applies the Plus pin set. Shared with the "Enable Business"
+ * patch, which is self-contained (Business alone must work) and
+ * adds the business-plan pins on top. If both patches are selected
+ * in one run, the pins are applied twice to the same methods; the
+ * blocks are value-identical and stack harmlessly at index 0, so
+ * the combined run is safe (verified on the desktop test run).
+ */
+internal fun applyPlusPins() {
+    // 1. The producer: the server bean now reports a Plus
+    // subscription expiring 2100-01-01 (4102444800000 ms), so
+    // the app's own refresh writes the Plus state into its
+    // statics and persisted prefs.
+    VipIsVipFingerprint.method.addInstructions(
+        0,
+        """
+            const/4 v0, 0x1
+            return v0
+        """.trimIndent()
+    )
+
+    VipExpireTimeFingerprint.method.addInstructions(
+        0,
+        """
+            const-wide v0, 0x3bb2cc3d800L
+            return-wide v0
+        """.trimIndent()
+    )
+
+    // 2. The readers: every feature gate asks these.
+    VipReaderDFingerprint.method.addInstructions(
+        0,
+        """
+            const/4 v0, 0x1
+            return v0
+        """.trimIndent()
+    )
+
+    VipReaderEFingerprint.method.addInstructions(
+        0,
+        """
+            const/4 v0, 0x1
+            return v0
+        """.trimIndent()
+    )
+
+    VipStateFingerprint.method.addInstructions(
+        0,
+        """
+            sget-object v0, Lp50/e;->ACTIVE:Lp50/e;
+            return-object v0
+        """.trimIndent()
+    )
+
+    // 3. The photo-save quota reader: never exhausted.
+    SaveQuotaFingerprint.method.addInstructions(
+        0,
+        """
+            sget-object v0, Leb0/a;->UNLIMITED:Leb0/a;
+            return-object v0
+        """.trimIndent()
+    )
+}
+
 @Suppress("unused")
 val enablePlusPatch = bytecodePatch(
     name = "Enable Plus",
@@ -73,58 +137,6 @@ val enablePlusPatch = bytecodePatch(
     compatibleWith(COMPATIBILITY_TIMEMARK)
 
     execute {
-        // 1. The producer: the server bean now reports a Plus
-        // subscription expiring 2100-01-01 (4102444800000 ms), so
-        // the app's own refresh writes the Plus state into its
-        // statics and persisted prefs.
-        VipIsVipFingerprint.method.addInstructions(
-            0,
-            """
-                const/4 v0, 0x1
-                return v0
-            """.trimIndent()
-        )
-
-        VipExpireTimeFingerprint.method.addInstructions(
-            0,
-            """
-                const-wide v0, 0x3bb2cc3d800L
-                return-wide v0
-            """.trimIndent()
-        )
-
-        // 2. The readers: every feature gate asks these.
-        VipReaderDFingerprint.method.addInstructions(
-            0,
-            """
-                const/4 v0, 0x1
-                return v0
-            """.trimIndent()
-        )
-
-        VipReaderEFingerprint.method.addInstructions(
-            0,
-            """
-                const/4 v0, 0x1
-                return v0
-            """.trimIndent()
-        )
-
-        VipStateFingerprint.method.addInstructions(
-            0,
-            """
-                sget-object v0, Lp50/e;->ACTIVE:Lp50/e;
-                return-object v0
-            """.trimIndent()
-        )
-
-        // 3. The photo-save quota reader: never exhausted.
-        SaveQuotaFingerprint.method.addInstructions(
-            0,
-            """
-                sget-object v0, Leb0/a;->UNLIMITED:Leb0/a;
-                return-object v0
-            """.trimIndent()
-        )
+        applyPlusPins()
     }
 }
