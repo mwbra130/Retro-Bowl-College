@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-16T19:34:35",
-  "description": "## [1.79.8](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.7...v1.79.8) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** address the location fix as p1 so the spoof writes land ([b4ebdea](https://github.com/mwbra130/Retro-Bowl-College/commit/b4ebdead048c0108b6340b499bd78bacb9afa31c))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.8/patches-1.79.8.mpp",
+  "created_at": "2026-11-16T19:40:32",
+  "description": "## [1.79.9](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.8...v1.79.9) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** build the location spoof writes as builder instructions ([e325448](https://github.com/mwbra130/Retro-Bowl-College/commit/e32544899df64e3aad808f056f46325667fdd5f4))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.9/patches-1.79.9.mpp",
   "signature_download_url": "",
-  "version": "1.79.8"
+  "version": "1.79.9"
 }

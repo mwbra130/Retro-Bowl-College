@@ -1,3 +1,9 @@
+## [1.79.9](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.8...v1.79.9) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **timemark:** build the location spoof writes as builder instructions ([e325448](https://github.com/mwbra130/Retro-Bowl-College/commit/e32544899df64e3aad808f056f46325667fdd5f4))
+
 ## [1.79.8](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.7...v1.79.8) (2026-11-16)
 
 ### 🐛 Bug Fixes
