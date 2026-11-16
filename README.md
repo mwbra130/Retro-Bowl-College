@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**39 apps · 82 patches** · current bundle: [v1.79.9](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.9)
+**39 apps · 83 patches** · current bundle: [v1.79.10](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.10)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.79.9. -->
+     block below on purpose. Reflects bundle v1.79.10. -->
 
 <!-- GRID_START -->
 <table>
@@ -230,7 +230,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.79.9](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.9)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;82 patches total
+> **[v1.79.10](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.10)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;83 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -523,6 +523,25 @@ Some apps I patched and other apps that were requested if you would like to requ
 
 </details>
 
+<a id="app-com-oceangalaxy-camera-new" name="app-com-oceangalaxy-camera-new"></a>
+<details>
+<summary>Timemark: Photo Proof for Work&nbsp;&nbsp;•&nbsp;&nbsp;4 patches</summary>
+<br>
+
+**Supported versions:**
+
+| v10.0.316 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Enable Business](#enable-business) | Turns on the app's Business plan state locally (everything in Enable Plus, plus the business-plan flag the team-space and paywall gates read). Team storage, team billing, admin control and other server-side business features cannot be created by a local patch. |  |
+| [Enable Plus](#enable-plus) | Turns on the app's Plus premium state: edit and remove watermarks, ultra quality, custom file names, unlimited annotations and saves, exports and the other personal Plus features, as if the Plus plan were bought. |  |
+| [Remove telemetry](#remove-telemetry) | Stops the app reporting usage to SensorsData: both analytics event funnels (the SensorAnalyzeUtil sinks and the framework logger's LogService sinks) are cut, so no clicks, watermark edits, purchase steps or location-page events leave the device. Camera, backup, weather and all other features are unaffected. |  |
+| [Spoof watermark location](#spoof-watermark-location) | Stamps photos with a location you pick on an OpenStreetMap pin-drop map (Timemark settings → Timemark patches) instead of your real GPS location. Off or unpicked means real GPS; change it any time without re-patching. |  |
+
+</details>
+
 <a id="app-com-relmtech-remote" name="app-com-relmtech-remote"></a>
 <details>
 <summary>Unified Remote&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
@@ -553,24 +572,6 @@ Some apps I patched and other apps that were requested if you would like to requ
 |----------|----------------|-----------|
 | [Enable Lifetime](#enable-lifetime) | Pins the license state to the permanent verified state (the $49.99 Lifetime tier) at its single writer, so the app always runs as a lifetime license. Experimental: the license verdict is computed in the app's native library, so whether the recording engine honors the Java-side state can only be settled on a device. Call Recorder 3.7.8 only. |  |
 | [Remove telemetry](#remove-telemetry) | Disables the Bugsnag crash-reporting startup provider so no crash, ANR or session reports are sent. Call Recorder ships no other telemetry SDK. Recording and all other features are unaffected. Call Recorder 3.7.8 only. |  |
-
-</details>
-
-<a id="app-com-oceangalaxy-camera-new" name="app-com-oceangalaxy-camera-new"></a>
-<details>
-<summary>Timemark: Photo Proof for Work&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
-<br>
-
-**Supported versions:**
-
-| v10.0.316 |
-| :---: |
-
-| Patch | Description | Options |
-|----------|----------------|-----------|
-| [Enable Plus](#enable-plus) | Turns on the app's Plus premium state: edit and remove watermarks, ultra quality, custom file names, unlimited annotations and saves, exports and the other personal Plus features, as if the Plus plan were bought. |  |
-| [Remove telemetry](#remove-telemetry) | Stops the app reporting usage to SensorsData: both analytics event funnels (the SensorAnalyzeUtil sinks and the framework logger's LogService sinks) are cut, so no clicks, watermark edits, purchase steps or location-page events leave the device. Camera, backup, weather and all other features are unaffected. |  |
-| [Spoof watermark location](#spoof-watermark-location) | Stamps photos as if taken at the latitude/longitude set in the patch options: the app resolves the place name and address for those coordinates, so the watermark shows that location. With both options empty (the default) nothing changes and the real GPS location is used. | • Spoofed latitude<br>• Spoofed longitude |
 
 </details>
 

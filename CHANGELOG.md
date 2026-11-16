@@ -1,3 +1,10 @@
+## [1.79.10](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.9...v1.79.10) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **timemark:** resolve Plus fingerprints in patch context for the shared pin helper ([cc829d7](https://github.com/mwbra130/Retro-Bowl-College/commit/cc829d7bf7b95492a50a07a49dde3ab8db7b3a95))
+* **timemark:** split Enable Business patch, runtime OSM location picker in settings tab ([a183bc2](https://github.com/mwbra130/Retro-Bowl-College/commit/a183bc2b0a3c2c1ae6bff1e9cf19aae9a5d51262))
+
 ## [1.79.9](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.8...v1.79.9) (2026-11-16)
 
 ### 🐛 Bug Fixes

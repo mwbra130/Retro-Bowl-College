@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-16T19:40:32",
-  "description": "## [1.79.9](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.8...v1.79.9) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** build the location spoof writes as builder instructions ([e325448](https://github.com/mwbra130/Retro-Bowl-College/commit/e32544899df64e3aad808f056f46325667fdd5f4))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.9/patches-1.79.9.mpp",
+  "created_at": "2026-11-16T20:17:22",
+  "description": "## [1.79.10](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.9...v1.79.10) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** resolve Plus fingerprints in patch context for the shared pin helper ([cc829d7](https://github.com/mwbra130/Retro-Bowl-College/commit/cc829d7bf7b95492a50a07a49dde3ab8db7b3a95))\n* **timemark:** split Enable Business patch, runtime OSM location picker in settings tab ([a183bc2](https://github.com/mwbra130/Retro-Bowl-College/commit/a183bc2b0a3c2c1ae6bff1e9cf19aae9a5d51262))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.10/patches-1.79.10.mpp",
   "signature_download_url": "",
-  "version": "1.79.9"
+  "version": "1.79.10"
 }
