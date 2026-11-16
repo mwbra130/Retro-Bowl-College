@@ -1,12 +1,8 @@
 package app.zdrgon.patches.timemark.misc
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
-import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
-import app.morphe.patcher.patch.resourcePatch
 import app.zdrgon.patches.timemark.shared.Constants.COMPATIBILITY_TIMEMARK
-import java.util.logging.Logger
-import org.w3c.dom.Element
 
 /**
  * Timemark — Remove telemetry.
@@ -33,35 +29,27 @@ import org.w3c.dom.Element
  *      auto-save results, attendance events); LogService.monitor()
  *      delegates to it too.
  *
- * This patch neutralizes the telemetry per component:
+ * This patch pins all four sink methods to return immediately, so
+ * no app event reaches SensorsData. The SDK itself stays
+ * initialized (the app also reads experiment configuration through
+ * it), and the framework logger's local on-device log — which only
+ * leaves the phone when the user explicitly sends a feedback
+ * report — is untouched.
  *
- * 1. Both funnels — PINNED AT THE SINKS. All four sink methods
- *    return immediately, so no app event reaches SensorsData. The
- *    SDK itself stays initialized (the app also reads experiment
- *    configuration through it), and the framework logger's local
- *    on-device log — which only leaves the phone when the user
- *    explicitly sends a feedback report — is untouched.
- *
- * 2. Upload/campaign components — DISABLED IN THE MANIFEST
- *    (inline resource patch in dependsOn below, so the Manager
- *    lists exactly one "Remove telemetry" entry):
- *    - SensorsFocusContentProvider: the Sensors Focus marketing
- *      campaign channel (vendor in-app campaigns/push targeting).
- *      The app's own push is its FCM service, not this.
- *    - The three Google datatransport components
- *      (TransportBackendDiscovery, JobInfoSchedulerService,
- *      AlarmManagerSchedulerBroadcastReceiver): the upload
- *      plumbing Firebase Analytics/Crashlytics/Sessions data
- *      leaves through. The app code never calls FirebaseAnalytics
- *      itself; with the scheduler disabled nothing uploads.
- *    A missing component is a hard failure: a build that changed
- *    the manifest must not silently ship with a channel enabled.
+ * Why there is no manifest half to this patch (unlike the App
+ * Finder / ContentCam sets): Timemark's stock manifest declares
+ * android:extractNativeLibs TWICE on the <application> element
+ * (visible in the aapt2 dump of the exact XAPK). Android tolerates
+ * it, but the decoded manifest is not well-formed XML, so every
+ * resource patch that opens AndroidManifest.xml dies in the XML
+ * parser (SAXParseException, verified on a desktop run of this
+ * set). The Sensors Focus campaign provider and the Firebase
+ * datatransport upload components therefore cannot be
+ * manifest-disabled for this app version; with both event funnels
+ * cut, the app produces no analytics events for that plumbing to
+ * upload in the first place.
  *
  * Deliberately left alone, and why:
- * - SensorsDataContentProvider: the analytics SDK's storage
- *   provider. With both event funnels pinned, no app event ever
- *   enters it; disabling it risks breaking the SDK initialization
- *   the app's experiment/config reads rely on.
  * - The first-party API reporters on the feature client
  *   (reportDeviceFeature, reportActiveVersion, addEventCount,
  *   saveUserAttribution): suspend calls returning response beans
@@ -78,61 +66,13 @@ import org.w3c.dom.Element
 @Suppress("unused")
 val removeTelemetryPatch = bytecodePatch(
     name = "Remove telemetry",
-    description = "Stops the app reporting usage to SensorsData: both analytics event funnels are cut, the Sensors Focus campaign provider is disabled, and the Firebase datatransport upload services are disabled. Camera, backup, weather and all other features are unaffected.",
+    description = "Stops the app reporting usage to SensorsData: both analytics event funnels (the SensorAnalyzeUtil sinks and the framework logger's LogService sinks) are cut, so no clicks, watermark edits, purchase steps or location-page events leave the device. Camera, backup, weather and all other features are unaffected.",
     default = true
 ) {
     compatibleWith(COMPATIBILITY_TIMEMARK)
 
-    // The manifest half of this patch, defined INLINE inside
-    // dependsOn() so PatchLoader never discovers it as a separate
-    // top-level entry and the Manager shows exactly one
-    // "Remove telemetry" patch (same one-entry pattern as the
-    // App Finder and ContentCam sets).
-    dependsOn(
-        resourcePatch(
-            name = "Remove telemetry (manifest)",
-            description = "Disables the Sensors Focus campaign provider and the Google datatransport upload components in the manifest. Part of 'Remove telemetry'; the two are applied together.",
-            default = true,
-        ) {
-            compatibleWith(COMPATIBILITY_TIMEMARK)
-
-            execute {
-                val logger = Logger.getLogger(this::class.java.name)
-
-                val targets = setOf(
-                    "com.sensorsdata.sf.core.data.SensorsFocusContentProvider",
-                    "com.google.android.datatransport.runtime.backends.TransportBackendDiscovery",
-                    "com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService",
-                    "com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
-                )
-
-                document("AndroidManifest.xml").use { doc ->
-                    var disabled = 0
-                    for (tag in listOf("service", "receiver", "activity", "provider")) {
-                        val elements = doc.getElementsByTagName(tag)
-                        for (i in 0 until elements.length) {
-                            val element = elements.item(i) as Element
-                            if (element.getAttribute("android:name") in targets) {
-                                element.setAttribute("android:enabled", "false")
-                                disabled++
-                            }
-                        }
-                    }
-                    if (disabled != targets.size) {
-                        throw PatchException(
-                            "Timemark telemetry: disabled $disabled of ${targets.size} upload/campaign " +
-                                "components in the manifest; refusing to ship with a channel " +
-                                "partly enabled."
-                        )
-                    }
-                    logger.info("Timemark telemetry: all ${targets.size} upload/campaign components disabled in the manifest.")
-                }
-            }
-        }
-    )
-
     execute {
-        // 1a. The analytics facade's sinks.
+        // The analytics facade's sinks.
         WrapSensorsTrackPropsFingerprint.method.addInstructions(
             0,
             """
@@ -147,7 +87,7 @@ val removeTelemetryPatch = bytecodePatch(
             """.trimIndent()
         )
 
-        // 1b. The framework logger's backing sinks.
+        // The framework logger's backing sinks.
         LogServiceTrackPropsFingerprint.method.addInstructions(
             0,
             """
