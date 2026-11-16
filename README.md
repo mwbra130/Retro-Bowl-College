@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**37 apps · 75 patches** · current bundle: [v1.79.2](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.2)
+**37 apps · 77 patches** · current bundle: [v1.79.3](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.3)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.79.2. -->
+     block below on purpose. Reflects bundle v1.79.3. -->
 
 <!-- GRID_START -->
 <table>
@@ -221,7 +221,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.79.2](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;75 patches total
+> **[v1.79.3](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.3)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;77 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -285,7 +285,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 
 <a id="app-app-contentcam-android" name="app-app-contentcam-android"></a>
 <details>
-<summary>ContentCam: Dual Camera Video&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<summary>ContentCam: Dual Camera Video&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
 
 **Supported versions:**
@@ -297,12 +297,13 @@ Some apps I patched and other apps that were requested if you would like to requ
 |----------|----------------|-----------|
 | [Bypass PairIP license check](#bypass-pairip-license-check) | Required for re-signed builds: PairIP asks Google Play to license the app at startup and sends unlicensed installs to a Play Store block page. Disables that check, its verdict handler and both block-page launchers so the patched app can open. |  |
 | [Enable Premium](#enable-premium) | Turns on Premium permanently (Front/Back, Photos, 4K, 60fps, manual controls, teleprompter, timelapse, unlimited projects, trim in review), as if the one-time Lifetime purchase were bought. |  |
+| [Remove telemetry](#remove-telemetry) | Disables the unused Google datatransport upload services in the manifest. ContentCam ships no analytics or crash-reporting SDKs; this removes the one piece of inert upload plumbing it carries. All features are unaffected. ContentCam 2.8.0 only. |  |
 
 </details>
 
 <a id="app-com-codeswitch-drapes" name="app-com-codeswitch-drapes"></a>
 <details>
-<summary>Drapes - Wallpapers&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<summary>Drapes - Wallpapers&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
 <br>
 
 **Supported versions:**
@@ -314,6 +315,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 |----------|----------------|-----------|
 | [Bypass PairIP license check](#bypass-pairip-license-check) | Lets the patched app run: stubs out PairIP's license check, which otherwise blocks re-signed builds with a license dialog. Drapes 3.9.3 only. |  |
 | [Enable Pro](#enable-pro) | Enables Drapes Pro: no advertisements, image effects (blur, grayscale, dimming), auto wallpapers, and favorites sync. Requires 'Bypass PairIP license check'. Drapes 3.9.3 only. |  |
+| [Remove telemetry](#remove-telemetry) | Disables Firebase Analytics and Crashlytics collection, stops the AppMeasurement upload services, and removes the advertising ID permissions. Sign-in, favorites sync and all other features are unaffected. Drapes 3.9.3 only. |  |
 
 </details>
 

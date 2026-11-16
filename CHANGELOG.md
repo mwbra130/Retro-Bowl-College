@@ -1,3 +1,10 @@
+## [1.79.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.2...v1.79.3) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **contentcam:** add Remove telemetry patch for ContentCam 2.8.0 ([891d113](https://github.com/mwbra130/Retro-Bowl-College/commit/891d1134e405e4ef2399b47917eb95339687612a))
+* **drapes:** add Remove telemetry patch for Drapes 3.9.3 ([e4da769](https://github.com/mwbra130/Retro-Bowl-College/commit/e4da7695d66e68e216f73a163b68c9e9fdeaa661))
+
 ## [1.79.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.1...v1.79.2) (2026-11-16)
 
 ### 🐛 Bug Fixes

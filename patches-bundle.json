@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-16T17:59:02",
-  "description": "## [1.79.2](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.1...v1.79.2) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **appfinder:** add Remove telemetry patch ([637b85e](https://github.com/mwbra130/Retro-Bowl-College/commit/637b85e66c3f29b64fc2c3603dc9ff5ab8b6519d))\n* **drapes:** correct field reference syntax in Enable Pro smali ([1834e93](https://github.com/mwbra130/Retro-Bowl-College/commit/1834e93eb4ba7c556a6ee096e2f2a1c69ec6b9b5))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.2/patches-1.79.2.mpp",
+  "created_at": "2026-11-16T18:07:36",
+  "description": "## [1.79.3](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.2...v1.79.3) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **contentcam:** add Remove telemetry patch for ContentCam 2.8.0 ([891d113](https://github.com/mwbra130/Retro-Bowl-College/commit/891d1134e405e4ef2399b47917eb95339687612a))\n* **drapes:** add Remove telemetry patch for Drapes 3.9.3 ([e4da769](https://github.com/mwbra130/Retro-Bowl-College/commit/e4da7695d66e68e216f73a163b68c9e9fdeaa661))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.3/patches-1.79.3.mpp",
   "signature_download_url": "",
-  "version": "1.79.2"
+  "version": "1.79.3"
 }
