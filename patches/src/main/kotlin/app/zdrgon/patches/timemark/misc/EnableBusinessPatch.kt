@@ -2,10 +2,13 @@ package app.zdrgon.patches.timemark.misc
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.proxy.mutableTypes.MutableMethod
+import app.morphe.patcher.util.smali.ExternalLabel
 import app.zdrgon.patches.timemark.shared.Constants.COMPATIBILITY_TIMEMARK
 import app.zdrgon.util.getReference
 import com.android.tools.smali.dexlib2.Opcode
@@ -106,6 +109,30 @@ private fun MutableMethod.forceConfigReadTrue(label: String) {
  *   4. The W(Z) argument pin is kept: when the subscription
  *      sync does run, it now also persists the flag true
  *      through the app's own writer (i1.g).
+ *   5. Round 3 (v1.79.14): the string-keyed prefs funnel
+ *      Lcom/xhey/xcamera/util/f;->p(Ljava/lang/String; Z)Z —
+ *      the single storage read beneath i1.a — returns true
+ *      whenever the key is the business key. i1.a itself has
+ *      no spare register for a key-compare guard (2 registers,
+ *      2 ins), and every config read of the flag, cached,
+ *      direct or dynamic, passes through f.p; this closes the
+ *      last unpinned read path, so the local business flag is
+ *      now true at EVERY read in the app.
+ *
+ * Round-3 label verdict (dex-proven, RECON.md): the displayed
+ * current-plan NAME is rendered only from the server
+ * subscription model — MemberSubscriptionInfo type/status
+ * inside the downloaded GroupInfo (Lb50/y0;->j / y0.p),
+ * mapped by Lb50/y0;->v (0 Free / 1 Business / 2 Trial) —
+ * on the team-space header, the team-space plan page, the
+ * team chooser and the paywall's Business-tab "Current Plan"
+ * block. No code maps the local business boolean to a plan
+ * name, and VipInfo.vipType has zero UI readers, so no local
+ * pin can make those surfaces print "Business": they require
+ * a server-issued team subscription object that this patch
+ * does not fabricate. What the pins do change is every local
+ * decision the flag feeds (feature gates, quota, paywall
+ * button/bar state, renewal-offer suppression).
  *
  * What this changes on screen: the paywall's plan state reads
  * business (its PAGE_STATUS logic branches on k), the
@@ -188,5 +215,29 @@ val enableBusinessPatch = bytecodePatch(
                 const/4 v3, 0x1
             """.trimIndent()
         )
+
+        // 5. Round 3: pin the prefs funnel beneath i1.a. f.p is
+        // a 3-register static (v0 local, v1 = key, v2 = default)
+        // whose body opens by loading the MMKV instance into v0,
+        // so v0 is free scratch at entry: compare the key against
+        // the business key (the literal is the receiver, so a
+        // null key safely falls through) and return true on a
+        // match; every other key continues into the original
+        // body untouched. This covers all i1.a reads of the
+        // business key — the funnel i1.a itself delegates to.
+        PrefsBoolReadFingerprint.method.run {
+            addInstructionsWithLabels(
+                0,
+                """
+                    const-string v0, "key_team_space_is_business_plan_user"
+                    invoke-virtual {v0, v1}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+                    move-result v0
+                    if-eqz v0, :original_body
+                    const/4 v0, 0x1
+                    return v0
+                """.trimIndent(),
+                ExternalLabel("original_body", getInstruction(0))
+            )
+        }
     }
 }

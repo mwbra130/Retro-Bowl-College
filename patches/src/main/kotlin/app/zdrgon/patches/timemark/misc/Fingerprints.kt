@@ -240,6 +240,46 @@ object RenewalOfferBusinessReadFingerprint : Fingerprint(
     name = "f"
 )
 
+// ── Business round 3 (2026-11-16): the prefs funnel ────────────────
+//
+// v1.79.13 pinned every consumer of the cached flag, yet on device
+// the plan still presented as Plus. A full round-3 census (RECON.md)
+// proved two things:
+//
+//   1. There are NO other literal readers of the business key: all
+//      8 call sites of i1.a with resource 0x7f1212c5 are the sites
+//      already pinned. But i1.a itself has no spare register
+//      (2 registers, 2 ins) for a key-compare guard, and its ONLY
+//      path to storage is the string-keyed funnel beneath it,
+//      Lcom/xhey/xcamera/util/f;->p(Ljava/lang/String; Z)Z — an
+//      MMKV boolean read (3 registers: v0 local, v1 key, v2
+//      default). Pinning f.p with a key compare covers every
+//      i1.a read of the business key — cached, direct or dynamic —
+//      at the one funnel they all pass through.
+//
+//   2. The displayed current-plan NAME is not flag-driven anywhere
+//      in the app. Every surface that prints a plan name derives
+//      it from the SERVER subscription model — MemberSubscription-
+//      Info.getType()/getStatus() inside the downloaded GroupInfo
+//      (Lb50/y0;->j / y0.p), mapped by Lb50/y0;->v (0 Free /
+//      1 Business / 2 Trial): the team-space header, the
+//      team-space plan page, the team chooser rows, and the
+//      paywall's Business-tab "Current Plan" block (visible only
+//      when a y0.p GroupInfo carries type 1 / status 1). No local
+//      boolean is ever mapped to the "Business" label, so that
+//      label cannot appear without a server-issued team
+//      subscription. The f.p pin completes the LOCAL flag; it
+//      does not (and cannot) fabricate the server team model.
+
+/** The string-keyed prefs boolean read beneath i1.a — the funnel every config read of the business key passes through. */
+object PrefsBoolReadFingerprint : Fingerprint(
+    returnType = "Z",
+    parameters = listOf("Ljava/lang/String;", "Z"),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.STATIC),
+    definingClass = "Lcom/xhey/xcamera/util/f;",
+    name = "p"
+)
+
 // ── Patch-settings machinery — Timemark v10.0.316 ──────────────────
 //
 // The spoof's runtime half lives in the bundle extension
