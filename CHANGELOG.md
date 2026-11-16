@@ -1,3 +1,9 @@
+## [1.79.12](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.11...v1.79.12) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **timemark:** pin Enable Business at the read side so business state actually appears ([19f97e7](https://github.com/mwbra130/Retro-Bowl-College/commit/19f97e702c46bc39f4e3f355cefb548545b0cf40))
+
 ## [1.79.11](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.10...v1.79.11) (2026-11-16)
 
 ### 🐛 Bug Fixes
