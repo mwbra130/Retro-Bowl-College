@@ -159,7 +159,7 @@ val enableBusinessPatch = bytecodePatch(
                 returnIndex,
                 """
                     const/4 v0, 0x1
-                    sput-boolean v0, Lb50/y0;->k Z
+                    sput-boolean v0, Lb50/y0;->k:Z
                 """.trimIndent()
             )
         }
