@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-16T21:17:56",
-  "description": "## [1.79.12](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.11...v1.79.12) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** pin Enable Business at the read side so business state actually appears ([19f97e7](https://github.com/mwbra130/Retro-Bowl-College/commit/19f97e702c46bc39f4e3f355cefb548545b0cf40))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.12/patches-1.79.12.mpp",
+  "created_at": "2026-11-16T21:22:33",
+  "description": "## [1.79.13](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.12...v1.79.13) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** correct field reference syntax in the Business clinit pin ([53f2db0](https://github.com/mwbra130/Retro-Bowl-College/commit/53f2db02677b74eccd402750075a9e91db4a24d1))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.13/patches-1.79.13.mpp",
   "signature_download_url": "",
-  "version": "1.79.12"
+  "version": "1.79.13"
 }

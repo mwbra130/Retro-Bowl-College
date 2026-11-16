@@ -1,3 +1,9 @@
+## [1.79.13](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.12...v1.79.13) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **timemark:** correct field reference syntax in the Business clinit pin ([53f2db0](https://github.com/mwbra130/Retro-Bowl-College/commit/53f2db02677b74eccd402750075a9e91db4a24d1))
+
 ## [1.79.12](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.11...v1.79.12) (2026-11-16)
 
 ### 🐛 Bug Fixes
