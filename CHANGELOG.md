@@ -1,3 +1,9 @@
+## [1.79.8](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.7...v1.79.8) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **timemark:** address the location fix as p1 so the spoof writes land ([b4ebdea](https://github.com/mwbra130/Retro-Bowl-College/commit/b4ebdead048c0108b6340b499bd78bacb9afa31c))
+
 ## [1.79.7](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.6...v1.79.7) (2026-11-16)
 
 ### 🐛 Bug Fixes
