@@ -45,3 +45,63 @@ object PlanTierFingerprint : Fingerprint(
     definingClass = "Lscadica/aq/UU;",
     name = "getF"
 )
+
+// ── Telemetry — App Finder 1.5.1 ─────────────────────────────────────
+//
+// Census verified 2026-11-16 across all three base dexes (the four
+// XAPK splits are config-only and carry no code):
+//
+// There is NO third-party analytics/crash/ads SDK in this app: no
+// Firebase Analytics or Crashlytics (com.google.firebase appears
+// only as firebase-encoders, a datatransport dependency; there is
+// no FirebaseApp reference, no FirebaseInitProvider and no
+// google-services config), no Sentry / AppMetrica / Amplitude /
+// Mixpanel / Adjust / AppsFlyer. No AD_ID permission, no
+// AdvertisingIdClient, no install-referrer API, and no ANDROID_ID
+// or random-UUID reads in app code. The manifest declares only
+// INTERNET, BILLING and ACCESS_NETWORK_STATE.
+//
+// The reporting that does exist is first-party, to the developer's
+// own backend (afapi.org / intcon.appquery.org), and rides on two
+// readers of the same user-state object as the plan tier:
+//
+//   Lscadica/aq/UU;->getIid()Ljava/lang/String;
+//     The persistent install ID. The backend assigns it in the
+//     /inf startup exchange and UU stores it; from then on it is
+//     read out ONLY through this getter (dex census: the iid field
+//     itself is touched only inside UU; getIid's only callers are
+//     the three request-payload classes Qn, Qq and Qu, which take
+//     their iid default from it). So every search query — and every
+//     later /inf post — carries the same cross-session identifier.
+//
+//   Lscadica/aq/UU;->log(Lscadica/aq/Sli;Z)Ljava/lang/String;
+//     A usage log disguised as a settings diff: it walks the
+//     user-state fields, and for each field whose value changed
+//     since the previous snapshot (minus a denylist that excludes
+//     iid itself) appends "field=value" to a string. Its only
+//     external caller is the search-request builder in RsltsKt,
+//     which attaches it to every query as Qn.uu (" |" + log(...)).
+//     The backend needs no diff to answer a search — the full query
+//     state travels in the same request — so this channel exists
+//     purely to report which settings the user changed between
+//     searches.
+//
+// Both methods are declared "public final" (0x0011), like getF.
+
+/** The persistent install-ID reader. Pinning it severs the ID from every outbound payload. */
+object InstallIdFingerprint : Fingerprint(
+    returnType = "Ljava/lang/String;",
+    parameters = listOf(),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lscadica/aq/UU;",
+    name = "getIid"
+)
+
+/** The settings-diff usage log. Pinning it empties the uu field of every search query. */
+object SettingsDiffLogFingerprint : Fingerprint(
+    returnType = "Ljava/lang/String;",
+    parameters = listOf("Lscadica/aq/Sli;", "Z"),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lscadica/aq/UU;",
+    name = "log"
+)
