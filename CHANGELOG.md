@@ -1,3 +1,13 @@
+## [1.79.1](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.0...v1.79.1) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **contentcam:** add Enable Premium and Bypass PairIP license check patches for ContentCam 2.8.0 ([53b3a5b](https://github.com/mwbra130/Retro-Bowl-College/commit/53b3a5b89556c9a01b0012a11c018f5f34b83e3b))
+* **drapes:** add Enable Pro and PairIP license check bypass for Drapes 3.9.3 ([f9377ca](https://github.com/mwbra130/Retro-Bowl-College/commit/f9377ca66647ca0854e01265dbbf942ee4eaf492))
+* **drapes:** add Enable Pro and PairIP license check bypass for Drapes 3.9.3 ([c7c54b5](https://github.com/mwbra130/Retro-Bowl-College/commit/c7c54b50336e536208c01dd422d706862f2ab75e))
+* **drapes:** add Enable Pro and PairIP license check bypass for Drapes 3.9.3 ([4f8bc50](https://github.com/mwbra130/Retro-Bowl-College/commit/4f8bc502caf9b7ca3c6e3e503494a5b3b6745561))
+* **drapes:** add Enable Pro and PairIP license check bypass for Drapes 3.9.3 ([024d6b2](https://github.com/mwbra130/Retro-Bowl-College/commit/024d6b2306123c1a7d40ac0bbb5a42cb789055d1))
+
 ## [1.79.0](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.78.0...v1.79.0) (2026-11-16)
 
 ### ✨ New Features
