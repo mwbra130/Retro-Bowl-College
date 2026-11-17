@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**41 apps · 88 patches** · current bundle: [v1.79.18](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.18)
+**41 apps · 88 patches** · current bundle: [v1.79.19](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.19)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.79.18. -->
+     block below on purpose. Reflects bundle v1.79.19. -->
 
 <!-- GRID_START -->
 <table>
@@ -57,15 +57,11 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><a href="#app-com-hapibits-soundlift"><b>Echo</b></a>
 </td>
 <td align="center" width="20%">
-<img src="https://placehold.co/128x128/png?text=F" width="72" height="72" alt="FORScan Lite icon">
-<br><a href="#app-com-astech-forscanlite"><b>FORScan Lite</b></a>
-</td>
-</tr>
-<tr>
-<td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/n-VW4rcGGAZNvcAxpAA6gM64UTXU2iuPuCXBluW83Kd21zGhNgOThvhsYTo25mME4VioiXXbg3oL3S_BIk5QvYQ=w128-h128" width="72" height="72" alt="Games In One - Watch Games icon">
 <br><a href="#app-com-mustbefun-gamesinonewatchgames"><b>Games In One</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/04xiToIui2lD8Co9xPb-_V3JW90vSS8ej7aEAMqzdA9uadnjkGbPFvtkQPxB4okIIkrZquPYnxE3Eg6d6Ik_XQ=w128-h128" width="72" height="72" alt="Gradient Weather icon">
 <br><a href="#app-com-subtlesignals-gradientweather"><b>Gradient Weather</b></a>
@@ -83,12 +79,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/bOSkPoR8m9Qc_TPwrID8_Db51EL9oO0rq4UzRPAHKN2Zc1mq7gCq_0tySpBp1h6PkV5h7IOr0IvA1MTBiGyQCw=w128-h128" width="72" height="72" alt="ISS Live Now icon">
 <br><a href="#app-com-nicedayapps-iss-free"><b>ISS Live Now</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/77S-ulWheY_54z8acN5T5tmgJnnXBt01mmNAtBMlE5SvReKz2LfmO1s6UUMTY12lWugDzgWlmPxHp2li2132Ges=w128-h128" width="72" height="72" alt="Luminar icon">
 <br><a href="#app-com-skylum-luminar"><b>Luminar</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/juZBxj0uxtz80RMbyvPxco2O7rD7aU71VvhLsgConfsM4FmtzXTprkGXiEZQHugPU0A17AYnQ_tgF-0Nph9MIQ=w128-h128" width="72" height="72" alt="Notes icon">
 <br><a href="#app-com-inotesapp-inotes"><b>Notes</b></a>
@@ -106,12 +102,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/ssy9sm_kmFckXCA5OT-VpT4pYOE_P0dy8oM8mTvvXaD692W14esUS6saR8qaprJcrfMrmPyYG4Dvyr4Mudp3gg=w128-h128" width="72" height="72" alt="Rocket Player icon">
 <br><a href="#app-com-jrtstudio-anothermusicplayer"><b>Rocket Player</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/8Y6RokzLQKhDAFcI5vYbgCd-_Hi8b6pQbrSAYB3a40ZH_NoBOz3U25qcvzOOEOkQrXzraI9DCs1NzJxpgZs2=w128-h128" width="72" height="72" alt="Roku Remote icon">
 <br><a href="#app-com-swiftsofts-rokuremote"><b>Roku Remote</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/OdQDxdeo_WyMUftwJbJHF4PALrfSJ4B4vpOWkXPKar1_JN3NKc9ULakQ5o3mjzcuRRTDheF36xSh9mxVRnjD=w128-h128" width="72" height="72" alt="Smart MP3 Tagger icon">
 <br><a href="#app-tageditor-automatictageditor-audiotagging-audioedit-mp3edit"><b>Smart MP3 Tagger</b></a>
@@ -128,12 +124,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/foOfzWD2UQTfnP9gP6aCSRUx-6s4fmm6ZemRW__C3e7_fbjwhyXbBSvZjr1IS31q9PElU6oqLY1HvP3McqMfK_8=w128-h128" width="72" height="72" alt="Timemark icon">
 <br><a href="#app-com-oceangalaxy-camera-new"><b>Timemark</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/5wJZegUK2e_dXD14bp1NqX_Op20rpfnSLAYiuVJR7e32095qA8-yEDlezpbT7r1mx69VzjqWbCyVhHMm1T8O=w128-h128" width="72" height="72" alt="Tuner icon">
 <br><a href="#app-com-studiosol-afinadorlite"><b>Tuner</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/o2AAUlWu7gGP5WwbE7eg0aP3vqNKjna0HbfFP3LIFVAHpUpT3KfLxnGv3R8Nn6z0XUP9hsly0SBR4jniSW08Dw=w128-h128" width="72" height="72" alt="Unified Remote icon">
 <br><a href="#app-com-relmtech-remote"><b>Unified Remote</b></a>
@@ -178,17 +174,22 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><sub>🧪 experimental</sub>
 </td>
 <td align="center" width="20%">
+<img src="https://placehold.co/128x128/png?text=F" width="72" height="72" alt="FORScan Lite icon">
+<br><a href="#app-com-astech-forscanlite"><b>FORScan Lite</b></a>
+<br><sub>🧪 experimental</sub>
+</td>
+<td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/Ndfiaudmk4fiveYNm5Gsnso8gFcvLeskQUdwgh9yNnOghIH0LN-Hth_yAMsY2TxN1u9jleiOX6Y81Wh5Vy5M=w128-h128" width="72" height="72" alt="Google Messages icon">
 <br><a href="#app-com-google-android-apps-messaging"><b>Google Messages</b></a>
 <br><sub>🧪 experimental</sub>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/fgeKZ4Jl9iOyASIdpxVk5VMbmCOJbgZTx00FnNpGun0fxya2jZvvqCsS3btbORv6O9XyXl--tkFwB2r8XiX8=w128-h128" width="72" height="72" alt="Pika Spot icon">
 <br><a href="#app-com-pika-dynamicisland"><b>Pika Spot</b></a>
 <br><sub>🧪 experimental</sub>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/S-gCULXUiJ9cWJlV9mhTj-1e6nleHaBWXDAZrzlHOaVavugkYBqqMeR7Q5p_-sjLdC9xM9HI7cte-iweKHDfhw=w128-h128" width="72" height="72" alt="RainViewer icon">
 <br><a href="#app-com-lucky-apps-rainviewer"><b>RainViewer</b></a>
@@ -209,13 +210,13 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><a href="#app-com-instantbits-cast-webvideo"><b>Web Video Caster</b></a>
 <br><sub>🧪 experimental</sub>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/ANtuOsdWIW2Z58FWqGfpt9u6Tau7HUox1gVDbtfX2-1pu1MpAyuGszSUq5KqY0iZqQi2GxOcAVdoD0ltW2bSow=w128-h128" width="72" height="72" alt="X-plore icon">
 <br><a href="#app-com-lonelycatgames-xplore"><b>X-plore</b></a>
 <br><sub>🧪 experimental</sub>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/eZs5iqAZIxCcvq0I820wedBRA3UJDuJOkxVVbCPsmlvuSQ_xC_QnXfOOc8vMamG7D6yJuuqU3wTLJRBYeXByU5o=w128-h128" width="72" height="72" alt="Yin Yang Launcher icon">
 <br><a href="#app-com-yinyang-launcher"><b>Yin Yang Launcher</b></a>
@@ -240,7 +241,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.79.18](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.18)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;88 patches total
+> **[v1.79.19](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.19)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;88 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>

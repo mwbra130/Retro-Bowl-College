@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-17T03:05:03",
-  "description": "## [1.79.18](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.17...v1.79.18) (2026-11-17)\n\n### 🐛 Bug Fixes\n\n* **luminar:** force Lifetime at the store write points in Enable Lifetime ([88a22fc](https://github.com/mwbra130/Retro-Bowl-College/commit/88a22fca35f139ec4c5c105f248181d27a17e94c))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.18/patches-1.79.18.mpp",
+  "created_at": "2026-11-17T03:08:09",
+  "description": "## [1.79.19](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.18...v1.79.19) (2026-11-17)\n\n### 🐛 Bug Fixes\n\n* **forscanlite:** move FORScan Lite to Testing (native signer wall at init) ([527fe5f](https://github.com/mwbra130/Retro-Bowl-College/commit/527fe5f24845be80c270d26a0680eb8dc4b6649d))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.19/patches-1.79.19.mpp",
   "signature_download_url": "",
-  "version": "1.79.18"
+  "version": "1.79.19"
 }

@@ -1,3 +1,9 @@
+## [1.79.19](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.18...v1.79.19) (2026-11-17)
+
+### 🐛 Bug Fixes
+
+* **forscanlite:** move FORScan Lite to Testing (native signer wall at init) ([527fe5f](https://github.com/mwbra130/Retro-Bowl-College/commit/527fe5f24845be80c270d26a0680eb8dc4b6649d))
+
 ## [1.79.18](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.17...v1.79.18) (2026-11-17)
 
 ### 🐛 Bug Fixes
