@@ -66,6 +66,60 @@ object SubscriptionIsActiveFingerprint : Fingerprint(
     name = "isActive"
 )
 
+// ── Store write points — Luminar 4.6 (round 2) ─────────────────────
+//
+// The getter pins above are not sufficient on a never-purchaser
+// profile: if the Adapty profile carries no "premium" access-level
+// entry at all, Ls9;->a / Ls57;->a return null and the derivation
+// yields isPremium = false no matter what the pinned getters say
+// (on-device v1.79.16: paywall stayed up, Restore Purchase did
+// nothing). Round 2 therefore also forces the UserPaymentData at
+// every point where one enters the store's StateFlow.
+//
+// Write-path census (verified 2026-11-16 against the exact 4.6
+// base APK): the flow field Ls57;->c is written (iput) only in
+// Ls57;-><init>, read (iget) in exactly four places, and a Llka;
+// reaches the flow only wrapped in Ll47; — Ll47;-><init>(Llka;)V
+// has exactly three call sites, each ending in an unconditional
+// Lcd9;->k(null, wrapper) compareAndSet (StateFlowImpl skips the
+// expect check for a null expect):
+//   1. Ls57;->n — the sink: callers Lgw4;->c x2 (StoreProfile
+//      path + the Luwa;->a startup seed), Lun8;->R, Lun8;->f0.
+//      Nobody calls n through the Ln47; interface (0 sites).
+//   2. Le57;->onResult — the Adapty.getProfile callback; builds
+//      its Llka; itself and writes the flow directly, bypassing n.
+//   3. Lf57;->onResult — the Adapty.restorePurchases callback;
+//      same direct write (why Restore did nothing on device).
+// Ls57;->e only reads the flow (getValue). Forcing the Llka; at
+// these three points covers every producer.
+
+/** The store sink: n(UserPaymentData, Continuation). */
+object StoreSinkFingerprint : Fingerprint(
+    returnType = "Ljava/lang/Object;",
+    parameters = listOf("Llka;", "Lgr1;"),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Ls57;",
+    name = "n"
+)
+
+/** Adapty getProfile callback owned by the store; direct flow write. */
+object GetProfileCallbackFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("Ljava/lang/Object;"),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Le57;",
+    name = "onResult"
+)
+
+/** Adapty restorePurchases callback owned by the store; direct flow write. */
+object RestorePurchasesCallbackFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf("Ljava/lang/Object;"),
+    accessFlags = listOf(AccessFlags.PUBLIC, AccessFlags.FINAL),
+    definingClass = "Lf57;",
+    name = "onResult"
+)
+
 // ── PairIP license check — Luminar 4.6 ─────────────────────────────
 //
 // Stock PairIP licensecheck SDK only (no Skylum signature checks
