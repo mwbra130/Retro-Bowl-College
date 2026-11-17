@@ -8,6 +8,13 @@ on:
         required: false
         default: ''
         type: string
+  push:
+    branches: [ main ]
+    paths:
+      - 'patches/**'
+      - 'extensions/**'
+      - 'settings.gradle.kts'
+
 
 concurrency:
   group: release
