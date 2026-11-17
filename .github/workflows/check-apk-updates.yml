@@ -1,0 +1,28 @@
+name: Check for App APK Updates
+
+on:
+  schedule:
+    - cron: '0 14 * * *' # Runs daily at 7:00 AM MST
+  workflow_dispatch:       # Adds the "Run workflow" button
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Public Repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check Play Store Versions & Open Issues
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 .github/scripts/check_updates.py
