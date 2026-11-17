@@ -17,15 +17,15 @@ import java.util.logging.Logger
 /**
  * OLX Pakistan — Plain listings only.
  *
- * Listings are ListingModel (Ldefpackage/dl7;). Proven field map
+ * Listings are ListingModel (Ldl7;). Proven field map
  * (from the model's own toString / serializer, 18.13.1):
  *   g:Z  isFeatured      — paid FEATURED/boosted listing
  *   S:Z  isElite         — paid elite tier
  *   T:Z  isAdOfTheWeek   — paid promo slot
  *   X:Z  isPowAd         — paid promo slot
- *   p:Ldefpackage/xr;    agencyInfo (AgencyModel) — agency/business seller
+ *   p:Lxr;    agencyInfo (AgencyModel) — agency/business seller
  *   A:Ljava/util/List;  agents — agency listings
- *   b0:Ldefpackage/mr;   agencyLocation — agency listings
+ *   b0:Lmr;   agencyLocation — agency listings
  *   j:Ljava/lang/String; type — "ecommerce" for store/marketplace listings
  *
  * Every home / search / category listing is deserialized and emitted
@@ -84,7 +84,7 @@ val plainListingsOnlyPatch = bytecodePatch(
         val emitIdx = insns.indices.firstOrNull { i ->
             i > addIdx && insns[i].opcode == Opcode.INVOKE_INTERFACE &&
                 insns[i].getReference<MethodReference>()?.let { ref ->
-                    ref.definingClass == "Ldefpackage/vc5;" && ref.name == "emit"
+                    ref.definingClass == "Lvc5;" && ref.name == "emit"
                 } == true
         } ?: throw PatchException("OLX plain listings: downstream emit not found in rrb.emit.")
         val returnIdx = insns.indices.firstOrNull { i ->
@@ -102,25 +102,25 @@ val plainListingsOnlyPatch = bytecodePatch(
         method.addInstructionsWithLabels(
             moveObjectIdx + 1,
             """
-                iget-boolean v$tmp, v$listingReg, Ldefpackage/dl7;->g:Z
+                iget-boolean v$tmp, v$listingReg, Ldl7;->g:Z
                 if-nez v$tmp, :morphe_drop
-                iget-boolean v$tmp, v$listingReg, Ldefpackage/dl7;->S:Z
+                iget-boolean v$tmp, v$listingReg, Ldl7;->S:Z
                 if-nez v$tmp, :morphe_drop
-                iget-boolean v$tmp, v$listingReg, Ldefpackage/dl7;->T:Z
+                iget-boolean v$tmp, v$listingReg, Ldl7;->T:Z
                 if-nez v$tmp, :morphe_drop
-                iget-boolean v$tmp, v$listingReg, Ldefpackage/dl7;->X:Z
+                iget-boolean v$tmp, v$listingReg, Ldl7;->X:Z
                 if-nez v$tmp, :morphe_drop
-                iget-object v$tmp, v$listingReg, Ldefpackage/dl7;->p:Ldefpackage/xr;
+                iget-object v$tmp, v$listingReg, Ldl7;->p:Lxr;
                 if-nonnull v$tmp, :morphe_drop
-                iget-object v$tmp, v$listingReg, Ldefpackage/dl7;->b0:Ldefpackage/mr;
+                iget-object v$tmp, v$listingReg, Ldl7;->b0:Lmr;
                 if-nonnull v$tmp, :morphe_drop
-                iget-object v$tmp, v$listingReg, Ldefpackage/dl7;->A:Ljava/util/List;
+                iget-object v$tmp, v$listingReg, Ldl7;->A:Ljava/util/List;
                 if-eqz v$tmp, :morphe_check_type
                 invoke-interface {v$tmp}, Ljava/util/List;->isEmpty()Z
                 move-result v$tmp
                 if-nez v$tmp, :morphe_drop
                 :morphe_check_type
-                iget-object v$tmp, v$listingReg, Ldefpackage/dl7;->j:Ljava/lang/String;
+                iget-object v$tmp, v$listingReg, Ldl7;->j:Ljava/lang/String;
                 const-string v$tmp2, "ecommerce"
                 invoke-virtual {v$tmp2, v$tmp}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
                 move-result v$tmp
