@@ -10,7 +10,7 @@ import zipfile
 from pathlib import Path
 from google_play_scraper import app as gp_app
 
-API_BASE = os.environ.get("GITHUB_API_URL", "https://api.github.com").rstrip("/")
+API_BASE = os.environ.get("GITHUB_API_URL", "https://github.com").rstrip("/")
 PUBLIC_REPO = os.environ["PUBLIC_REPO"].strip()
 PRIVATE_REPO = os.environ["PRIVATE_REPO"].strip()
 PUBLIC_TOKEN = os.environ["GITHUB_TOKEN"].strip()
@@ -285,10 +285,7 @@ if not data:
     print("Could not find patches-list.json in repo or latest .mpp release.")
     exit(0)
 
-open_issues = github_api(PRIVATE_REPO, PRIVATE_TOKEN, "/issues?state=open&per_page=100")
+patches = data if isinstance(data, list) else data.get("patches", [])
+print(f"Loaded {len(patches)} patches from release metadata.")
 
-checked = {}
-for patch in data.get("patches", []):
-    for cp in patch.get("compatiblePackages") or []:
-        pkg = cp["packageName"]
-        name = cp.get("name") or pkg
+open_issues = github_api(PRIVATE_REPO, PRIVATE_TOKEN, "/issues?state=open&per_page=100")
