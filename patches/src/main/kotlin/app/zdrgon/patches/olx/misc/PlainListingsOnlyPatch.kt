@@ -111,9 +111,9 @@ val plainListingsOnlyPatch = bytecodePatch(
                 iget-boolean v$tmp, v$listingReg, Ldl7;->X:Z
                 if-nez v$tmp, :morphe_drop
                 iget-object v$tmp, v$listingReg, Ldl7;->p:Lxr;
-                if-nonnull v$tmp, :morphe_drop
+                if-nez v$tmp, :morphe_drop
                 iget-object v$tmp, v$listingReg, Ldl7;->b0:Lmr;
-                if-nonnull v$tmp, :morphe_drop
+                if-nez v$tmp, :morphe_drop
                 iget-object v$tmp, v$listingReg, Ldl7;->A:Ljava/util/List;
                 if-eqz v$tmp, :morphe_check_type
                 invoke-interface {v$tmp}, Ljava/util/List;->isEmpty()Z
@@ -128,9 +128,15 @@ val plainListingsOnlyPatch = bytecodePatch(
                 goto :morphe_keep
                 :morphe_drop
                 goto :morphe_return
-                :morphe_keep
             """.trimIndent(),
             ExternalLabel("morphe_return", method.getInstruction(returnIdx)),
+            // The keep target MUST be an external label bound to the
+            // original instruction after the insertion point (the
+            // if-eqz on the emit register). A trailing plain label at
+            // the end of the smali block resolved to the return
+            // instruction instead when this was desktop-tested, which
+            // would have made every listing skip the emit.
+            ExternalLabel("morphe_keep", method.getInstruction(moveObjectIdx + 1)),
         )
         logger.info("OLX plain listings: filter inserted in rrb.emit (listing v$listingReg, temps v$tmp/v$tmp2).")
     }
