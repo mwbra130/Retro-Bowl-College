@@ -95,15 +95,25 @@ jobs:
             python3 -c '
           import json
           from pathlib import Path
+          from datetime import datetime, timezone
+          ver = "${{ steps.ver.outputs.version }}"
           p = Path("patches-list.json")
           data = json.loads(p.read_text())
-          data["version"] = "${{ steps.ver.outputs.version }}"
+          data["version"] = ver
           p.write_text(json.dumps(data, indent=2))
+          bundle = {
+              "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
+              "description": f"Release v{ver}",
+              "download_url": f"https://github.com/${{ github.repository }}/releases/download/v{ver}/patches-{ver}.mpp",
+              "signature_download_url": "",
+              "version": ver,
+          }
+          Path("patches-bundle.json").write_text(json.dumps(bundle, indent=2))
           '
             python3 .github/scripts/generate_patches_readme.py "${{ github.repository }}" main patches-list.json README.md
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add README.md patches-list.json
+            git add README.md patches-list.json patches-bundle.json
             git commit -m "docs: update README for v${{ steps.ver.outputs.version }} [skip ci]" || exit 0
             git push
           fi
