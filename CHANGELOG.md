@@ -1,3 +1,10 @@
+## [1.79.16](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.15...v1.79.16) (2026-11-17)
+
+### 🐛 Bug Fixes
+
+* **callrecorder:** move Call Recorder to Testing (very unstable, experimental) ([8ac3d3f](https://github.com/mwbra130/Retro-Bowl-College/commit/8ac3d3f26af931a4f0f60bd246365dc2faddb3d4))
+* **luminar:** add Enable Lifetime, Bypass PairIP license check and Remove telemetry patches for Luminar 4.6 ([84af475](https://github.com/mwbra130/Retro-Bowl-College/commit/84af4751b62c56da473c131dffc91093e97f79a0))
+
 ## [1.79.15](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.14...v1.79.15) (2026-11-16)
 
 ### 🐛 Bug Fixes

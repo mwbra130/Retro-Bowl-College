@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**39 apps · 83 patches** · current bundle: [v1.79.15](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.15)
+**40 apps · 86 patches** · current bundle: [v1.79.16](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.16)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.79.15. -->
+     block below on purpose. Reflects bundle v1.79.16. -->
 
 <!-- GRID_START -->
 <table>
@@ -35,16 +35,11 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><a href="#app-scadica-aq"><b>App Finder</b></a>
 </td>
 <td align="center" width="20%">
-<img src="https://play-lh.googleusercontent.com/ldoC6AYZEHze9vFmmXz7nDIFPQK866Cw0oWSL6R7TGH3a5ZUabqplWV5kuJj5fKEBPIwDAxYmTzKII9K-2sC_w=w128-h128" width="72" height="72" alt="Call Recorder icon">
-<br><a href="#app-org-skvalex-cr"><b>Call Recorder</b></a>
-<br><sub>🧪 experimental</sub>
-</td>
-</tr>
-<tr>
-<td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/qT9Drz6krjycwLb6o0xrvk0Ju0JUQPbORoFX9SHHx1UYO5tA-5Lwy9fKmz15n_Na96TNsftMhaAFYk_iCyAeMY4=w128-h128" width="72" height="72" alt="ContentCam icon">
 <br><a href="#app-app-contentcam-android"><b>ContentCam</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/LX__Y8tKCvkvEgboZtQfDsvYiNFa6kwWSpqObipZI2MLK5rFVd5tEU8xgMNoMj1ICOf9TO7PFoFmiKGeIpf1=w128-h128" width="72" height="72" alt="Crossy Road icon">
 <br><a href="#app-com-yodo1-crossyroad"><b>Crossy Road</b></a>
@@ -61,12 +56,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/pVUW445uF1ek7vCeJetlNWk6bb4gMBnbSUtMEbzMkNHU6dDwoyO3KiEsSvYoiFByfHfAHXtcKf8nIGrCsu4ueQ=w128-h128" width="72" height="72" alt="Echo icon">
 <br><a href="#app-com-hapibits-soundlift"><b>Echo</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/n-VW4rcGGAZNvcAxpAA6gM64UTXU2iuPuCXBluW83Kd21zGhNgOThvhsYTo25mME4VioiXXbg3oL3S_BIk5QvYQ=w128-h128" width="72" height="72" alt="Games In One - Watch Games icon">
 <br><a href="#app-com-mustbefun-gamesinonewatchgames"><b>Games In One</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/04xiToIui2lD8Co9xPb-_V3JW90vSS8ej7aEAMqzdA9uadnjkGbPFvtkQPxB4okIIkrZquPYnxE3Eg6d6Ik_XQ=w128-h128" width="72" height="72" alt="Gradient Weather icon">
 <br><a href="#app-com-subtlesignals-gradientweather"><b>Gradient Weather</b></a>
@@ -83,6 +78,10 @@ Some apps I patched and other apps that were requested if you would like to requ
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/bOSkPoR8m9Qc_TPwrID8_Db51EL9oO0rq4UzRPAHKN2Zc1mq7gCq_0tySpBp1h6PkV5h7IOr0IvA1MTBiGyQCw=w128-h128" width="72" height="72" alt="ISS Live Now icon">
 <br><a href="#app-com-nicedayapps-iss-free"><b>ISS Live Now</b></a>
+</td>
+<td align="center" width="20%">
+<img src="https://play-lh.googleusercontent.com/77S-ulWheY_54z8acN5T5tmgJnnXBt01mmNAtBMlE5SvReKz2LfmO1s6UUMTY12lWugDzgWlmPxHp2li2132Ges=w128-h128" width="72" height="72" alt="Luminar icon">
+<br><a href="#app-com-skylum-luminar"><b>Luminar</b></a>
 </td>
 </tr>
 <tr>
@@ -165,6 +164,11 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><sub>🧪 experimental</sub>
 </td>
 <td align="center" width="20%">
+<img src="https://play-lh.googleusercontent.com/ldoC6AYZEHze9vFmmXz7nDIFPQK866Cw0oWSL6R7TGH3a5ZUabqplWV5kuJj5fKEBPIwDAxYmTzKII9K-2sC_w=w128-h128" width="72" height="72" alt="Call Recorder icon">
+<br><a href="#app-org-skvalex-cr"><b>Call Recorder</b></a>
+<br><sub>🧪 experimental</sub>
+</td>
+<td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/3Q9MNHslRe9p1Zbzn-H7b0OUZkqlvxuaMoPyZ_8mzQmry8tB-FeFPXfbJ7zBxVY6B8zrphBREyZhL-8I9R4r=w128-h128" width="72" height="72" alt="DiskWala icon">
 <br><a href="#app-com-diskwalaapp"><b>DiskWala</b></a>
 <br><sub>🧪 experimental</sub>
@@ -179,13 +183,13 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><a href="#app-com-pika-dynamicisland"><b>Pika Spot</b></a>
 <br><sub>🧪 experimental</sub>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/S-gCULXUiJ9cWJlV9mhTj-1e6nleHaBWXDAZrzlHOaVavugkYBqqMeR7Q5p_-sjLdC9xM9HI7cte-iweKHDfhw=w128-h128" width="72" height="72" alt="RainViewer icon">
 <br><a href="#app-com-lucky-apps-rainviewer"><b>RainViewer</b></a>
 <br><sub>🧪 experimental</sub>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/J4LN2qH2PQkZ3sFQonz-HWYkd7M38BtEO4Grzh1Xn7L2J6NUILHPkhYvPjdhMZQzrdm4BarUj547wfthyMz_vWM=w128-h128" width="72" height="72" alt="Strava icon">
 <br><a href="#app-com-strava"><b>Strava</b></a>
@@ -206,6 +210,8 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><a href="#app-com-lonelycatgames-xplore"><b>X-plore</b></a>
 <br><sub>🧪 experimental</sub>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/eZs5iqAZIxCcvq0I820wedBRA3UJDuJOkxVVbCPsmlvuSQ_xC_QnXfOOc8vMamG7D6yJuuqU3wTLJRBYeXByU5o=w128-h128" width="72" height="72" alt="Yin Yang Launcher icon">
 <br><a href="#app-com-yinyang-launcher"><b>Yin Yang Launcher</b></a>
@@ -230,7 +236,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.79.15](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.15)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;83 patches total
+> **[v1.79.16](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.16)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;86 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -325,6 +331,24 @@ Some apps I patched and other apps that were requested if you would like to requ
 | [Bypass PairIP license check](#bypass-pairip-license-check) | Lets the patched app run: stubs out PairIP's license check, which otherwise blocks re-signed builds with a license dialog. Drapes 3.9.3 only. |  |
 | [Enable Pro](#enable-pro) | Enables Drapes Pro: no advertisements, image effects (blur, grayscale, dimming), auto wallpapers, and favorites sync. Requires 'Bypass PairIP license check'. Drapes 3.9.3 only. |  |
 | [Remove telemetry](#remove-telemetry) | Disables Firebase Analytics and Crashlytics collection, stops the AppMeasurement upload services, and removes the advertising ID permissions. Sign-in, favorites sync and all other features are unaffected. Drapes 3.9.3 only. |  |
+
+</details>
+
+<a id="app-com-skylum-luminar" name="app-com-skylum-luminar"></a>
+<details>
+<summary>Luminar: Photo Editor&Enhancer&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
+<br>
+
+**Supported versions:**
+
+| 4.6 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Bypass PairIP license check](#bypass-pairip-license-check) | Required for re-signed builds: PairIP asks Google Play to license the app at startup and sends unlicensed installs to a Play Store block page. Disables that check at its entry point so the patched app can open. |  |
+| [Enable Lifetime](#enable-lifetime) | Turns on Lifetime permanently: every premium feature unlocks as if the one-time Lifetime purchase (Mobile + Web) were bought, and stays on across restarts. |  |
+| [Remove telemetry](#remove-telemetry) | Stops the app reporting usage: AppsFlyer and the TikTok Business SDK never initialize, Skylum's own stats sender (stats-api.skylum.com) is disabled, Firebase Analytics/Crashlytics/Performance collection is turned off, and Sentry is removed. Editing, purchases and sign-in are unaffected. Luminar 4.6 only. |  |
 
 </details>
 

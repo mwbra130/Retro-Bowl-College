@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.79.15",
+  "version": "1.79.16",
   "patches": [
     {
       "name": "Bypass PairIP application checks",
@@ -148,6 +148,32 @@
           "targets": [
             {
               "version": "3.9.3",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Bypass PairIP license check",
+      "description": "Required for re-signed builds: PairIP asks Google Play to license the app at startup and sends unlicensed installs to a Play Store block page. Disables that check at its entry point so the patched app can open.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.skylum.luminar",
+          "name": "Luminar",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#7C4DFF",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "4.6",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,
@@ -929,6 +955,32 @@
               "version": "3.6.9",
               "versionCodes": null,
               "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Enable Lifetime",
+      "description": "Turns on Lifetime permanently: every premium feature unlocks as if the one-time Lifetime purchase (Mobile + Web) were bought, and stays on across restarts.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.skylum.luminar",
+          "name": "Luminar",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#7C4DFF",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "4.6",
+              "versionCodes": null,
+              "isExperimental": false,
               "minSdk": null,
               "description": null
             }
@@ -1922,6 +1974,34 @@
           "targets": [
             {
               "version": "3.9.3",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove telemetry",
+      "description": "Stops the app reporting usage: AppsFlyer and the TikTok Business SDK never initialize, Skylum's own stats sender (stats-api.skylum.com) is disabled, Firebase Analytics/Crashlytics/Performance collection is turned off, and Sentry is removed. Editing, purchases and sign-in are unaffected. Luminar 4.6 only.",
+      "default": true,
+      "dependencies": [
+        "ResourcePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "com.skylum.luminar",
+          "name": "Luminar",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#7C4DFF",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "4.6",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,

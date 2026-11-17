@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-16T23:53:12",
-  "description": "## [1.79.15](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.14...v1.79.15) (2026-11-16)\n\n### 🐛 Bug Fixes\n\n* **timemark:** pin the subscription model getters and present the Business banner in the paywall ([6f60bd9](https://github.com/mwbra130/Retro-Bowl-College/commit/6f60bd9d9d104a591fb3bca7bf6a910565a792d7))",
-  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.15/patches-1.79.15.mpp",
+  "created_at": "2026-11-17T02:39:02",
+  "description": "## [1.79.16](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.15...v1.79.16) (2026-11-17)\n\n### 🐛 Bug Fixes\n\n* **callrecorder:** move Call Recorder to Testing (very unstable, experimental) ([8ac3d3f](https://github.com/mwbra130/Retro-Bowl-College/commit/8ac3d3f26af931a4f0f60bd246365dc2faddb3d4))\n* **luminar:** add Enable Lifetime, Bypass PairIP license check and Remove telemetry patches for Luminar 4.6 ([84af475](https://github.com/mwbra130/Retro-Bowl-College/commit/84af4751b62c56da473c131dffc91093e97f79a0))",
+  "download_url": "https://github.com/mwbra130/Retro-Bowl-College/releases/download/v1.79.16/patches-1.79.16.mpp",
   "signature_download_url": "",
-  "version": "1.79.15"
+  "version": "1.79.16"
 }
