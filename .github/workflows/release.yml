@@ -1,58 +1,109 @@
-name: Release
+name: Build & Publish Release
 
 on:
   workflow_dispatch:
+    inputs:
+      custom_version:
+        description: 'Leave blank to auto-increment (0.0.1 -> 0.0.2), or enter exact version (e.g. 0.0.1)'
+        required: false
+        default: ''
+        type: string
   push:
+    branches: [ main ]
+    paths:
+      - 'patches/**'
+      - 'extensions/**'
+      - 'settings.gradle.kts'
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+  attestations: write
 
 jobs:
   release:
-    name: Release
-    permissions:
-      contents: write
-      packages: write
-      id-token: write
-      attestations: write
+    name: Build & Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Java
-        uses: actions/setup-java@v5.7.0
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 'lts/*'
-          cache: 'npm'
+      - name: Setup Gradle (Cached)
+        uses: gradle/actions/setup-gradle@v4
 
-      - name: Install dependencies
-        run: npm install
+      - name: Determine Next Version (Starts at 0.0.1)
+        id: ver
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CUSTOM_VER: ${{ github.event.inputs.custom_version }}
+        run: |
+          if [ -n "$CUSTOM_VER" ]; then
+            NEXT_VER="${CUSTOM_VER#v}"
+          else
+            # Check your latest published GitHub Release (ignores old inherited tags)
+            LATEST_TAG=$(gh release list --limit 1 --json tagName -q '.[0].tagName' 2>/dev/null || echo "")
+            if [[ "$LATEST_TAG" =~ ^v?0\.0\.([0-9]+)$ ]]; then
+              PATCH_NUM=$((BASH_REMATCH[1] + 1))
+              NEXT_VER="0.0.${PATCH_NUM}"
+            elif [[ "$LATEST_TAG" =~ ^v?([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+              PATCH_NUM=$((BASH_REMATCH[3] + 1))
+              NEXT_VER="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${PATCH_NUM}"
+            else
+              # First release starts at 0.0.1
+              NEXT_VER="0.0.1"
+            fi
+          fi
+          echo "version=$NEXT_VER" >> $GITHUB_OUTPUT
+          echo "Building version v$NEXT_VER"
 
-      # Semantic release runs its own Gradle build command.
-      # Only dev and main branch will generate a release as specified by .releaserc
-      - name: Release
-        uses: cycjimmy/semantic-release-action@v6
-        id: release
+      - name: Build Patches (.mpp)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew :patches:buildAndroid -Pversion="${{ steps.ver.outputs.version }}" --no-daemon
+          # Ensure the built file matches patches-X.Y.Z.mpp
+          BUILT_FILE=$(ls patches/build/libs/patches-*.mpp | head -n 1)
+          if [ "$BUILT_FILE" != "patches/build/libs/patches-${{ steps.ver.outputs.version }}.mpp" ]; then
+            cp "$BUILT_FILE" "patches/build/libs/patches-${{ steps.ver.outputs.version }}.mpp"
+          fi
 
-      - name: Attest
-        if: steps.release.outputs.new_release_published == 'true'
-        uses: actions/attest-build-provenance@v4
-        with:
-          subject-name: 'Morphe Patches ${{ steps.release.outputs.new_release_git_tag }}'
-          subject-path: patches/build/libs/patches-*.mpp
+      - name: Update README App Grid & Patch List
+        run: |
+          python3 -c '
+          import zipfile, json
+          from pathlib import Path
+          mpp = sorted(Path("patches/build/libs").glob("patches-*.mpp"))[0]
+          with zipfile.ZipFile(mpp) as z:
+              if "patches-list.json" in z.namelist():
+                  data = json.loads(z.read("patches-list.json").decode("utf-8"))
+                  data["version"] = "${{ steps.ver.outputs.version }}"
+                  Path("patches-list.json").write_text(json.dumps(data, indent=2))
+          '
+          if [ -f "patches-list.json" ] && [ -f ".github/scripts/generate_patches_readme.py" ]; then
+            python3 .github/scripts/generate_patches_readme.py "${{ github.repository }}" main patches-list.json README.md
+            rm -f patches-list.json
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@://github.com"
+            git add README.md
+            git commit -m "docs: update README for v${{ steps.ver.outputs.version }} [skip ci]" || exit 0
+            git push
+          fi
 
-      # Always verify compilation when semantic-release did not publish a release.
-      # This covers non-main/dev branches, chore commits, docs commits, etc.
-      - name: Verify project compiles
-        if: steps.release.outputs.new_release_published != 'true'
+      - name: Publish GitHub Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew :patches:buildAndroid clean --no-daemon
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VER="${{ steps.ver.outputs.version }}"
+          gh release create "v${VER}" \
+            "patches/build/libs/patches-${VER}.mpp" \
+            --title "v${VER}" \
+            --notes "Release v${VER}"
