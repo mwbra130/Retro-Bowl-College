@@ -7,7 +7,7 @@ object Constants {
     val COMPATIBILITY_FORSCAN_LITE = Compatibility(
         name = "FORScan Lite",
         packageName = "com.astech.forscanlite",
-        appIconColor = 0xFF33B5E5,
+        appIconColor = 0xFF33B5E5.toInt(),
         targets = listOf(
             AppTarget(version = "1.5.31")
         )
