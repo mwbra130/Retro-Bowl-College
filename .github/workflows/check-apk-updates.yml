@@ -2,8 +2,8 @@ name: Check for App APK Updates
 
 on:
   schedule:
-    - cron: '0 14 * * *' # Runs daily at 7:00 AM MST
-  workflow_dispatch:       # Adds the "Run workflow" button
+    - cron: '0 14 * * *'
+  workflow_dispatch:
 
 permissions:
   issues: write
@@ -20,6 +20,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: Install Play Store Scraper
+        run: pip install google-play-scraper
 
       - name: Check Play Store Versions & Open Issues
         env:
