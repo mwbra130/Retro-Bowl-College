@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**41 apps · 88 patches** · current bundle: [v1.79.20](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.20)
+**42 apps · 91 patches** · current bundle: [v1.79.21](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.21)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.79.20. -->
+     block below on purpose. Reflects bundle v1.79.21. -->
 
 <!-- GRID_START -->
 <table>
@@ -91,6 +91,10 @@ Some apps I patched and other apps that were requested if you would like to requ
 <br><sub>🧪 experimental</sub>
 </td>
 <td align="center" width="20%">
+<img src="https://play-lh.googleusercontent.com/6pwBTSQ4miOUb2Bj1043PM71JyzCUAa62TiH95RE2WW168iIT3hy4ANK3jaQZYAWSFHlEg7f7g7g0pSogSfsaA=w128-h128" width="72" height="72" alt="OLX Pakistan icon">
+<br><a href="#app-com-olx-pk"><b>OLX Pakistan</b></a>
+</td>
+<td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/-21ASw97RWIu-CnDVbEEtTrfVIDqpfhY4eofgk5aT98q4E8jnrMVxNqI0J7JYgRTkHjoOoWM58ScUzu30cxevQ=w128-h128" width="72" height="72" alt="Poweramp icon">
 <br><a href="#app-com-maxmpz-audioplayer"><b>Poweramp</b></a>
 </td>
@@ -102,12 +106,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/ssy9sm_kmFckXCA5OT-VpT4pYOE_P0dy8oM8mTvvXaD692W14esUS6saR8qaprJcrfMrmPyYG4Dvyr4Mudp3gg=w128-h128" width="72" height="72" alt="Rocket Player icon">
 <br><a href="#app-com-jrtstudio-anothermusicplayer"><b>Rocket Player</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/8Y6RokzLQKhDAFcI5vYbgCd-_Hi8b6pQbrSAYB3a40ZH_NoBOz3U25qcvzOOEOkQrXzraI9DCs1NzJxpgZs2=w128-h128" width="72" height="72" alt="Roku Remote icon">
 <br><a href="#app-com-swiftsofts-rokuremote"><b>Roku Remote</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/OdQDxdeo_WyMUftwJbJHF4PALrfSJ4B4vpOWkXPKar1_JN3NKc9ULakQ5o3mjzcuRRTDheF36xSh9mxVRnjD=w128-h128" width="72" height="72" alt="Smart MP3 Tagger icon">
 <br><a href="#app-tageditor-automatictageditor-audiotagging-audioedit-mp3edit"><b>Smart MP3 Tagger</b></a>
@@ -124,12 +128,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/foOfzWD2UQTfnP9gP6aCSRUx-6s4fmm6ZemRW__C3e7_fbjwhyXbBSvZjr1IS31q9PElU6oqLY1HvP3McqMfK_8=w128-h128" width="72" height="72" alt="Timemark icon">
 <br><a href="#app-com-oceangalaxy-camera-new"><b>Timemark</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/5wJZegUK2e_dXD14bp1NqX_Op20rpfnSLAYiuVJR7e32095qA8-yEDlezpbT7r1mx69VzjqWbCyVhHMm1T8O=w128-h128" width="72" height="72" alt="Tuner icon">
 <br><a href="#app-com-studiosol-afinadorlite"><b>Tuner</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/o2AAUlWu7gGP5WwbE7eg0aP3vqNKjna0HbfFP3LIFVAHpUpT3KfLxnGv3R8Nn6z0XUP9hsly0SBR4jniSW08Dw=w128-h128" width="72" height="72" alt="Unified Remote icon">
 <br><a href="#app-com-relmtech-remote"><b>Unified Remote</b></a>
@@ -241,7 +245,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.79.20](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.20)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;88 patches total
+> **[v1.79.21](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.21)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;91 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -797,6 +801,24 @@ Some apps I patched and other apps that were requested if you would like to requ
 | Patch | Description | Options |
 |----------|----------------|-----------|
 | [OLED black mode](#oled-black-mode) | Turns the dark theme true black (#000000) for OLED screens: backgrounds and surfaces go pure black, raised containers (cards, bubbles, sheets) become near-black steps so they stay visible. Dark theme only — light mode is untouched. Needs the stock APK of the target version (messages.android_20261020_00_RC01.phone_dynamic, the universal APK — not a BUNDLE — from APKMirror: https://www.apkmirror.com/apk/google-inc/messenger-google-inc/); Morphe Manager also suggests that exact version when you don't have the file. A few settings screens on Android 12+ take surfaces from the system palette and stay dark grey. |  |
+
+</details>
+
+<a id="app-com-olx-pk" name="app-com-olx-pk"></a>
+<details>
+<summary>OLX Pakistan - Online Shopping&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
+<br>
+
+**Supported versions:**
+
+| 18.13.1 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Plain listings only](#plain-listings-only) | Removes featured, boosted and paid-promo listings and all agency, dealer and store listings from home, search and category feeds, leaving only plain listings from individual sellers. OLX Pakistan 18.13.1 only. |  |
+| [Remove ads](#remove-ads) | Removes the Google Ads banner, featured-agency cards and promo widgets that are interleaved into home, search and category feeds. OLX Pakistan 18.13.1 only. |  |
+| [Remove telemetry](#remove-telemetry) | Turns off Firebase Analytics, Crashlytics and Performance reporting and ad-id collection, disables the Firebase report-upload plumbing, and disables MoEngage in-app campaigns and push-open tracking. Search, chat, sign-in and notifications are unaffected. OLX Pakistan 18.13.1 only. |  |
 
 </details>
 

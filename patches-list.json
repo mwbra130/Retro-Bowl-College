@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.79.20",
+  "version": "1.79.21",
   "patches": [
     {
       "name": "Bypass PairIP application checks",
@@ -1747,6 +1747,32 @@
       "options": []
     },
     {
+      "name": "Plain listings only",
+      "description": "Removes featured, boosted and paid-promo listings and all agency, dealer and store listings from home, search and category feeds, leaving only plain listings from individual sellers. OLX Pakistan 18.13.1 only.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.olx.pk",
+          "name": "OLX Pakistan",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": "#002E25",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "18.13.1",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Remove ads",
       "description": "Stops banner, interstitial and app-open ads from loading (AppLovin MAX). Rewarded ads for hints are left working.",
       "default": true,
@@ -1818,6 +1844,32 @@
               "version": "2.2.2",
               "versionCodes": null,
               "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove ads",
+      "description": "Removes the Google Ads banner, featured-agency cards and promo widgets that are interleaved into home, search and category feeds. OLX Pakistan 18.13.1 only.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.olx.pk",
+          "name": "OLX Pakistan",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": "#002E25",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "18.13.1",
+              "versionCodes": null,
+              "isExperimental": false,
               "minSdk": null,
               "description": null
             }
@@ -2054,6 +2106,32 @@
           "targets": [
             {
               "version": "4.6",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove telemetry",
+      "description": "Turns off Firebase Analytics, Crashlytics and Performance reporting and ad-id collection, disables the Firebase report-upload plumbing, and disables MoEngage in-app campaigns and push-open tracking. Search, chat, sign-in and notifications are unaffected. OLX Pakistan 18.13.1 only.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.olx.pk",
+          "name": "OLX Pakistan",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": "#002E25",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "18.13.1",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,

@@ -1,3 +1,13 @@
+## [1.79.21](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.20...v1.79.21) (2026-11-17)
+
+### 🐛 Bug Fixes
+
+* add OLX Pakistan patch set (plain listings only, remove ads, remove telemetry) ([30c81c2](https://github.com/mwbra130/Retro-Bowl-College/commit/30c81c23ba0e64137712a9b4c8cd5dc2b9055325))
+* add OLX Pakistan patch set (plain listings only, remove ads, remove telemetry) ([ce7a26f](https://github.com/mwbra130/Retro-Bowl-College/commit/ce7a26fefcc6f0bffa78659b399f7e9f9d2a3693))
+* add OLX Pakistan patch set (plain listings only, remove ads, remove telemetry) ([a9f0f2a](https://github.com/mwbra130/Retro-Bowl-College/commit/a9f0f2a2d6e998ef8399422c03999b0dd14fc3ab))
+* add OLX Pakistan patch set (plain listings only, remove ads, remove telemetry) ([a34759c](https://github.com/mwbra130/Retro-Bowl-College/commit/a34759c41406a713083e106a19c63e83a5416a0d))
+* add OLX Pakistan patch set (plain listings only, remove ads, remove telemetry) ([535d577](https://github.com/mwbra130/Retro-Bowl-College/commit/535d5772e8c06a08fd6e4e57fe10cf38494e27ef))
+
 ## [1.79.20](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.19...v1.79.20) (2026-11-17)
 
 ### 🐛 Bug Fixes
