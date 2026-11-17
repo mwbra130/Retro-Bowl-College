@@ -1,3 +1,9 @@
+## [1.79.18](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.17...v1.79.18) (2026-11-17)
+
+### 🐛 Bug Fixes
+
+* **luminar:** force Lifetime at the store write points in Enable Lifetime ([88a22fc](https://github.com/mwbra130/Retro-Bowl-College/commit/88a22fca35f139ec4c5c105f248181d27a17e94c))
+
 ## [1.79.17](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.16...v1.79.17) (2026-11-17)
 
 ### 🐛 Bug Fixes
