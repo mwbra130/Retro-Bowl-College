@@ -26,7 +26,7 @@ jobs:
       - name: Check Play Store Versions & Open Private Issues
         env:
           PUBLIC_REPO: ${{ github.repository }}
-          PRIVATE_REPO: mwbra130/YOUR-PRIVATE-REPO-NAME # <-- Replace with your exact private repo name
+          PRIVATE_REPO: mwbra130/Morphe_Patch_Tests
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PRIVATE_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
         run: python3 .github/scripts/check_updates.py
