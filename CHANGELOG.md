@@ -1,3 +1,9 @@
+## [1.79.20](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.19...v1.79.20) (2026-11-17)
+
+### 🐛 Bug Fixes
+
+* **luminar:** make the Enable Lifetime store helper public static ([2c17bf2](https://github.com/mwbra130/Retro-Bowl-College/commit/2c17bf24bd92a41ce9524242f34d887115f25af5))
+
 ## [1.79.19](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.18...v1.79.19) (2026-11-17)
 
 ### 🐛 Bug Fixes
