@@ -50,7 +50,7 @@ private const val HELPER_REFERENCE = "Ls57;->morpheForceLifetime(Llka;)Llka;"
  * access-level entry entirely — Ls9;->a / Ls57;->a then return
  * null and the derivation produces isPremium = false regardless
  * (on-device v1.79.16: paywall stayed, Restore Purchase did
- * nothing). So the patch also adds a private static helper,
+ * nothing). So the patch also adds a public static helper,
  * Ls57;->morpheForceLifetime(Llka;)Llka;, which rebuilds any
  * UserPaymentData through its 11-argument constructor with
  * isPremium = 1, isPrime = 1, primeSku =
@@ -111,7 +111,7 @@ val enableLifetimePatch = bytecodePatch(
             HELPER_NAME,
             listOf(ImmutableMethodParameter("Llka;", null, null)),
             "Llka;",
-            AccessFlags.PRIVATE.value or AccessFlags.STATIC.value,
+            AccessFlags.PUBLIC.value or AccessFlags.STATIC.value,
             null,
             null,
             MutableMethodImplementation(16),
