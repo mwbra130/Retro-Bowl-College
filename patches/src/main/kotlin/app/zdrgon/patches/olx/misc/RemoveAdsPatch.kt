@@ -19,11 +19,11 @@ import java.util.logging.Logger
  * The only third-party ad SDK in 18.13.1 is Google Mobile Ads
  * (next-gen); there is no Meta/AppLovin/Unity/ironSource/InMobi
  * code in the dex. In the listing feed its banner is the
- * ListingAdBanner item (Ldefpackage/lk7;), interleaved into the
+ * ListingAdBanner item (Llk7;), interleaved into the
  * stream by the search repository's flow transform,
  * urb.invokeSuspend, together with three first-party promo items:
- * FeaturedAgency (Ldefpackage/f35;), CarInspectionWidget
- * (Ldefpackage/is1;) and InterScroller (Ldefpackage/js6;).
+ * FeaturedAgency (Lf35;), CarInspectionWidget
+ * (Lis1;) and InterScroller (Ljs6;).
  *
  * urb.invokeSuspend gates each promo on a computed register
  * (verified instruction-by-instruction against the 18.13.1
@@ -83,7 +83,7 @@ val removeAdsPatch = bytecodePatch(
         // back to its isEmpty gate (see header).
         val f35Idx = insns.indexOfFirst { insn ->
             insn.opcode == Opcode.NEW_INSTANCE &&
-                insn.getReference<TypeReference>()?.type == "Ldefpackage/f35;"
+                insn.getReference<TypeReference>()?.type == "Lf35;"
         }
         if (f35Idx < 0) {
             throw PatchException("OLX remove ads: FeaturedAgency construction not found in urb.invokeSuspend.")
