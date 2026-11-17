@@ -7,11 +7,6 @@ from pathlib import Path
 
 REPO = os.environ["GITHUB_REPOSITORY"]
 TOKEN = os.environ["GITHUB_TOKEN"]
-PATCHES_JSON = Path("patches-list.json")
-
-# Minimum jump required before opening an issue:
-# - Always alerts on Major (1.x -> 2.x) or Minor (1.2 -> 1.3) bumps
-# - Only alerts on Patch bumps (1.2.1 -> 1.2.6) if the patch number jumps by at least 5
 MIN_PATCH_JUMP = 5
 
 def parse_version(v):
@@ -25,10 +20,8 @@ def is_meaningful_update(old_ver, new_ver):
     new_t = parse_version(new_ver)
     if new_t <= old_t:
         return False
-    # Major or Minor version increased (e.g. 1.2.x -> 1.3.0 or 2.0.0)
     if new_t[0] > old_t[0] or new_t[1] > old_t[1]:
         return True
-    # Tiny patch bump: only alert if it jumped by MIN_PATCH_JUMP or more
     return (new_t[2] - old_t[2]) >= MIN_PATCH_JUMP
 
 def get_play_version(pkg):
@@ -53,11 +46,24 @@ def github_api(path, method="GET", body=None):
     with urllib.request.urlopen(req) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
-if not PATCHES_JSON.exists():
-    print("patches-list.json not found.")
+def load_patches_json():
+    local_file = Path("patches-list.json")
+    if local_file.exists():
+        return json.loads(local_file.read_text(encoding="utf-8"))
+    # Fetch patches-list.json from the latest GitHub Release assets
+    latest = github_api("/releases/latest")
+    for asset in latest.get("assets", []):
+        if asset["name"] == "patches-list.json":
+            req = urllib.request.Request(asset["browser_download_url"], headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+    return None
+
+data = load_patches_json()
+if not data:
+    print("Could not find patches-list.json in repo or latest release.")
     exit(0)
 
-data = json.loads(PATCHES_JSON.read_text(encoding="utf-8"))
 open_issues = github_api("/issues?state=open&per_page=100")
 
 checked = {}
@@ -77,7 +83,6 @@ for pkg, (name, supported_ver) in checked.items():
         print(f"Skipping {name}: supported={supported_ver}, play={play_ver}")
         continue
 
-    # Check if ANY open update issue already exists for this package (prevents duplicate issues)
     if any(f"({pkg})" in issue["title"] for issue in open_issues):
         print(f"Open update issue already exists for {name} ({pkg})")
         continue
