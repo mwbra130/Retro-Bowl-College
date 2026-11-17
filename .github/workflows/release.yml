@@ -8,13 +8,6 @@ on:
         required: false
         default: ''
         type: string
-  push:
-    branches: [ main ]
-    paths:
-      - 'patches/**'
-      - 'extensions/**'
-      - 'settings.gradle.kts'
-      - '.github/scripts/**'
 
 concurrency:
   group: release
@@ -75,11 +68,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./gradlew :patches:buildAndroid :patches:generatePatchesList -Pversion="${{ steps.ver.outputs.version }}" --no-daemon
-          # Ensure the built file matches patches-X.Y.Z.mpp
-          BUILT_FILE=$(ls patches/build/libs/patches-*.mpp | head -n 1)
-          if [ "$BUILT_FILE" != "patches/build/libs/patches-${{ steps.ver.outputs.version }}.mpp" ]; then
-            cp "$BUILT_FILE" "patches/build/libs/patches-${{ steps.ver.outputs.version }}.mpp"
-          fi
+          # The build also drops -sources and -javadoc jars in this folder.
+          # Never glob-pick one of those as the bundle: the release asset must
+          # be exactly patches-<version>.mpp, or this run fails right here.
+          ls -la patches/build/libs/
+          test -f "patches/build/libs/patches-${{ steps.ver.outputs.version }}.mpp"
 
       - name: Update README App Grid & Patch List
         run: |
