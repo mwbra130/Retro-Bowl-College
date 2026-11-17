@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.79.21",
+  "version": "1.79.22",
   "patches": [
     {
       "name": "Bypass PairIP application checks",
@@ -228,6 +228,32 @@
               "version": "6.1.0",
               "versionCodes": null,
               "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Bypass PairIP signature check",
+      "description": "Required for re-signed builds: PairIP verifies the app's signing certificate at startup and kills tampered builds. Disables that Java-layer check (its pass state is returning normally). The native PairIP VM layer is untouched.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "ai.moises",
+          "name": "Moises",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#7B61FF",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.141.0",
+              "versionCodes": null,
+              "isExperimental": false,
               "minSdk": null,
               "description": null
             }
@@ -1468,6 +1494,32 @@
     },
     {
       "name": "Enable Pro",
+      "description": "Turns on the app's Pro plan state (plan-gated features, Hi-Fi and drum-part pickers, advanced creative control, credit checks) as if the Pro plan were active. Note: stem separation itself runs on Moises' servers, which meter the account separately.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "ai.moises",
+          "name": "Moises",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#7B61FF",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.141.0",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Enable Pro",
       "description": "Turns on the app's Pro state (no ads, Pro features) as if the lifetime plan were active.",
       "default": true,
       "dependencies": [],
@@ -2106,6 +2158,34 @@
           "targets": [
             {
               "version": "4.6",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove telemetry",
+      "description": "Stops the app reporting usage: the Singular attribution SDK never initializes and its events are refused, and Firebase Analytics/Crashlytics collection is turned off in the manifest. Separation jobs, account, purchases and push are unaffected.",
+      "default": true,
+      "dependencies": [
+        "ResourcePatch"
+      ],
+      "compatiblePackages": [
+        {
+          "packageName": "ai.moises",
+          "name": "Moises",
+          "description": null,
+          "apkFileType": "XAPK",
+          "appIconColor": "#7B61FF",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "2.141.0",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,

@@ -2,7 +2,7 @@
 
 Some apps I patched and other apps that were requested if you would like to request an app please drop a comment in my reddit discussion for patches: https://www.reddit.com/r/MorpheApp/s/xRx6wdTYA5
 
-**42 apps · 91 patches** · current bundle: [v1.79.21](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.21)
+**43 apps · 94 patches** · current bundle: [v1.79.22](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.22)
 
 ## Apps
 
@@ -13,7 +13,7 @@ Some apps I patched and other apps that were requested if you would like to requ
      the GRID_START / GRID_END markers on every release — new apps get their name, Play
      Store icon and experimental marker automatically, and grid names link to the
      detailed sections below (which use the apps' full Play Store names). Kept OUTSIDE the auto-generated patches
-     block below on purpose. Reflects bundle v1.79.21. -->
+     block below on purpose. Reflects bundle v1.79.22. -->
 
 <!-- GRID_START -->
 <table>
@@ -86,6 +86,10 @@ Some apps I patched and other apps that were requested if you would like to requ
 </tr>
 <tr>
 <td align="center" width="20%">
+<img src="https://play-lh.googleusercontent.com/N4P3p5wvAau7_GaIZWi6NhHKPhjzYQfJRU0LZ79Q2_W2nB0p52mqCxa8tci7KqdqY73AOdlpij4lpq2kcyLp2A=w128-h128" width="72" height="72" alt="Moises icon">
+<br><a href="#app-ai-moises"><b>Moises</b></a>
+</td>
+<td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/juZBxj0uxtz80RMbyvPxco2O7rD7aU71VvhLsgConfsM4FmtzXTprkGXiEZQHugPU0A17AYnQ_tgF-0Nph9MIQ=w128-h128" width="72" height="72" alt="Notes icon">
 <br><a href="#app-com-inotesapp-inotes"><b>Notes</b></a>
 <br><sub>🧪 experimental</sub>
@@ -102,12 +106,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/DrvO8zMElYMrKfmdRtxwyH_kkvk6MJD87mBaC_38Bw1Pkq0DJB0h-SpfbK5SOAkoJQRJ2TpUU0QvW3bSdUe8=w128-h128" width="72" height="72" alt="Retro Bowl College icon">
 <br><a href="#app-com-newstargames-retrobowlcollege"><b>Retro Bowl College</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/ssy9sm_kmFckXCA5OT-VpT4pYOE_P0dy8oM8mTvvXaD692W14esUS6saR8qaprJcrfMrmPyYG4Dvyr4Mudp3gg=w128-h128" width="72" height="72" alt="Rocket Player icon">
 <br><a href="#app-com-jrtstudio-anothermusicplayer"><b>Rocket Player</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/8Y6RokzLQKhDAFcI5vYbgCd-_Hi8b6pQbrSAYB3a40ZH_NoBOz3U25qcvzOOEOkQrXzraI9DCs1NzJxpgZs2=w128-h128" width="72" height="72" alt="Roku Remote icon">
 <br><a href="#app-com-swiftsofts-rokuremote"><b>Roku Remote</b></a>
@@ -124,12 +128,12 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/G1eIJ3yor1yW20izrYjOfCzHgVkRtewlfPFG9CEFTHzSI2m0Lwds_Y1xYgeg21CFok_UXrol-ox2IwqL4JMrLQ=w128-h128" width="72" height="72" alt="Subway Surfers icon">
 <br><a href="#app-com-kiloo-subwaysurf"><b>Subway Surfers</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/foOfzWD2UQTfnP9gP6aCSRUx-6s4fmm6ZemRW__C3e7_fbjwhyXbBSvZjr1IS31q9PElU6oqLY1HvP3McqMfK_8=w128-h128" width="72" height="72" alt="Timemark icon">
 <br><a href="#app-com-oceangalaxy-camera-new"><b>Timemark</b></a>
 </td>
-</tr>
-<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/5wJZegUK2e_dXD14bp1NqX_Op20rpfnSLAYiuVJR7e32095qA8-yEDlezpbT7r1mx69VzjqWbCyVhHMm1T8O=w128-h128" width="72" height="72" alt="Tuner icon">
 <br><a href="#app-com-studiosol-afinadorlite"><b>Tuner</b></a>
@@ -146,6 +150,8 @@ Some apps I patched and other apps that were requested if you would like to requ
 <img src="https://play-lh.googleusercontent.com/79Q266gifrq0sHAhSLlPk2Bur1fgWIZJW-B4vWPpoEcvlIOCFIFooR7OV3qXhWMNJbE8MTTmtIoHwWUYj0hLVA=w128-h128" width="72" height="72" alt="VPN Gate icon">
 <br><a href="#app-com-giamping-sevpn"><b>VPN Gate</b></a>
 </td>
+</tr>
+<tr>
 <td align="center" width="20%">
 <img src="https://play-lh.googleusercontent.com/MyptZXmcCyF59phIWPsNCfHq6zSO_ojEdw_4rMYYWPOGdikSjqeOXcoszBZ053VYpINe5K7ZR9KV1nkFWgxdOw=w128-h128" width="72" height="72" alt="YouTube Music (Wear OS) icon">
 <br><a href="#app-com-google-android-apps-youtube-music"><b>YouTube Music (Wear OS)</b></a>
@@ -245,7 +251,7 @@ Some apps I patched and other apps that were requested if you would like to requ
 ## Patch descriptions
 
 <!-- PATCHES_START -->
-> **[v1.79.21](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.21)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;91 patches total
+> **[v1.79.22](https://github.com/mwbra130/Retro-Bowl-College/releases/tag/v1.79.22)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;94 patches total
 <a id="app-com-diskwalaapp" name="app-com-diskwalaapp"></a>
 <details>
 <summary>DiskWala&nbsp;&nbsp;•&nbsp;&nbsp;9 patches</summary>
@@ -376,6 +382,24 @@ Some apps I patched and other apps that were requested if you would like to requ
 | [Bypass PairIP license check](#bypass-pairip-license-check) | Required for re-signed builds: PairIP asks Google Play to license the app at startup and sends unlicensed installs to a Play Store block page. Disables that check, its verdict handler and both block-page launchers so the patched app can open. |  |
 | [Enable Lifetime VIP](#enable-lifetime-vip) | Turns on the lifetime Life Member (SVIP) state: no ads and every animated theme applies for free, with no expiry — the VIP screen reads Level: SVIP and Status: life member. Needs the stock Pika! Spot 1.4.5 XAPK. |  |
 | [Spoof app signature](#spoof-app-signature) | Fixes the 'Can not connect to server' stop at 30% on launch: the app's first server login carries a token derived from the APK signing certificate, and a re-signed build computes it from the wrong certificate, so the server rejects the login. Recomputes the token with the stock signing certificate. Needs the stock Pika! Spot 1.4.5 XAPK. |  |
+
+</details>
+
+<a id="app-ai-moises" name="app-ai-moises"></a>
+<details>
+<summary>Moises: The Musician's AI App&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
+<br>
+
+**Supported versions:**
+
+| 2.141.0 |
+| :---: |
+
+| Patch | Description | Options |
+|----------|----------------|-----------|
+| [Bypass PairIP signature check](#bypass-pairip-signature-check) | Required for re-signed builds: PairIP verifies the app's signing certificate at startup and kills tampered builds. Disables that Java-layer check (its pass state is returning normally). The native PairIP VM layer is untouched. |  |
+| [Enable Pro](#enable-pro) | Turns on the app's Pro plan state (plan-gated features, Hi-Fi and drum-part pickers, advanced creative control, credit checks) as if the Pro plan were active. Note: stem separation itself runs on Moises' servers, which meter the account separately. |  |
+| [Remove telemetry](#remove-telemetry) | Stops the app reporting usage: the Singular attribution SDK never initializes and its events are refused, and Firebase Analytics/Crashlytics collection is turned off in the manifest. Separation jobs, account, purchases and push are unaffected. |  |
 
 </details>
 

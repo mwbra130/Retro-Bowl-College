@@ -1,3 +1,14 @@
+## [1.79.22](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.21...v1.79.22) (2026-11-17)
+
+### 🐛 Bug Fixes
+
+* correct OLX dex descriptors (root-level classes, no defpackage prefix) so fingerprints match ([3de3e9f](https://github.com/mwbra130/Retro-Bowl-College/commit/3de3e9f697c3c7da4498eda5fa5569b3f793ffec))
+* correct OLX dex descriptors (root-level classes, no defpackage prefix) so fingerprints match ([b549923](https://github.com/mwbra130/Retro-Bowl-College/commit/b549923ae26410ebec9e02772373d9a1b14fcb0e))
+* correct OLX dex descriptors (root-level classes, no defpackage prefix) so fingerprints match ([dee1379](https://github.com/mwbra130/Retro-Bowl-College/commit/dee1379ad112137dc6e8ed09ac2d3cc263356701))
+* fix OLX fingerprints (drop strings criterion) and Plain listings smali (if-nez null checks, external keep label) ([95c8a44](https://github.com/mwbra130/Retro-Bowl-College/commit/95c8a448c5963d2943ffc100b97158fb978e7662))
+* fix OLX fingerprints (drop strings criterion) and Plain listings smali (if-nez null checks, external keep label) ([9741382](https://github.com/mwbra130/Retro-Bowl-College/commit/9741382ce6b2db46042b8dc744d7ff8f0bb136e0))
+* **moises:** add Enable Pro, Bypass PairIP signature check and Remove telemetry patches for Moises 2.141.0 ([4fc8eea](https://github.com/mwbra130/Retro-Bowl-College/commit/4fc8eea46037820b83f8827ab4b7d29bb20b01b2))
+
 ## [1.79.21](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.20...v1.79.21) (2026-11-17)
 
 ### 🐛 Bug Fixes
