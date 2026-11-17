@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.79.16",
+  "version": "1.79.17",
   "patches": [
     {
       "name": "Bypass PairIP application checks",
@@ -1545,6 +1545,32 @@
       "options": []
     },
     {
+      "name": "Enable license",
+      "description": "Opens the full app without an activation code. FORScan Lite checks your license once at startup against its server; this patch pins that startup check to its licensed outcome, so the activation dialog never appears and no activation request is sent. FORScan Lite 1.5.31 only.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.astech.forscanlite",
+          "name": "FORScan Lite",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": "#33B5E5",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "1.5.31",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
       "name": "Enable premium",
       "description": "Enables premium: removes all ads and unlocks unlimited VPN session time (free sessions are capped at 30 to 60 minutes). VPN Gate 20261111 only.",
       "default": true,
@@ -1974,6 +2000,32 @@
           "targets": [
             {
               "version": "3.9.3",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Remove telemetry",
+      "description": "Stops the app from phoning home. FORScan Lite has no analytics or ad SDKs; the only non-essential traffic is a launch-time version check to forscan.org, which this patch disables. Diagnostics and all other features are unaffected. FORScan Lite 1.5.31 only.",
+      "default": true,
+      "dependencies": [],
+      "compatiblePackages": [
+        {
+          "packageName": "com.astech.forscanlite",
+          "name": "FORScan Lite",
+          "description": null,
+          "apkFileType": null,
+          "appIconColor": "#33B5E5",
+          "signatures": null,
+          "targets": [
+            {
+              "version": "1.5.31",
               "versionCodes": null,
               "isExperimental": false,
               "minSdk": null,

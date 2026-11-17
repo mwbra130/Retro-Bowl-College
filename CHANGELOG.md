@@ -1,3 +1,14 @@
+## [1.79.17](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.16...v1.79.17) (2026-11-17)
+
+### 🐛 Bug Fixes
+
+* **forscanlite:** add FORScan Lite license + telemetry patches (1.5.31) ([24ce33a](https://github.com/mwbra130/Retro-Bowl-College/commit/24ce33aaae3620af13d70b913da176e8af97efc3))
+* **forscanlite:** add FORScan Lite license + telemetry patches (1.5.31) ([deebeb1](https://github.com/mwbra130/Retro-Bowl-College/commit/deebeb13a8d4f49b912c1692ea3c8b93f20f111a))
+* **forscanlite:** add FORScan Lite license + telemetry patches (1.5.31) ([0b3d0b9](https://github.com/mwbra130/Retro-Bowl-College/commit/0b3d0b95a620729152c7cd2e90e703be7edaf4c4))
+* **forscanlite:** add FORScan Lite license + telemetry patches (1.5.31) ([df8b8f3](https://github.com/mwbra130/Retro-Bowl-College/commit/df8b8f32573ad8d7384965125c31ff6791a24f26))
+* **forscanlite:** appIconColor literal must be Int, not Long ([6e9eb20](https://github.com/mwbra130/Retro-Bowl-College/commit/6e9eb208739025f45ed7afcbedd9a0f5a3f7ae33))
+* **forscanlite:** appIconColor must be 0xRRGGBB (no alpha byte) ([8510fd0](https://github.com/mwbra130/Retro-Bowl-College/commit/8510fd02889a3f67c5d0f037cf6523c037b3107f))
+
 ## [1.79.16](https://github.com/mwbra130/Retro-Bowl-College/compare/v1.79.15...v1.79.16) (2026-11-17)
 
 ### 🐛 Bug Fixes
