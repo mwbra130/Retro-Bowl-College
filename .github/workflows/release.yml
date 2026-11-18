@@ -130,7 +130,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VER="${{ steps.ver.outputs.version }}"
+          SUBJECT="$(git log -1 --pretty=%s)"
+          APP="$(echo "$SUBJECT" | sed -nE 's/^(fix|feat)\(([a-z0-9_-]+)\):.*/\2/p')"
+          TITLE="v${VER}"
+          NOTES="Release v${VER}"
+          if [ -n "$APP" ]; then
+            TITLE="v${VER} (${APP})"
+            NOTES="Release v${VER} — promoted app: ${APP}"
+          fi
+          echo "Release title: $TITLE"
           gh release create "v${VER}" \
             "patches/build/libs/patches-${VER}.mpp" \
-            --title "v${VER}" \
-            --notes "Release v${VER}"
+            --title "$TITLE" \
+            --notes "$NOTES"
