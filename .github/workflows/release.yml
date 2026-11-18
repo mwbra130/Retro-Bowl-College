@@ -130,19 +130,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VER="${{ steps.ver.outputs.version }}"
-          SUBJECT="$(git log -1 --pretty=%s "${{ github.sha }}")"
-          APP="$(echo "$SUBJECT" | sed -nE 's/^(fix|feat)\(([a-z0-9_-]+)\):.*/\2/p')"
-          if [ -z "$APP" ]; then
-            APP="$(echo "$SUBJECT" | sed -nE 's/^fix: update (.+) patches$/\1/p')"
-          fi
           TITLE="v${VER}"
-          if [ -n "$APP" ]; then
-            if [ ${#APP} -le 80 ]; then
-              TITLE="v${VER} (${APP})"
-            else
-              TITLE="v${VER} (multiple apps)"
-            fi
-          fi
           echo "Release title: $TITLE"
           PREV_TAG="$(gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null || true)"
           if [ -n "$PREV_TAG" ] && git show "$PREV_TAG:patches-list.json" > /tmp/old-list.json 2>/dev/null; then
